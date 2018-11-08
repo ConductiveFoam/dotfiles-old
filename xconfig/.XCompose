@@ -1,0 +1,15 @@
+include "%L"
+
+<Multi_key> <b> <less> <3> : "💙" U1F449 # Blue Heart
+<Multi_key> <g> <less> <3> : "💚" U1F49A # Green Heart
+<Multi_key> <y> <less> <3> : "💛" U1F49B # Yellow Heart
+<Multi_key> <p> <less> <3> : "💜" U1F49C # Purple Heart
+
+<Multi_key> <Q> <E> <D> : "∎" U220E # END OF PROOF
+<Multi_key> <a> <n> <g> <l> <e> : "∠" U2220 # Angle sign
+
+<Multi_key> <s> <p> <o> <o> <k> : "👻" U1F47B # Ghost
+
+<Multi_key> <f> <l> <o> <w> <e> <r> : "⚘" U2698 # Flower
+<Multi_key> <w> <f> <l> <o> <w> <e> <r> : "❀" U2740 # White Florette
+<Multi_key> <t> <u> <l> <i> <p> : "🌷" U1F337 # Tulipp

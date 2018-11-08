@@ -1,0 +1,1 @@
+/home/sam/src/emacs/emacswiki.org/modeline-posn.el

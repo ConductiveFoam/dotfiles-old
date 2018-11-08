@@ -1,0 +1,5 @@
+[user]
+	name = Sam B
+	email = nhalbleiter@gmail.com
+[core]
+	editor = emacs -nw

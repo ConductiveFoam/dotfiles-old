@@ -1,0 +1,14 @@
+random
+repeat
+consume
+single
+
+next
+prev
+
+searchplay
+play
+stop
+toggle
+
+clear

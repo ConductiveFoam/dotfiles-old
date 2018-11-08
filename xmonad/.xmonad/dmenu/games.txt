@@ -1,0 +1,13 @@
+Left 4 Dead 2 @ steam steam://run/550
+
+Stellaris @ steam steam://run/281990
+
+Full Bore @ steam steam://run/264060
+Zen Bound 2 @ steam steam://run/61600
+Portal @ steam steam://run/400
+Portal 2 @ steam steam://run/620
+
+Hollow Knight @ ./games/Hollow\ Knight/start.sh
+They Bleed Pixels @ steam steam://run/211260
+Rex Rocket @ steam steam://run/288020
+Dustforce @ steam steam://run/65300

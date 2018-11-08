@@ -1,0 +1,24 @@
+* General info
+Dotfile repository, to be used with GNU stow.
+
+** App specific instructions
+*** Emacs
+Expects the emacswiki.org and hrs/sensible-defaults.el repos in `~/src/emacs/`:
+#+BEGIN_SRC sh
+$ git clone git://github.com/emacsmirror/emacswiki.org.git
+$ cd emacswiki.org; git checkout -b master origin/master
+#+END_SRC
+
+#+BEGIN_SRC sh
+$ git clone https://github.com/hrs/sensible-defaults.el.git
+#+END_SRC
+
+** Stuff to do
+*** TODO Bash
+**** TODO Make independent of distro
+
+*** TODO X config
+**** TODO Consolidate?
+
+*** General
+**** TODO Color switching
