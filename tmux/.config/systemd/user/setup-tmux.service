@@ -1,0 +1,10 @@
+[Unit]
+Description=Setup script for tmux sessions
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=%h/bin/tmux_setup.sh
+
+[Install]
+WantedBy=multi-user.target
