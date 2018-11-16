@@ -28,4 +28,4 @@ RestrictNamespaces=yes
 # permitted")
 
 [Install]
-WantedBy=default.target
+WantedBy=sound.target
