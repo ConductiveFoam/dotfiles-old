@@ -1,24 +1,52 @@
 * General info
-Dotfile repository, to be used with GNU stow.
+Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
 ** App specific instructions
 *** Emacs
-Expects the emacswiki.org and hrs/sensible-defaults.el repos in `~/src/emacs/`:
+- Expects the emacswiki.org and hrs/sensible-defaults.el repos in "~/src/emacs/":
 #+BEGIN_SRC sh
-$ git clone git://github.com/emacsmirror/emacswiki.org.git
-$ cd emacswiki.org; git checkout -b master origin/master
+$ git clone -b master git://github.com/emacsmirror/emacswiki.org.git
 #+END_SRC
 
 #+BEGIN_SRC sh
 $ git clone https://github.com/hrs/sensible-defaults.el.git
 #+END_SRC
 
-** Stuff to do
-*** TODO Bash
-**** TODO Make independent of distro
+- Enable emacsd.service
 
-*** TODO X config
+*** Tmux
+- Needs [[https://github.com/tmux-plugins/tpm][TPM]]
+- Enable setup-tmux.service
+
+*** XConfig
+- Enable comptond.service, udiskied.service and xss-deactivate.timer
+
+*** Redshift
+- Enable redshiftd.service
+
+*** MPD
+- Enable mpd.service
+
+** Stuff to do
+*** Bash
+**** TODO Make independent of distro
+Easiest to just symlink both ".profile" and ".bash_profile" to same file?
+**** TODO Sort between .profile and .bashrc
+**** TODO Finally introduce some aliases
+
+*** X config
 **** TODO Consolidate?
+**** TODO Thoroughly check functionality of unit xss-deactivate
+**** TODO Document dependencies of bin/multibg.py
+
+*** Tmux
+**** TODO Verify setup-tmux.service
+
+*** XMonad
+**** TODO systemctl --user integration
+
+*** Emacs
+**** TODO move config to customize?
 
 *** General
 **** TODO Color switching
