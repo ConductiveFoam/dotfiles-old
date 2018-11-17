@@ -1,16 +1,16 @@
 #!/bin/bash
+mode=$(systemctl --user --property=ActiveState show xss-deactivate.timer)
 
-mode=$( gawk '/^mode/{print $2}' .xscreensaver )
 case $mode in
-    off)
-	mode=one
+    ActiveState=inactive)
+	cmd=start
 	;;
-    one)
-	mode=off
+    ActiveState=active)
+	cmd=stop
 	;;
     *)
-	mode=one
+	cmd=start
 	;;
 esac
 
-sed -i "s/\\(mode:\t\t\\).*/\\1$mode/" .xscreensaver
+systemctl --user $cmd xss-deactivate.timer

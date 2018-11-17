@@ -1,0 +1,7 @@
+[Unit]
+Description=Deactivate xss
+RefuseManualStop=yes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/xscreensaver-command -deactivate

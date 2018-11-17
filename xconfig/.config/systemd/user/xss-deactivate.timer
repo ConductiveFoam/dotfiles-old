@@ -1,0 +1,9 @@
+[Unit]
+Description=Deactivate xss
+RefuseManualStop=no
+
+[Timer]
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=graphical.target
