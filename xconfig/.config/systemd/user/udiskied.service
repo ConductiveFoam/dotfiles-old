@@ -1,0 +1,12 @@
+[Unit]
+Description=Udiskie
+Documentation=info:udiskie man:udiskie(8) https://github.com/coldfix/udiskie
+After=udisks2.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/udiskie
+ExecStop=pkill udiskie
+
+[Install]
+WantedBy=graphical.target

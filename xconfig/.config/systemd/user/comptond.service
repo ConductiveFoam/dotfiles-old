@@ -1,0 +1,11 @@
+[Unit]
+Description=Compton
+Documentation=info:compton man:compton(1) https://github.com/yshui/compton
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/compton -b
+ExecStop=pkill compton
+
+[Install]
+WantedBy=graphical.target
