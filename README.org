@@ -1,25 +1,29 @@
 * General info
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
-** App specific instructions
+** Package specific instructions
 *** Emacs
-- Expects the emacswiki.org and hrs/sensible-defaults.el repos in "~/src/emacs/":
+- Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~/src/emacs/:
 #+BEGIN_SRC sh
-$ git clone -b master git://github.com/emacsmirror/emacswiki.org.git
+$ git clone -b master https://github.com/emacsmirror/emacswiki.org.git
 #+END_SRC
 
 #+BEGIN_SRC sh
 $ git clone https://github.com/hrs/sensible-defaults.el.git
 #+END_SRC
-
+- M-x RET package-install-selected-packages RET
 - Enable emacsd.service
 
 *** Tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
+#+BEGIN_SRC sh
+$ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
+#+END_SRC
 - Enable setup-tmux.service
 
 *** XConfig
 - Enable comptond.service, udiskied.service and xss-deactivate.timer
+- bin/multibg.py taken from https://github.com/johannes87/multibg
 
 *** Redshift
 - Enable redshiftd.service
@@ -36,11 +40,6 @@ Easiest to just symlink both ".profile" and ".bash_profile" to same file?
 
 *** X config
 **** TODO Consolidate?
-**** TODO Thoroughly check functionality of unit xss-deactivate
-**** TODO Document dependencies of bin/multibg.py
-
-*** Tmux
-**** TODO Verify setup-tmux.service
 
 *** XMonad
 **** TODO systemctl --user integration
