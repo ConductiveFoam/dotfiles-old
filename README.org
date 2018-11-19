@@ -22,7 +22,7 @@ $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 - Enable setup-tmux.service
 
 *** XConfig
-- Enable comptond.service, udiskied.service and xss-deactivate.timer
+- Enable comptond.service, udiskied.service, xss.service and xss-deactivate.timer
 - bin/multibg.py taken from https://github.com/johannes87/multibg
 
 *** Redshift
