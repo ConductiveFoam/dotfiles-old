@@ -5,7 +5,6 @@ Documentation=info:redshift man:redshift(1) http://jonls.dk/redshift/
 [Service]
 Type=simple
 ExecStart=/usr/bin/redshift
-ExecStop=pkill redshift
 
 [Install]
 WantedBy=graphical.target
