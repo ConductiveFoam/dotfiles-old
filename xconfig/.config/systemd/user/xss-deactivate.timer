@@ -8,4 +8,4 @@ OnUnitActiveSec=5min
 
 [Install]
 Requires=xss.service
-WantedBy=graphical.target
+WantedBy=default.target

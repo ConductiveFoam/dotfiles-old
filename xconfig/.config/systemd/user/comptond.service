@@ -7,4 +7,4 @@ Type=simple
 ExecStart=/usr/bin/compton
 
 [Install]
-WantedBy=graphical.target
+WantedBy=default.target

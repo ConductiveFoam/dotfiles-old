@@ -7,4 +7,4 @@ Type=simple
 ExecStart=/usr/bin/redshift
 
 [Install]
-WantedBy=graphical.target
+WantedBy=default.target

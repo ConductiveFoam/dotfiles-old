@@ -9,4 +9,4 @@ ExecStart=/usr/local/bin/udiskie
 ExecStop=pkill udiskie
 
 [Install]
-WantedBy=graphical.target
+WantedBy=default.target
