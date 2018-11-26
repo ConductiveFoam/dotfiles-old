@@ -191,6 +191,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xK_Insert), pasteSelection) -- %! Paste selection
 
   , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s") -- %! Select window, make screenshot of it
+  , ((shiftMask, xK_Print), spawn "scrot -u") -- %! Make screenshot of focused window
   , ((0, xK_Print), spawn "scrot") -- %! Make screenshot
 
   , ((maskS, xK_s), spawn "gnome-control-center") -- %! Gnome Control Center
