@@ -12,40 +12,46 @@ $ git clone -b master https://github.com/emacsmirror/emacswiki.org.git
 $ git clone https://github.com/hrs/sensible-defaults.el.git
 #+END_SRC
 - M-x RET package-install-selected-packages RET
-- Enable emacsd.service
+- Provides emacsd.service
 
 *** Tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
 #+BEGIN_SRC sh
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 #+END_SRC
-- Enable setup-tmux.service
+- Provides setup-tmux.service
 
 *** XConfig
-- Enable comptond.service, udiskied.service, xss.service and xss-deactivate.timer
+- Provides comptond.service, redshiftd.service, udiskied.service, xss.service and xss-deactivate.timer
 - bin/multibg.py taken from https://github.com/johannes87/multibg
-
-*** Redshift
-- Enable redshiftd.service
 
 *** MPD
 - Enable mpd.service
 
 ** Stuff to do
 *** Bash
-**** TODO Make independent of distro
+**** Make independent of distro
 Easiest to just symlink both ".profile" and ".bash_profile" to same file?
-**** TODO Sort between .profile and .bashrc
-**** TODO Finally introduce some aliases
+**** Sort between .profile and .bashrc
+**** Finally introduce some aliases
+- xss-config to HOME="$HOME/dotfiles/xconfig/" xscreensaver-demo
+- systemctl --user
 
 *** X config
-**** TODO Consolidate?
+**** Consolidate
+**** Move udiskied.service to separate package?
 
 *** XMonad
-**** TODO systemctl --user integration
+**** systemctl --user integration
+**** More prefix-aware actions?
+**** Feedback which submap is active?
+**** GPU load in bar
+**** processor frequencies in bar
 
 *** Emacs
-**** TODO move config to customize?
+**** move config to customize?
+**** Expand cyphejor replacements
 
 *** General
-**** TODO Color switching
+**** Color switching
+**** System status overview

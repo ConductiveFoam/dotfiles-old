@@ -1,5 +1,6 @@
 [Unit]
 Description=Setup script for tmux sessions
+After=emacsd.service
 
 [Service]
 Type=oneshot
