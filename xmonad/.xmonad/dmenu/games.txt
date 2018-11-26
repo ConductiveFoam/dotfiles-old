@@ -1,4 +1,4 @@
-Left 4 Dead 2 @ steam steam://run/550
+Left 4 Dead 2 @ left4gore -2
 
 Stellaris @ steam steam://run/281990
 
