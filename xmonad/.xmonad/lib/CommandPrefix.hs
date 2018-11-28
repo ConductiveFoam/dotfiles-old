@@ -38,13 +38,12 @@ prefixedAction a = do
     (replicateM_ (prefix - 1) a) >> a
   resetPrefix
   refresh
-spawnWithPrefix cmd = do
+spawnWithPrefix f = do
   prefix <- XS.gets commandPrefix
-  spawn $ cmd ++ " " ++ (prefixToString prefix)
+  spawn $ f prefix
   resetPrefix
   refresh
 logPrefix :: Logger
 logPrefix = do
   prefix <- XS.gets commandPrefix
   return . Just $ xmobarColor colDYellow "" $ prefixToString prefix
-

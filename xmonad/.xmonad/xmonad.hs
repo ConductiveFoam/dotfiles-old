@@ -49,12 +49,13 @@ maskS = myModMask .|. shiftMask
 maskC = myModMask .|. controlMask
 maskCS = myModMask .|. shiftMask .|. controlMask
 
--- Terminal & dmenu-prompts
+-- Terminal, commands & dmenu-prompts
 myTerminal = "xfce4-terminal"
 dmenuExec = "exe=`dmenu_path | dmenu` && eval \"exec $exe\""
 dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $exe\""
 dmenuGames = "sel=`cut -d@ -f1 .xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" .xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
+dmenuSysctl cmd = "sysctl.sh " ++ cmd ++ " $(find ~/.config/systemd/user/ -maxdepth 1 \\( -name '*.service' -o -name '*.timer' \\) -printf '%P\n' | sort | dmenu)"
 
 -- Layout hook
 myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
@@ -155,8 +156,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! MPD & Audio control
   [ ((maskS, xK_m), spawn dmenuMpcLoadPlaylist) -- %! Load playlist
-  , ((maskC, xK_m), submap . M.fromList $ -- mod-control-m %! Audio Submap:
-    [ ((0, xK_p), spawnWithPrefix "mpc play") -- %! MPC play $prefix
+  , ((maskC, xK_m), submap . M.fromList $ -- %! Audio Submap:
+    [ ((0, xK_p), spawnWithPrefix (\p -> "mpc play " ++ (prefixToString p))) -- %! MPC play $prefix
     , ((0, xK_n), spawn "mpc pause") -- %! MPC pause
     , ((shiftMask, xK_t), spawn "mpc stop") -- %! MPC stop
     , ((0, xK_t), spawn "mpc toggle") -- %! MPC toggle
@@ -168,13 +169,21 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_c), spawn "mpc consume") -- %! MPC consume
     , ((shiftMask, xK_s), spawn "mpc single") -- %! MPC single
 
-    , ((0, xK_Delete), spawnWithPrefix "mpc del") -- %! MPC del $prefix
+    , ((0, xK_Delete), spawnWithPrefix (\p -> "mpc del " ++ (prefixToString p))) -- %! MPC del $prefix
     , ((controlMask, xK_Delete), spawn "mpc clear") -- %! MPC clear
     ])
   , ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") -- %! Increase volume
   , ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") -- %! Decrease volume
   , ((0, xF86XK_AudioMute), spawn "amixer set Master toggle") -- %! Toggle mute
   , ((0, xF86XK_AudioPlay), spawn "mpc toggle") -- %! MPC toggle
+
+  -- %% ! Systemctl integration
+  , ((maskC, xK_s), submap . M.fromList $ -- %! Systemctl submap:
+    [ ((0, xK_s), spawn $ dmenuSysctl "status") -- %! Show unit status
+    , ((0, xK_t), spawn $ dmenuSysctl "toggle") -- %! Toggle unit
+    , ((0, xK_a), spawn $ dmenuSysctl "start") -- %! Start unit
+    , ((0, xK_d), spawn $ dmenuSysctl "stop ") -- %! Stop unit
+    ])
 
   -- %% ! Quit xmonad, Power control
   , ((maskS, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
