@@ -1,8 +1,7 @@
-* General info
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
-** Package specific instructions
-*** Emacs
+* Package specific instructions
+** Emacs
 - Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~/src/emacs/:
 #+BEGIN_SRC sh
 $ git clone -b master https://github.com/emacsmirror/emacswiki.org.git
@@ -14,44 +13,42 @@ $ git clone https://github.com/hrs/sensible-defaults.el.git
 - M-x RET package-install-selected-packages RET
 - Provides emacsd.service
 
-*** Tmux
+** Tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
 #+BEGIN_SRC sh
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 #+END_SRC
 - Provides setup-tmux.service
 
-*** XConfig
+** XConfig
 - Provides comptond.service, redshiftd.service, udiskied.service, xss.service and xss-deactivate.timer
 - bin/multibg.py taken from https://github.com/johannes87/multibg
 
-*** MPD
-- Enable mpd.service
+** MPD
+- Provides mpd.service
+- bin/mpd_gen_playlists.zsh to create playlists for directories in mpd music library; respects an mpd_exclude.txt file there
 
-** Stuff to do
-*** Bash
-**** Make independent of distro
+* Stuff to do
+** Bash
+*** Make independent of distro
 Easiest to just symlink both ".profile" and ".bash_profile" to same file?
-**** Sort between .profile and .bashrc
-**** Finally introduce some aliases
+*** Sort between .profile and .bashrc
+*** Finally introduce some aliases
 - xss-config to HOME="$HOME/dotfiles/xconfig/" xscreensaver-demo
 - systemctl --user
 
-*** X config
-**** Consolidate
-**** Move udiskied.service to separate package?
+** X config
 
-*** XMonad
-**** systemctl --user integration
-**** More prefix-aware actions?
-**** Feedback which submap is active?
-**** GPU load in bar
-**** processor frequencies in bar
+** XMonad
+*** More prefix-aware actions?
+*** Feedback which submap is active?
+*** GPU load in bar
+*** processor frequencies in bar
 
-*** Emacs
-**** move config to customize?
-**** Expand cyphejor replacements
+** Emacs
+*** move config to customize?
+*** Expand cyphejor replacements
 
-*** General
-**** Color switching
-**** System status overview
+** General
+*** Color switching
+*** System status overview
