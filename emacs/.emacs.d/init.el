@@ -5,31 +5,6 @@
  ;; If there is more than one, they won't work right.
  '(org-hide ((t (:foreground "white")))))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
- '(package-selected-packages
-   (quote
-    (cyphejor use-package smartparens smart-mode-line racer haskell-mode flycheck-rust company cargo)))
- '(sml/replacer-regexp-list
-   (quote
-    (("^~/org" ":Org:")
-     ("^/sudo:.*:" ":SU:")
-     ("^~/Documents/" ":Doc:")
-     ("^:\\([^:]*\\):Documento?s/" ":\\1/Doc:")
-     ("^~/[Gg]it/" ":Git:")
-     ("^~/[Gg]it[Hh]ub/" ":Git:")
-     ("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:")
-     ("^~/dotfiles/" ":DOT:")
-     ("^:DOT:\\([^/]+\\)/" ":DOT:\\1:")
-     ("^:DOT:emacs:\\.emacs\\.d/" ":DOT:ED:"))))
- '(sml/theme (quote light)))
-
 ;;; Packages & local imports
 (add-to-list 'load-path "~/dotfiles/emacs/.emacs.d/lib")
 ;;(add-to-list 'load-path "~/src/emacs/emacswiki.org")
@@ -39,6 +14,7 @@
       '(("gnu" . "http://elpa.gnu.org/packages/")
 	("marmalade" . "http://marmalade-repo.org/packages/")
 	("melpa" . "http://melpa.milkbox.net/packages/")))
+(setq package-selected-packages '(cyphejor use-package smartparens smart-mode-line racer haskell-mode flycheck-rust company cargo))
 (package-initialize)
 (require 'use-package)
 
