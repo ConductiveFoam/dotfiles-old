@@ -2,4 +2,4 @@
 	name = Sam B
 	email = nhalbleiter@gmail.com
 [core]
-	editor = emacs -nw
+	editor = emacs -q -nw
