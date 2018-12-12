@@ -74,12 +74,12 @@ $ mkdir -p ~/.mpd
 ** XMonad
 *** More prefix-aware actions
 *** Ideas
+**** Replace dmenu with prompt
 **** Feedback which submap is active
 **** GPU load in bar
 **** processor frequencies in bar
 
 ** Emacs
-*** move config to customize?
 *** Expand cyphejor replacements
 
 ** General
