@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -d ~/.xprofile.d ]; then
+  for fn in ~/.xprofile.d/*; do
+    [ -x "$fn" ] && . "$fn"
+  done
+fi

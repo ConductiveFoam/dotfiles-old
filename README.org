@@ -1,49 +1,82 @@
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
+Pretty much everything in here depends on tmux
+~mkdir~ invocations for packages indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree)
+
 * Package specific instructions
-** Emacs
-- Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~/src/emacs/:
+** Bash
 #+BEGIN_SRC sh
-$ git clone -b master https://github.com/emacsmirror/emacswiki.org.git
+$ mkdir -p ~/.profile.d
 #+END_SRC
+- Drop-in setup via executable scripts in ~~/.profile.d~
 
-#+BEGIN_SRC sh
-$ git clone https://github.com/hrs/sensible-defaults.el.git
-#+END_SRC
-- M-x RET package-install-selected-packages RET
-- Provides emacsd.service
-
-** Tmux
+** tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
 #+BEGIN_SRC sh
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 #+END_SRC
-- Provides setup-tmux.service
+- Autostarts sessions on sourcing of ~~/.bash_profile~
+- Assumes that session names don't contain dashes or spaces (for session cleanup)
+- Dependencies: ~xsel~, ~xdg-open~, ~elinks~
+
+** Emacs
+#+BEGIN_SRC sh
+$ mkdir -p ~/src/emacs ~/.emacs.d/lib
+#+END_SRC
+- tmux integration starts server when window is created
+- Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~/src/emacs/:
+#+BEGIN_SRC sh
+$ cd ~/src/emacs
+$ git clone -b master https://github.com/emacsmirror/emacswiki.org.git
+$ git clone https://github.com/hrs/sensible-defaults.el.git
+#+END_SRC
+- ~M-x RET package-install-selected-packages RET~
+
+** Elinks
+#+BEGIN_SRC sh
+$ mkdir -p ~/.elinks
+#+END_SRC
+- Key binds and session resume
+- Startup of tmux session (XMonad integration)
 
 ** XConfig
-- Provides comptond.service, redshiftd.service, udiskied.service, xss.service and xss-deactivate.timer
-- bin/multibg.py taken from https://github.com/johannes87/multibg
+#+BEGIN_SRC sh
+$ mkdir -p ~/.xprofile.d
+#+END_SRC
+- Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
+- Starts ~xscreensaver~ and ~compton~
+- Configured to start XMonad in ~.xinitrc~
+- Setup in ~~/.xprofile~ and executable scripts in ~~/.xprofile.d~
+
+** XMonad
+#+BEGIN_SRC sh
+$ mkdir -p ~/.xmonad/lib
+#+END_SRC
+- No XMonad-specific setup needs to be done before starting the binary
+- XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~notify-send~, ~xmessage~, ~xfce4-terminal~; [[https://github.com/johannes87/multibg][multibg.py]] in PATH
 
 ** MPD
-- Provides mpd.service
-- bin/mpd_gen_playlists.zsh to create playlists for directories in mpd music library; respects an mpd_exclude.txt file there
+#+BEGIN_SRC sh
+$ mkdir -p ~/.mpd
+#+END_SRC
+- ~bin/mpd_gen_playlists.zsh~ to create playlists for directories in mpd music library; respects an ~mpd_exclude.txt~ file there
 
 * Stuff to do
 ** Bash
-*** Make independent of distro
-Easiest to just symlink both ".profile" and ".bash_profile" to same file?
-*** Sort between .profile and .bashrc
 *** Finally introduce some aliases
 - xss-config to HOME="$HOME/dotfiles/xconfig/" xscreensaver-demo
 - systemctl --user
 
 ** X config
+*** Move to DM
 
 ** XMonad
-*** More prefix-aware actions?
-*** Feedback which submap is active?
-*** GPU load in bar
-*** processor frequencies in bar
+*** More prefix-aware actions
+*** Ideas
+**** Feedback which submap is active
+**** GPU load in bar
+**** processor frequencies in bar
 
 ** Emacs
 *** move config to customize?
@@ -52,3 +85,7 @@ Easiest to just symlink both ".profile" and ".bash_profile" to same file?
 ** General
 *** Color switching
 *** System status overview
+
+** Merge configs
+*** LXQt (& SDDM)
+*** SSH

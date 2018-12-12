@@ -5,8 +5,7 @@ After=udisks2.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/udiskie
-ExecStop=pkill udiskie
+ExecStart=/usr/bin/udiskie
 
 [Install]
 WantedBy=default.target

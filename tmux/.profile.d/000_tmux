@@ -1,0 +1,11 @@
+if [[ -z "$TMUX" ]]; then
+  dev="dev"
+
+  sess=$(tmux new-session -dPF "#S" -s "dev")
+  tmux new-window -d -n man -t "$sess:5"
+fi
+
+#	tmux new-window -d -n mon -t "$dev:6"
+#	tmux split-window -v -p 60 -t "$dev:6"
+#	tmux send-keys -t "$dev:6.0" 'less +F /var/log/syslog' C-m
+#	tmux send-keys -t "$dev:6.1" 'htop' C-m

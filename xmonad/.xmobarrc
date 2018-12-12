@@ -3,7 +3,7 @@ Config { font = "mononoki-bold:size=9:antialias=true"
        , bgColor = "rgb:00/2b/36"
        , fgColor = "rgb:83/94/96"
        , position = TopW L 95
-       
+
        , commands =
          [ Run Cpu ["-L", "15", "-H", "50", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 10
          , Run Memory ["-t", "Mem: <usedratio>", "-L", "15", "-H", "50", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 10
@@ -13,12 +13,11 @@ Config { font = "mononoki-bold:size=9:antialias=true"
 	 , Run Kbd [("us(dvorak)", "DV"), ("us", "US"), ("de", "DE")]
 	 , Run Date "%a %b %_d %l:%M %p" "date" 60
 	 , Run Uptime [] 10
-	
+
 	 , Run StdinReader
          ]
-       , template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%    XSS <fc=#d33682>%xssmode.sh%</fc> | %getvolume.sh% %mpcstatus.sh% | <fc=#d33682>%kbd%</fc> | <fc=#d33682>%date%</fc> * %uptime% "
+       , template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=#d33682>%kbd%</fc> | <fc=#d33682>%date%</fc> * %uptime% "
 
-       , allDesktops = True
     }
 
 -- Didn't work (for whatever reason), so we're using a shell script

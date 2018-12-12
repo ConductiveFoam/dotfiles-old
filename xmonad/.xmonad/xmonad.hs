@@ -1,5 +1,5 @@
 -- Base
-import Data.List(isPrefixOf, isSuffixOf)
+import Data.List(isPrefixOf, isSuffixOf, intercalate)
 import qualified Data.Map as M
 import System.IO
 import System.Exit
@@ -27,7 +27,7 @@ import Graphics.X11.ExtraTypes.XF86
 -- Actions
 import XMonad.Operations
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.Run(spawnPipe, safeSpawn)
 import XMonad.Util.Paste
 
 -- Custom
@@ -53,9 +53,13 @@ maskCS = myModMask .|. shiftMask .|. controlMask
 myTerminal = "xfce4-terminal"
 dmenuExec = "exe=`dmenu_path | dmenu` && eval \"exec $exe\""
 dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $exe\""
-dmenuGames = "sel=`cut -d@ -f1 .xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" .xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
+dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
 dmenuSysctl cmd = "sysctl.sh " ++ cmd ++ " $(find ~/.config/systemd/user/ -maxdepth 1 \\( -name '*.service' -o -name '*.timer' \\) -printf '%P\n' | sort | dmenu)"
+trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x002b36 --height 17 --monitor primary; fi"
+
+-- Misc. variables
+backgrounds = ["~/Pictures/snoopy_wp.jpg", "~/Pictures/snoopy_wp.jpg"]
 
 -- Layout hook
 myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
@@ -63,8 +67,8 @@ myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
            tiled ||| Mirror tiled
   where
     dev = (Tall 1 delta (139/400)) ||| (Tall 1 delta (1/2)) ||| (mosaic 2 [2, 1])
-    msg = spacing 2 $ Mirror $ Column 1
-    tiled = spacing 2 $ Tall 1 delta (1/2)
+    msg = Mirror $ Column 1
+    tiled = Tall 1 delta (1/2)
 
     delta = 3/100
 
@@ -98,7 +102,7 @@ myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
   [ ((maskS, xK_Return), spawn myTerminal) -- %! Launch terminal
-  , ((myModMask, xK_Return), spawn $ myTerminal ++ " --execute tmux a -t dev") -- %! Launch dev terminal
+  , ((myModMask, xK_Return), spawn $ myTerminal  ++ " --title \"Terminal\" --execute tmux a -t dev") -- %! Launch dev terminal
   , ((maskC, xK_Return), spawn $ myTerminal ++ " --title \"Terminal - Web\" --execute tmux a -t web") -- %! Launch elinks terminal
   , ((maskS, xK_r), spawn dmenuExec) -- %! Launch curated dmenu
   , ((myModMask, xK_r), spawn dmenuApps) -- %! Launch app
@@ -203,7 +207,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), spawn "scrot -u") -- %! Make screenshot of focused window
   , ((0, xK_Print), spawn "scrot") -- %! Make screenshot
 
-  , ((maskS, xK_s), spawn "gnome-control-center") -- %! Gnome Control Center
+--  , ((maskS, xK_s), spawn "gnome-control-center") -- %! Gnome Control Center
   ]
   where
     helpCommand :: X ()
@@ -212,6 +216,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
 -- Main config
 main = do
+  spawn $ "multibg.py " ++ (intercalate " " backgrounds)
+  spawn trayerCmd
   xmproc <- spawnPipe "xmobar"
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig

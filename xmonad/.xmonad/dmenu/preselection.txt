@@ -1,19 +1,14 @@
-firefox-beta
+firefox
 steam
 emacsclient.emacs24
 xfce4-terminal
-telegram
+telegram-desktop
 teamspeak3.sh
 thunderbird
 vlc
 amixer
 gnome-control-center
 libreoffice
-
-cyclexlayout.sh
-multibg.py
-session_setup.sh
-tmux_setup.sh
 
 udiskie
 udiskie-mount
@@ -22,7 +17,4 @@ kill
 killall
 pkill
 
-xmonad
 xmonad --recompile
-compton
-

@@ -5,12 +5,11 @@ if [[ -z "$TMUX" ]]; then
     web="web"
 
     tmux has-session -t "$dev"
-    if [[ $? -ne 0 ]]; then 
+    if [[ $? -ne 0 ]]; then
 	tmux new-session -d -s "$dev"
-	
+
 #	tmux send-keys -t "$dev:1" 'clear' C-m
-	
-	tmux new-window -d -n "emacs" -t "$dev:2" -d emacsclient -nw
+
 
 	tmux new-window -d -n man -t "$dev:5"
 
