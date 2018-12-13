@@ -82,4 +82,3 @@ $ mkdir -p ~/.mpd
 
 ** Merge configs
 *** LXQt (& SDDM)
-*** SSH
