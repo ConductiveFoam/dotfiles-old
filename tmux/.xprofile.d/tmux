@@ -1,1 +1,4 @@
-tmux setenv -t dev DISPLAY "$DISPLAY"
+tmux setenv -g DISPLAY "$DISPLAY"
+
+tmux killw -t dev:1
+tmux neww -dt dev:1 -c ~
