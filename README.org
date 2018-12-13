@@ -64,9 +64,6 @@ $ mkdir -p ~/.mpd
 
 * Stuff to do
 ** Bash
-*** Finally introduce some aliases
-- xss-config to HOME="$HOME/dotfiles/xconfig/" xscreensaver-demo
-- systemctl --user
 
 ** X config
 *** Move to DM
