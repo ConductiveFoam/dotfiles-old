@@ -55,7 +55,7 @@ dmenuExec = "exe=`dmenu_path | dmenu` && eval \"exec $exe\""
 dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $exe\""
 dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
-dmenuSysctl cmd = "sysctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
+dmenuSysctl cmd = "sysdctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
 trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x002b36 --height 17 --monitor primary; fi"
 
 -- Layout hook
