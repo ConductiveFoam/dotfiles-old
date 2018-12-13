@@ -54,7 +54,7 @@ $ mkdir -p ~/.xmonad/lib
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~notify-send~, ~xmessage~, ~xfce4-terminal~; [[https://github.com/johannes87/multibg][multibg.py]] in PATH
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~nitrogen~, ~notify-send~, ~xmessage~, ~xfce4-terminal~
 
 ** MPD
 #+BEGIN_SRC sh

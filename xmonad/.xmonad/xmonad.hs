@@ -58,9 +58,6 @@ dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
 dmenuSysctl cmd = "sysctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
 trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x002b36 --height 17 --monitor primary; fi"
 
--- Misc. variables
-backgrounds = ["~/Pictures/snoopy_wp.jpg", "~/Pictures/snoopy_wp.jpg"]
-
 -- Layout hook
 myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
            onWorkspace wsMsg msg $ onWorkspace wsMisc' Accordion $
@@ -216,7 +213,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
 -- Main config
 main = do
-  spawn $ "multibg.py " ++ (intercalate " " backgrounds)
+  spawn $ "nitrogen --restore"
   spawn trayerCmd
   xmproc <- spawnPipe "xmobar"
   xmonad $ ewmh $ desktopConfig
