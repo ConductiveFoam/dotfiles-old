@@ -1,10 +1,6 @@
 ofs="$IFS"
 IFS=$'\n'
 if [[ -z "$TMUX" ]]; then
-  # Convenience: PREFIX+l switches between windows 1 and 2 initially
-  tmux selectw -t "$dev:2"
-  tmux selectw -t "$dev:1"
-
   # Kill all sessions that
   # - are not attached to a terminal
   # - do not have a group

@@ -1,4 +1,13 @@
-tmux setenv -g DISPLAY "$DISPLAY"
+tmux has-session -t "$web" 2> /dev/null
+if [[ $? -ne 0 ]]; then
+  # Import DISPLAY variable
+  tmux setenv -g DISPLAY "$DISPLAY"
 
-tmux killw -t dev:1
-tmux neww -dt dev:1 -c ~
+  # Make DISPLAY available in first window
+  tmux killw -t dev:1
+  tmux neww -dt dev:1 -c ~
+
+  # Convenience: PREFIX+l initially switches between windows 1 and 2
+  tmux selectw -t "$dev:2"
+  tmux selectw -t "$dev:1"
+fi
