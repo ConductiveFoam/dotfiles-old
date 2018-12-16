@@ -18,6 +18,8 @@ alias cd...='cd ../..'
 alias cd~.='cd ~/dotfiles'
 alias rmi='rm -i'
 
+alias clr='clear'
+
 alias sysdctl='systemctl --user'
 
 # Setting HOME for this does undesired things, e.g. save .cache there, so we're working around
@@ -30,7 +32,7 @@ PS1='[\u@\h \W]\$ '
 export EDITOR="emacsclient -nw"
 export VISUAL="emacsclient"
 
-PATH="$HOME/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:$PATH"
+PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:$PATH"
 export PATH
 
 export BUILDDIR="$HOME/build"
