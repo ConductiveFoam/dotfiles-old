@@ -1,13 +1,12 @@
 firefox
 steam
-emacsclient.emacs24
+emacsclient
 xfce4-terminal
 telegram-desktop
 teamspeak3.sh
-thunderbird
 vlc
-amixer
-gnome-control-center
+pavucontrol-qt
+
 libreoffice
 
 udiskie
