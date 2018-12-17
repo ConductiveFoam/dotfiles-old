@@ -38,15 +38,15 @@ function bindmodifiers(s) {
 }
 
 #-- [bind] %! Are bindings with their combination elsewhere
-/^.*--\s+[^\s]+\s+%!/ {
+/^.*--\s+[^[:blank:]]+\s+%!/ {
     if ($1 == "--") {
 	$1 = $3 = ""
 	$4 = "\t" ltrim($4)
 	print "\t" ltrim($0)
     } else {
-	i = index($0, "--") + 3
+	i = index($0, "-- ") + 3
 	j = index($0, "%! ")
-	bind = substr($0, i, j - i) 
+	bind = substr($0, i, j - i)
 	print "\t" bind "\t" substr($0, j + 3)
     }
 }
