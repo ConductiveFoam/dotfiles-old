@@ -189,7 +189,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! Quit xmonad, Power control
   , ((maskS, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
-  , ((myModMask, xK_q     ), spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
+  , ((myModMask, xK_q), spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
   , ((maskCS, xK_q), spawn "systemctl poweroff") -- %! Shut off system
   , ((myModMask, xK_z), spawn "xscreensaver-command --lock") -- %! Lock screen
   , ((maskC, xK_z), spawn "togglexss.sh") -- %! Toggle automatic lock
@@ -205,7 +205,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), spawn "scrot -u") -- %! Make screenshot of focused window
   , ((0, xK_Print), spawn "scrot") -- %! Make screenshot
 
---  , ((maskS, xK_s), spawn "gnome-control-center") -- %! Gnome Control Center
   ]
   where
     helpCommand :: X ()
