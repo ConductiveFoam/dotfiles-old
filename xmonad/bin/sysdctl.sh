@@ -8,6 +8,10 @@ function stop {
     $sysctl stop $1
     notify-send -t 2000 "$1: Unit stopped"
 }
+function restart {
+    $sysctl restart $1
+    notify-send -t 2000 "$1: Unit restarted"
+}
 
 sysctl="systemctl --user"
 case $1 in
@@ -16,6 +20,9 @@ case $1 in
 	;;
     stop)
 	stop $2
+	;;
+    restart)
+	restart $2
 	;;
     toggle)
 	if [[ $(systemctl --user --value --property=ActiveState show $2) == "active" ]]; then

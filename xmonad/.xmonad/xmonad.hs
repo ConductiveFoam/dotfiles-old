@@ -183,7 +183,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     [ ((0, xK_s), spawn $ dmenuSysctl "status") -- %! Show unit status
     , ((0, xK_t), spawn $ dmenuSysctl "toggle") -- %! Toggle unit
     , ((0, xK_a), spawn $ dmenuSysctl "start") -- %! Start unit
-    , ((0, xK_d), spawn $ dmenuSysctl "stop ") -- %! Stop unit
+    , ((0, xK_d), spawn $ dmenuSysctl "stop") -- %! Stop unit
+    , ((0, xK_r), spawn $ dmenuSysctl "restart") -- %! Restart unit
     ])
 
   -- %% ! Quit xmonad, Power control
