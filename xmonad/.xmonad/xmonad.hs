@@ -194,6 +194,11 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_z), spawn "xscreensaver-command --lock") -- %! Lock screen
   , ((maskC, xK_z), spawn "togglexss.sh") -- %! Toggle automatic lock
 
+  -- %% ! Notification control
+  -- mod-ctrl-n %! Close notification
+  -- mod-ctrl-shift-n %! Close all notifications
+  -- mod-shift-h %! Show previous notification(s)
+
   -- %% ! Miscellaneous
   , ((maskC, xK_space), spawn "cyclexlayout.sh") -- %! Cycle keyboard layouts
 

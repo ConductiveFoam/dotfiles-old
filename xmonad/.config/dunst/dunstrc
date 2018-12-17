@@ -1,0 +1,86 @@
+[global]
+    ### Display ###
+    # Position & Size
+    monitor = 0
+    follow = none
+    geometry = "700x5-4+20"
+    notification_height = 0
+
+    padding = 8
+    horizontal_padding = 8
+
+    frame_width = 2
+    frame_color = "#939496"
+    separator_height = 2
+    separator_color = frame
+
+    sort = yes
+
+    indicate_hidden = yes
+    idle_threshold = 120
+    show_age_threshold = 60
+
+    ### Text ###
+    font = Monospace 9
+
+    # The spacing between lines.  If the height is smaller than the
+    # font height, it will get raised to the font height.
+    line_height = 0
+
+    markup = full
+    format = "<i>%s</i>\n%b"
+    alignment = left
+
+    word_wrap = yes
+    ellipsize = middle
+    ignore_newline = no
+
+    # Merge multiple notifications with the same content
+    stack_duplicates = true
+    hide_duplicate_count = false
+
+    # Display indicators for URLs (U) and actions (A).
+    show_indicators = no
+
+    ### Icons ###
+    icon_position = off
+    max_icon_size = 32
+    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+
+    ### History ###
+    sticky_history = yes
+    history_length = 15
+
+    ### Misc/Advanced ###
+    dmenu = /usr/bin/dmenu -p dunst:
+    browser = /usr/bin/firefox -new-tab
+    always_run_script = true
+
+    title = Dunst
+    class = Dunst
+
+    startup_notification = false
+
+[shortcuts]
+    close = mod4+ctrl+n
+    close_all = mod4+ctrl+shift+n
+    history = mod4+shift+h
+    #context = mod4+ctrl+
+
+[urgency_low]
+    background = "#002b36"
+    foreground = "#939496"
+    frame_color = "#268bd2"
+    timeout = 10
+
+[urgency_normal]
+    background = "#002b36"
+    foreground = "#939496"
+    frame_color = "#859900"
+    timeout = 10
+
+[urgency_critical]
+    background = "#002b36"
+    foreground = "#939496"
+    frame_color = "#dc322f"
+    timeout = 0

@@ -54,7 +54,8 @@ $ mkdir -p ~/.xmonad/lib
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~nitrogen~, ~notify-send~, ~xmessage~, ~xfce4-terminal~
+- Enable --user dunst.service
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~nitrogen~, ~notify-send~, ~xmessage~, ~xfce4-terminal~
 
 ** MPD
 #+BEGIN_SRC sh
