@@ -4,3 +4,10 @@ if [[ -z "$TMUX" ]] && \
   sess=$(tmux new -dPF "#S" -t "dev")
   tmux neww -d -n "emacs" -t "dev:2" emacsclient -a "" -nw
 fi
+
+# Convenience: PREFIX+l initially switches between windows 1 and 2
+tmux has -t "dev" 2> /dev/null
+if [[ $? -eq 0 ]]; then
+  tmux selectw -t "dev:2"
+  tmux selectw -t "dev:1"
+fi

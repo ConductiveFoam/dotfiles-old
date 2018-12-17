@@ -13,8 +13,4 @@ if [[ $? -eq 0 ]]; then
       fi
   done
   IFS="$ofs"
-
-  # Convenience: PREFIX+l initially switches between windows 1 and 2
-  tmux selectw -t "dev:2"
-  tmux selectw -t "dev:1"
 fi
