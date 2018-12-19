@@ -1,16 +1,15 @@
 # Import DISPLAY variable
 tmux setenv -g DISPLAY "$DISPLAY"
 
-tmux has -t "dev" 2> /dev/null
-if [[ $? -eq 0 ]]; then
-  # Make DISPLAY available in all panes with default-command (i.e. running a shell)
-  defcmd=$(tmux show -g default-command | cut -d" " -f2 | sed 's/"//g')
-  ofs="$IFS"
-  IFS=$'\n'
-  for si in $(tmux lsp -a -F "#S:#I.#P #{pane_current_command}"); do
-      if [[ `which $(echo "$si" | cut -d" " -f2)` = "$defcmd" ]]; then
-	  tmux respawnp -k -t "$(echo "$si" | cut -d" " -f1)"
-      fi
-  done
-  IFS="$ofs"
-fi
+# Make DISPLAY available in all panes with default-command (i.e. running a shell)
+defcmd=$(tmux show -g default-command | cut -d" " -f2 | sed 's/"//g')
+ofs="$IFS"
+IFS=$'\n'
+for si in $(tmux lsp -a -F "#S:#I.#P #{pane_current_command}"); do
+  if [[ `which $(echo "$si" | cut -d" " -f2)` = "$defcmd" ]]; then
+    # This did not work for whatever reason - called manually afterward works
+    # tmux respawnp -k -t "$(echo "$si" | cut -d" " -f1)"
+    tmux send -t "$(echo "$si" | cut -d" " -f1)" " export DISPLAY='$DISPLAY'" C-m "clear" C-m
+  fi
+done
+IFS="$ofs"
