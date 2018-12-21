@@ -50,12 +50,12 @@ $ mkdir -p ~/.xprofile.d
 
 ** XMonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib
+$ mkdir -p ~/.xmonad/lib ~/screenshots
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
 - Enable --user dunst.service
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~nitrogen~, ~notify-send~, ~xmessage~, ~xfce4-terminal~
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~nitrogen~, ~maim~, ~notify-send~, ~xmessage~, ~xdotool~, ~xfce4-terminal~
 
 ** MPD
 #+BEGIN_SRC sh
@@ -78,7 +78,6 @@ $ mkdir -p ~/.mpd
 **** processor frequencies in bar
 
 ** General
-*** Color switching
 *** System status overview
 
 ** Merge configs
