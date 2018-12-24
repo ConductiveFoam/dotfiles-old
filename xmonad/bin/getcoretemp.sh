@@ -23,9 +23,10 @@ function formattemp() {
 
 c0=$(coretemp 0)
 c1=$(coretemp 1)
-c2=$(coretemp 2)
-c3=$(coretemp 3)
+#c2=$(coretemp 2)
+#c3=$(coretemp 3)
 
 g=$(gputemp)
 
-echo "$c0|$c1|$c2|$c3;$g°C"
+echo "${c0}|${c1}C"
+# g°
