@@ -17,7 +17,7 @@ $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 #+END_SRC
 - Autostarts sessions on sourcing of ~~/.bash_profile~
 - Assumes that session names don't contain dashes or spaces (for session cleanup)
-- Dependencies: ~xsel~, ~xdg-open~, ~elinks~
+- Dependencies: ~xsel~, ~xdg-open~
 
 ** Emacs
 #+BEGIN_SRC sh
@@ -26,27 +26,27 @@ $ mkdir -p ~/src/emacs ~/.emacs.d/lib
 - tmux integration starts server when window is created
 - Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~/src/emacs/:
 #+BEGIN_SRC sh
-$ cd ~/src/emacs
-$ git clone -b master https://github.com/emacsmirror/emacswiki.org.git
-$ git clone https://github.com/hrs/sensible-defaults.el.git
+$ git clone -b master https://github.com/emacsmirror/emacswiki.org.git ~/src/emacs/emacswiki.org
+$ git clone https://github.com/hrs/sensible-defaults.el.git ~/src/emacs/sensible-defaults.el
 #+END_SRC
-- ~M-x RET package-install-selected-packages RET~
+- ~M-x package-refresh-contents RET~ ~M-x package-install-selected-packages RET~
 
 ** Elinks
 #+BEGIN_SRC sh
 $ mkdir -p ~/.elinks
 #+END_SRC
 - Key binds and session resume
-- Startup of tmux session (XMonad integration)
+- Autostart through tmux
 
 ** XConfig
 #+BEGIN_SRC sh
 $ mkdir -p ~/.xprofile.d
 #+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
-- Starts ~xscreensaver~ and ~compton~
+- Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~compton~
 - Configured to start XMonad in ~.xinitrc~
 - Setup in ~~/.xprofile~ and executable scripts in ~~/.xprofile.d~
+- Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~compton~
 
 ** XMonad
 #+BEGIN_SRC sh
