@@ -35,4 +35,7 @@ fi
 xprof="$HOME/.xprofile"
 [ -r "$xprof" ] && . "$xprof"
 
+compton -b
+systemctl --user start redshiftd
+
 exec xmonad
