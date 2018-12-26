@@ -3,7 +3,7 @@ steam
 emacsclient
 xfce4-terminal
 telegram-desktop
-teamspeak3.sh
+teamspeak3
 vlc
 pavucontrol-qt
 
