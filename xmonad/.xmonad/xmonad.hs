@@ -39,9 +39,9 @@ wsMain = "main"
 wsDev = "dev"
 wsGame = "game"
 wsMsg = "msg"
-wsMisc = "div."
-wsMisc' = "misc"
-myWorkspaces = [ wsMain, wsDev, wsMisc, wsGame, wsMsg, wsMisc' ]
+wsRead = "read"
+wsMisc = "misc"
+myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
 -- Mask shortnames
 myModMask = mod4Mask
@@ -61,7 +61,7 @@ makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot"
 
 -- Layout hook
 myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
-           onWorkspace wsMsg msg $ onWorkspace wsMisc' Accordion $
+           onWorkspace wsMsg msg $ onWorkspace wsMisc Accordion $
            tiled ||| Mirror tiled
   where
     dev = (Tall 1 delta (139/400)) ||| (Tall 1 delta (1/2)) ||| (mosaic 2 [2, 1])
@@ -87,7 +87,7 @@ myManageHook = composeOne
   , className =? "TeamSpeak 3" -?> doShift wsMsg
 
   , className =? "vlc" -?> doShift wsMisc
-  , className =? "Thunderbird" -?> doShift wsMisc'
+  , className =? "Thunderbird" -?> doShift wsMisc
 
   , className =? "Matplotlib" -?> doCenterFloat
 
