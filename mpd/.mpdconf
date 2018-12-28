@@ -95,15 +95,18 @@ input {
 #
 # An example of an ALSA output:
 #
-#audio_output {
-#	type		"alsa"
-#	name		"My ALSA Device"
+audio_output {
+	type		"alsa"
+	name		"My ALSA Device"
 ##	device		"hw:0,0"	# optional
+	mixer_type	"alsa"
+	mixer_device	"default"
+	mixer_control	"Master"
 ##	mixer_type      "hardware"	# optional
 ##	mixer_device	"default"	# optional
 ##	mixer_control	"PCM"		# optional
 ##	mixer_index	"0"		# optional
-#}
+}
 #
 # An example of an OSS output:
 #

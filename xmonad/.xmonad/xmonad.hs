@@ -56,8 +56,8 @@ dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $
 dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
 dmenuSysctl cmd = "sysdctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
-trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x002b36 --height 17 --monitor primary; fi"
-makeScreenshot opts name = spawn ("maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png")
+trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x002b36 --height 20 --monitor primary; fi"
+makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
 
 -- Layout hook
 myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
@@ -209,9 +209,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   , ((0, xK_Insert), pasteSelection) -- %! Paste selection
 
-  , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s") -- %! Select window, make screenshot of it [TODO]
-  , ((shiftMask, xK_Print), withFocused $ \w -> makeScreenshot ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
-  , ((0, xK_Print), makeScreenshot "" "") -- %! Make screenshot of whole desktop
+  , ((controlMask, xK_Print), spawn $ "sleep 0.2; " ++ (makeScreenshotCmd "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
+  , ((shiftMask, xK_Print), withFocused $ \w -> spawn $ makeScreenshotCmd ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
+  , ((0, xK_Print), spawn $ makeScreenshotCmd "" "") -- %! Make screenshot of whole desktop
 
   ]
   where

@@ -1,5 +1,5 @@
 -- -*-Haskell-*-
-Config { font = "mononoki-bold:size=9:antialias=true"
+Config { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
        , bgColor = "rgb:00/2b/36"
        , fgColor = "rgb:83/94/96"
        , position = TopW L 95
@@ -18,7 +18,6 @@ Config { font = "mononoki-bold:size=9:antialias=true"
 	 , Run StdinReader
          ]
        , template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=#d33682>%kbd%</fc> | <fc=#d33682>%date%</fc> * %uptime% "
-
     }
 
 -- Didn't work (for whatever reason), so we're using a shell script
