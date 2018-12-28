@@ -3,6 +3,7 @@ Config { font = "mononoki-bold:size=9:antialias=true"
        , bgColor = "rgb:00/2b/36"
        , fgColor = "rgb:83/94/96"
        , position = TopW L 95
+       , allDesktops = False
 
        , commands =
          [ Run Cpu ["-L", "15", "-H", "50", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 10
