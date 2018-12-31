@@ -19,12 +19,9 @@ BEGIN { tempstr = "" }
     tempstr = tempstr "|" formattemp(temp)
   }
 }
+/^[1-9][0-9]*$/ {
+  tempstr = tempstr ";" formattemp($0)
+}
 END { print tempstr }'
 
-#function gputemp() {
-#    temp=$(nvidia-smi --query-gpu=temperature.gpu --format=csv | tail -n1)
-#    echo $(formattemp $temp)
-#}
-
-echo "$(sensors | awk "$fmt")C"
-# °
+echo "$(sensors | cat - <(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader) | awk "$fmt")°C"
