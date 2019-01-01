@@ -37,9 +37,9 @@ import CommandPrefix
 -- Workspaces
 wsMain = "main"
 wsDev = "dev"
+wsRead = "read"
 wsGame = "game"
 wsMsg = "msg"
-wsRead = "read"
 wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
@@ -56,16 +56,17 @@ dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $
 dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
 dmenuSysctl cmd = "sysdctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
-trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x002b36 --height 20 --monitor primary; fi"
+trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x" ++ (tail colBackground) ++ " --height 19 --monitor primary; fi"
 makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
 
 -- Layout hook
-myLayout = onWorkspace wsDev dev $ onWorkspace wsGame (noBorders Full) $
-           onWorkspace wsMsg msg $ onWorkspace wsMisc Accordion $
-           tiled ||| Mirror tiled
+myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
+           onWorkspace wsGame (noBorders Full) $ onWorkspace wsMsg msg $
+           onWorkspace wsMisc Accordion $ Mirror tiled ||| tiled
   where
-    dev = (Tall 1 delta (139/400)) ||| (Tall 1 delta (1/2)) ||| (mosaic 2 [2, 1])
-    msg = Mirror $ Column 1
+    col = Column 1
+    read = Mirror $ (Tall 2 delta (1/3)) ||| (mosaic 2 [2, 1])
+    msg = (Mirror $ col) ||| col
     tiled = Tall 1 delta (1/2)
 
     delta = 3/100
@@ -244,8 +245,8 @@ main = do
     , workspaces = myWorkspaces
 
     , borderWidth = 2
-    , normalBorderColor = "rgb:00/2b/36"
-    , focusedBorderColor = "rgb:83/94/96"
+    , normalBorderColor = colBackground
+    , focusedBorderColor = colForeground
 
     , modMask = myModMask
     , keys = myKeys

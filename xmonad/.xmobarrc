@@ -1,7 +1,7 @@
 -- -*-Haskell-*-
 Config { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
-       , bgColor = "rgb:00/2b/36"
-       , fgColor = "rgb:83/94/96"
+       , bgColor = "#002b36"
+       , fgColor = "#839496"
        , position = TopW L 95
        , allDesktops = False
 
@@ -9,24 +9,16 @@ Config { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
          [ Run Cpu ["-L", "15", "-H", "50", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 10
          , Run Memory ["-t", "Mem: <usedratio>", "-L", "15", "-H", "50", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 10
 	 , Run Swap ["-L", "15", "-H", "50", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 10
-         , Run DynNetwork ["-t", "<dev>: <fc=#268bd2><rx></fc>|<fc=#268bd2><tx></fc>KB"] 10
+         , Run DynNetwork ["-t", "<dev>: <fc=#268bd2><rx></fc>;<fc=#268bd2><tx></fc>KB"] 10
 
 	 , Run Kbd [("us(dvorak)", "DV"), ("us", "US"), ("de", "DE")]
 	 , Run Date "%a %b %_d %l:%M %p" "date" 60
-	 , Run Uptime [] 10
+	 , Run Uptime [] 60
 
 	 , Run StdinReader
          ]
        , template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=#d33682>%kbd%</fc> | <fc=#d33682>%date%</fc> * %uptime% "
     }
-
--- Didn't work (for whatever reason), so we're using a shell script
---	 , Run CommandReader "/home/sam/bin/xssmode.sh" "XssMode"
---	 , Run Com "gawk" ["'/^mode/ {print $2}'", ".xscreensaver"] "XssMode" 60
-
--- This worked in the older versions, so shell script
---	 , Run CoreTemp ["-t", "Temp: <core0>|<core1>|<core2>|<core3>C", "-L", "45", "-H", "60", "-l", "#268bd2", "-n", "#859900", "-h", "#dc322f"] 40
---  * %coretemp%
 
 -- Doesn't accept -C nor -c, so shell script
 --	 , Run Volume "default" "Master" ["-C", "#859900", "-c", "#dc322f"] 5

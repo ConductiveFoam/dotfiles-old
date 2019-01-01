@@ -3,14 +3,14 @@
     # Position & Size
     monitor = 0
     follow = none
-    geometry = "700x5-4+20"
+    geometry = "700x5-4+24"
     notification_height = 0
 
     padding = 8
     horizontal_padding = 8
 
     frame_width = 2
-    frame_color = "#939496"
+    frame_color = "#839496"
     separator_height = 2
     separator_color = frame
 
@@ -21,7 +21,7 @@
     show_age_threshold = 60
 
     ### Text ###
-    font = Monospace 9
+    font = Fira Code 9
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.

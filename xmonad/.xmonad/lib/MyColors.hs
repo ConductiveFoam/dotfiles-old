@@ -1,4 +1,4 @@
--- Solarized (light variant) colors
+-- Solarized colors
 module MyColors where
 
 colDBlue = "#268bd2"
@@ -16,9 +16,6 @@ colLMagenta = "#6c71c4"
 colDWhite = "#eee8d5"
 colLWhite = "#fdf6e3"
 
-colBackground = "#fdf6e3"
-colForeground = "#657b83"
-colFade = "#fdf6e3"
-colCursor = "#586e75"
-colPointerBackground = "#93a1a1"
-colPointerForeground = "#586e75"
+-- dark / light
+colBackground = colLBlack
+colForeground = colLBlue
