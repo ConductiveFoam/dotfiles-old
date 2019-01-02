@@ -55,13 +55,16 @@ $ mkdir -p ~/.xmonad/lib ~/screenshots
 - No XMonad-specific setup needs to be done before starting the binary
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
 - Enable --user dunst.service
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~nitrogen~, ~maim~, ~notify-send~, ~xmessage~, ~xdotool~, ~xfce4-terminal~
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~nitrogen~, ~maim~, ~notify-send~, ~xmessage~, ~xdotool~, ~alacritty~
 
 ** MPD
 #+BEGIN_SRC sh
 $ mkdir -p ~/.mpd
 #+END_SRC
 - ~bin/mpd_gen_playlists.zsh~ to create playlists for directories in mpd music library; respects an ~mpd_exclude.txt~ file there
+
+** terminals
+- Configuration of terminal emulators, currently xfce4's terminal and alacritty
 
 * Stuff to do
 ** Bash

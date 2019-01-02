@@ -50,7 +50,8 @@ maskC = myModMask .|. controlMask
 maskCS = myModMask .|. shiftMask .|. controlMask
 
 -- Terminal, commands & dmenu-prompts
-myTerminal = "xfce4-terminal"
+myTerminal = "alacritty" -- "xfce4-terminal"
+myTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
 dmenuExec = "exe=`dmenu_path | dmenu` && eval \"exec $exe\""
 dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $exe\""
 dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
@@ -72,11 +73,12 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
     delta = 3/100
 
 -- Manage hook
-myManageHook = composeOne
-  [ className =? "Xfce4-terminal" -?> doShift wsDev
-  , (className =? "Xmessage" <&&> title =? "XMonad key binds") -?> doRectFloat largeThinRect
+myManageHook = composeOne $
+  [ className =? terminal -?> doShift wsDev | terminal <- myTerminalClasses ] ++ -- Move all terminal emulators to dev workspace
+  [ (className =? "Xmessage" <&&> title =? "XMonad key binds") -?> doRectFloat largeThinRect
   , className =? "Xmessage" -?> doRectFloat centerRect
 
+  -- Gaming related
   , (className =? "Steam" <&&> title =? "Steam" ) -?> doShift wsGame
   , (className =? "Steam" <&&> title ..=? "Friends List") -?> doShift wsMsg
   , (className =? "Steam" <&&> title ..=? "Steam - News") -?> doHideIgnore
@@ -84,12 +86,13 @@ myManageHook = composeOne
   , className =? "Dustforce.bin.x86_64" -?> doFullFloat
   , className =? "hollow_knight.x86_64" -?> doShift wsGame
 
+  -- Messenger & Communication
   , className =? "TelegramDesktop" -?> doShift wsMsg
   , className =? "TeamSpeak 3" -?> doShift wsMsg
 
+  -- Miscellaneous
   , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
-
   , className =? "Matplotlib" -?> doCenterFloat
 
   , isDialog -?> doCenterFloat
@@ -103,8 +106,8 @@ myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
   [ ((maskS, xK_Return), spawn myTerminal) -- %! Launch terminal
-  , ((myModMask, xK_Return), spawn $ myTerminal  ++ " --title \"Terminal\" --execute tmux a -t dev") -- %! Launch dev terminal
-  , ((maskC, xK_Return), spawn $ myTerminal ++ " --title \"Terminal - Web\" --execute tmux a -t web") -- %! Launch elinks terminal
+  , ((myModMask, xK_Return), spawn $ myTerminal  ++ " -t \"Terminal\" -e tmux a -t dev") -- %! Launch dev terminal
+  , ((maskC, xK_Return), spawn $ myTerminal ++ " -t \"Terminal - Web\" -e tmux a -t web") -- %! Launch elinks terminal
   , ((maskS, xK_r), spawn dmenuExec) -- %! Launch curated dmenu
   , ((myModMask, xK_r), spawn dmenuApps) -- %! Launch app
   , ((myModMask, xK_g), spawn dmenuGames) -- %! Launch game
