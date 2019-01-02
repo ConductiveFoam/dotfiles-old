@@ -51,7 +51,7 @@ maskCS = myModMask .|. shiftMask .|. controlMask
 
 -- Terminal, commands & dmenu-prompts
 myTerminal = "alacritty" -- "xfce4-terminal"
-myTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
+knownTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
 dmenuExec = "exe=`dmenu_path | dmenu` && eval \"exec $exe\""
 dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $exe\""
 dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
@@ -74,8 +74,8 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 
 -- Manage hook
 myManageHook = composeOne $
-  [ className =? terminal -?> doShift wsDev | terminal <- myTerminalClasses ] ++ -- Move all terminal emulators to dev workspace
-  [ (className =? "Xmessage" <&&> title =? "XMonad key binds") -?> doRectFloat largeThinRect
+  [ className =? terminal -?> doShift wsDev | terminal <- knownTerminalClasses ] ++ -- Move all terminal emulators to dev workspace
+  [ (className =? "Xmessage" <&&> title =? "XMonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
   , className =? "Xmessage" -?> doRectFloat centerRect
 
   -- Gaming related

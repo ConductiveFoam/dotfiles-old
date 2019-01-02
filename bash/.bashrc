@@ -5,6 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+export LS_COLORS='ln=00;36'
+
 alias ls='ls --color=auto'
 alias lsa='ls -a'
 alias lsl='ls -l'

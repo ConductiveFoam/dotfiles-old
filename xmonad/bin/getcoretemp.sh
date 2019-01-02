@@ -16,7 +16,7 @@ BEGIN { tempstr = "" }
   if ($2 == "0:") {
     tempstr = tempstr formattemp(temp)
   } else {
-    tempstr = tempstr "|" formattemp(temp)
+    tempstr = tempstr ":" formattemp(temp)
   }
 }
 /^[1-9][0-9]*$/ {

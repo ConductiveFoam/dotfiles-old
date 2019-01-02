@@ -1,6 +1,6 @@
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
-Pretty much everything in here depends on tmux
+Pretty much everything in here depends on tmux.
 ~mkdir~ invocations for packages indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree)
 
 * Package specific instructions
