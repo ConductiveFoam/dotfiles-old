@@ -1,7 +1,7 @@
 firefox
 steam
 emacsclient
-xfce4-terminal
+alacritty
 telegram-desktop
 teamspeak3
 vlc
