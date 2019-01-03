@@ -3,7 +3,7 @@
 # Modify .Xresources
 sed -e 's/: S_base0\([[:digit:]]\)$/: S_base0\1;/g' \
     -e 's/: S_base\([[:digit:]]\)$/: S_base0\1/g' \
-    -e 's/: S_base0\([[:digit:]]\);$/: S_base\1 /g' \
+    -e 's/: S_base0\([[:digit:]]\);$/: S_base\1/g' \
     --follow-symlinks -i ~/.Xresources
 xrdb -merge ~/.Xresources
 
