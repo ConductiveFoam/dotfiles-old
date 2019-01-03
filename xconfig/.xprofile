@@ -5,3 +5,6 @@ if [ -d ~/.xprofile.d ]; then
     [ -x "$fn" ] && . "$fn"
   done
 fi
+
+compton -b
+systemctl --user start redshiftd
