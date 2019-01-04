@@ -22,6 +22,8 @@ alias rmi='rm -i'
 
 alias clr='clear'
 
+alias git?='clear; git status'
+
 alias sysdctl='systemctl --user'
 
 # Setting HOME for this does undesired things, e.g. save .cache there, so we're working around

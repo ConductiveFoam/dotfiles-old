@@ -13,3 +13,6 @@ for si in $(tmux lsp -a -F "#S:#I.#P #{pane_current_command}"); do
   fi
 done
 IFS="$ofs"
+
+# Show repo git status initially
+tmux send-keys -t "dev:4.1" "cd $HOME/dotfiles; clr; git status" C-m

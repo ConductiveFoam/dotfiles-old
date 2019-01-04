@@ -5,6 +5,11 @@ if [[ -z "$TMUX" ]]; then
   tmux neww -d -n man -t "$sess:5"
 
   tmux neww -d -n "~." -t "$sess:4" -c "$HOME/dotfiles"
+  tmux splitw -t "$sess:4" -c "$HOME/dotfiles"
+  tmux selectp -t "$sess:4.0"
+
+  tmux splitw -t "$sess:1"
+  tmux selectp -t "$sess:1.0"
 fi
 
 #	tmux new-window -d -n mon -t "$dev:6"
