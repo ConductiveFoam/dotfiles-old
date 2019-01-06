@@ -8,23 +8,23 @@ Pretty much everything in here depends on tmux.
 #+BEGIN_SRC sh
 $ mkdir -p ~/.profile.d
 #+END_SRC
-- Drop-in setup via executable scripts in ~~/.profile.d~
+- Drop-in setup via executable scripts in ~$HOME/.profile.d~
 
 ** tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
 #+BEGIN_SRC sh
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 #+END_SRC
-- Autostarts sessions on sourcing of ~~/.bash_profile~
+- Autostarts sessions on sourcing of ~$HOME/.bash_profile~
 - Assumes that session names don't contain dashes or spaces (for session cleanup)
-- Dependencies: ~xsel~, ~xdg-open~
+- Dependencies: ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~)
 
 ** Emacs
 #+BEGIN_SRC sh
 $ mkdir -p ~/src/emacs ~/.emacs.d/lib
 #+END_SRC
 - tmux integration starts server when window is created
-- Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~/src/emacs/:
+- Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~$HOME/src/emacs/~:
 #+BEGIN_SRC sh
 $ git clone -b master https://github.com/emacsmirror/emacswiki.org.git ~/src/emacs/emacswiki.org
 $ git clone https://github.com/hrs/sensible-defaults.el.git ~/src/emacs/sensible-defaults.el
@@ -45,7 +45,7 @@ $ mkdir -p ~/.xprofile.d
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~compton~
 - Configured to start XMonad in ~.xinitrc~
-- Setup in ~~/.xprofile~ and executable scripts in ~~/.xprofile.d~
+- Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
 - Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~compton~
 
 ** XMonad
@@ -55,7 +55,7 @@ $ mkdir -p ~/.xmonad/lib ~/screenshots
 - No XMonad-specific setup needs to be done before starting the binary
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
 - Enable --user dunst.service
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~nitrogen~, ~maim~, ~notify-send~, ~xmessage~, ~xdotool~, ~alacritty~
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~notify-send~, ~xmessage~, ~alacritty~, ~nitrogen~, ~xdotool~, ~maim~
 
 ** MPD
 #+BEGIN_SRC sh
@@ -64,10 +64,13 @@ $ mkdir -p ~/.mpd
 - ~bin/mpd_gen_playlists.zsh~ to create playlists for directories in mpd music library; respects an ~mpd_exclude.txt~ file there
 
 ** terminals
-- Configuration of terminal emulators, currently xfce4's terminal and alacritty
+- Configuration of terminal emulators, currently ~xfce4-terminal~ and ~alacritty~
 
 * Stuff to do
 ** Bash
+
+** tmux
+*** Make startup more robust: may insert windows into wrong sessions
 
 ** X config
 *** Move to DM
