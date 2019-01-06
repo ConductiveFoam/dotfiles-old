@@ -63,11 +63,11 @@ makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot"
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
            onWorkspace wsGame (noBorders Full) $ onWorkspace wsMsg msg $
-           onWorkspace wsMisc Accordion $ Mirror tiled ||| tiled
+           onWorkspace wsMisc Accordion $ tiled ||| Mirror tiled
   where
     col = Column 1
     read = Mirror $ (Tall 2 delta (1/3)) ||| (mosaic 2 [2, 1])
-    msg = (Mirror $ col) ||| col
+    msg = col ||| Mirror col
     tiled = Tall 1 delta (1/2)
 
     delta = 3/100
