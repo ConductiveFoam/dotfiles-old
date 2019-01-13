@@ -52,10 +52,13 @@ $ mkdir -p ~/.xprofile.d
 #+BEGIN_SRC sh
 $ mkdir -p ~/.xmonad/lib ~/screenshots
 #+END_SRC
-- No XMonad-specific setup needs to be done before starting the binary
+- No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
 - Enable --user dunst.service
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~dunst~, ~notify-send~, ~xmessage~, ~alacritty~, ~nitrogen~, ~xdotool~, ~ddate~, ~maim~
+- Dependencies: ~xmonad-contrib~, ~xmobar~, ~trayer~, ~nitrogen~
+  - Commands used in XMonad: ~alacritty~, ~dmenu~, ~maim~, ~mpc~
+  - XMobar: ~ddate~, ~amixer~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
+  - Integration: ~dunst~, ~notify-send~, ~xmessage~
 
 ** MPD
 #+BEGIN_SRC sh
