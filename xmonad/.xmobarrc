@@ -12,12 +12,12 @@ Config { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
          , Run DynNetwork ["-t", "<dev>: <fc=#268bd2><rx></fc>;<fc=#268bd2><tx></fc>KB"] 10
 
 	 , Run Kbd [("us(dvorak)", "DV"), ("us", "US"), ("de", "DE")]
-	 , Run Date "%a %b %_d %l:%M %p" "date" 60
+	 , Run Date "%l:%M %p" "time" 60
 	 , Run Uptime [] 60
 
 	 , Run StdinReader
          ]
-       , template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=#d33682>%kbd%</fc> | <fc=#d33682>%date%</fc> * %uptime% "
+       , template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=#d33682>%kbd%</fc> | <fc=#d33682>%gettime.sh% %time%</fc> * %uptime% "
     }
 
 -- Doesn't accept -C nor -c, so shell script
