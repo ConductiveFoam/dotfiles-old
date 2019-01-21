@@ -10,6 +10,8 @@ if [[ -z "$TMUX" ]]; then
 
   tmux splitw -t "$sess:1"
   tmux selectp -t "$sess:1.0"
+  tmux send-keys -t "$dev:1.0" 'clr; fortune pratchett tao koan' C-m
+  tmux send-keys -t "$dev:1.1" 'clr; fortune pratchett tao koan' C-m
 fi
 
 #	tmux new-window -d -n mon -t "$dev:6"

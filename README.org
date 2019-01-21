@@ -9,6 +9,7 @@ Pretty much everything in here depends on tmux.
 $ mkdir -p ~/.profile.d
 #+END_SRC
 - Drop-in setup via executable scripts in ~$HOME/.profile.d~
+- Dependencies: ~thefuck~
 
 ** tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
@@ -17,7 +18,7 @@ $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 #+END_SRC
 - Autostarts sessions on sourcing of ~$HOME/.bash_profile~
 - Assumes that session names don't contain dashes or spaces (for session cleanup)
-- Dependencies: ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~)
+- Dependencies: ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~), ~fortune~
 
 ** Emacs
 #+BEGIN_SRC sh

@@ -29,6 +29,13 @@ alias sysdctl='systemctl --user'
 # Setting HOME for this does undesired things, e.g. save .cache there, so we're working around
 alias xscreensaver-demo="xscreensaver-demo; mv ~/.xscreensaver ~/dotfiles/xconfig/.xscreensaver; ln -sf ~/dotfiles/xconfig/.xscreensaver ~"
 
+# Fortune aliases
+alias koan='fortune koan'
+alias tao='fortune tao'
+alias pratchett='fortune pratchett'
+
+eval $(thefuck --alias)
+
 ssht() { /usr/bin/ssh -t "$@" "tmux attach || tmux new"; }
 
 PS1='[\u@\h \W]\$ '
