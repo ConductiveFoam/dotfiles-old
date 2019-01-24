@@ -16,3 +16,6 @@ IFS="$ofs"
 
 # Show repo git status initially
 tmux send-keys -t "dev:4.1" "cd $HOME/dotfiles; clr; git status" C-m
+# Show fortunes in general shell
+tmux send-keys -t "dev:1.0" 'clr; fortune pratchett tao koan' C-m
+tmux send-keys -t "dev:1.1" 'clr; fortune pratchett tao koan' C-m
