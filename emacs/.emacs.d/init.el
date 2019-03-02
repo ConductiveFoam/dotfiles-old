@@ -12,7 +12,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-     ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default))))
+    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default))))
 
 ;;; Packages & local imports
 (add-to-list 'load-path "~/.emacs.d/lib")
@@ -22,9 +22,10 @@
       '(("gnu" . "http://elpa.gnu.org/packages/")
 	("marmalade" . "http://marmalade-repo.org/packages/")
 	("melpa" . "http://melpa.milkbox.net/packages/")))
-(setq package-selected-packages '(cyphejor use-package smartparens smart-mode-line racer haskell-mode flycheck-rust company cargo))
+(setq package-selected-packages '(use-package smart-mode-line cyphejor smartparens company haskell-mode flycheck-rust racer cargo company-jedi))
 (package-initialize)
 (require 'use-package)
+(require 'company) ;; Necessary since company-mode-map is referenced later
 
 ;;; Environment
 (set-language-environment "UTF-8")
@@ -75,8 +76,7 @@
      ("^:DOT:emacs:\\.emacs\\.d/" ":DOT:ED:")))
   (sml/theme 'light)
   :config
-  (progn
-    (sml/setup)))
+  (sml/setup))
 (use-package cyphejor
   :ensure t
   :custom
@@ -89,6 +89,7 @@
      ("cargo" "")
      ("company" "")
      ("racer" "")
+     ("python" "Py")
      ("org" "ORG")
      ("interaction" "i-" :prefix)
      ("interactive" "i-" :prefix)
@@ -128,10 +129,9 @@ respectively."
 ;; Config
 (use-package smartparens-config
   :ensure smartparens
-  :hook ((prog-mode org-mode) . smartparens-mode)
-  :config
-  (progn
-    (show-smartparens-global-mode t)))
+  :hook ((prog-mode org-mode) . smartparens-mode))
+(show-smartparens-global-mode t) ;; Would not work in :config
+
 (bind-keys
  :map smartparens-mode-map
  ("C-M-a" . sp-beginning-of-sexp)
@@ -180,17 +180,30 @@ respectively."
   (interactive)
   (move-to-window-line -1))
 
-;;; Window resizing
+;;; Global keybinds
 (bind-keys
  :map global-map
+ ;; Window resizing
  ("C-c C-w k" . (lambda () (interactive) (window-resize (selected-window) -1)))
  ("C-c C-w j" . (lambda () (interactive) (window-resize (selected-window) +1)))
  ("C-c C-w h" . (lambda () (interactive) (window-resize (selected-window) +1 1)))
  ("C-c C-w l" . (lambda () (interactive) (window-resize (selected-window) -1 1)))
 
+ ;; Navigation
  ("C-c M-m <" . move-to-window-line-top)
  ("C-c M-m |" . move-to-window-line-center)
  ("C-c M-m >" . move-to-window-line-bottom))
+
+;;; Prog mode
+(add-hook 'prog-mode-hook 'company-mode)
+
+(bind-keys
+ :map prog-mode-map
+ ("C-c ;" . comment-or-uncomment-region))
+(bind-keys
+ :map company-mode-map
+ ("TAB" . indent-for-tab-command)
+ ("M-TAB" . company-manual-begin))
 
 ;;; Timestamp insertion
 (defun format-date (format)
@@ -217,6 +230,13 @@ respectively."
 (add-hook 'org-mode-hook 'visual-line-mode)
 (setq org-hide-leading-stars t)
 
+;;; Haskell
+(add-hook 'haskell-mode-hook
+	  (lambda ()
+	    (set (make-local-variable 'company-backends)
+		 (append '((company-capf company-dabbrev-code))
+			 company-backends))))
+
 ;;; Rust
 (use-package rust-mode
   :ensure t
@@ -230,7 +250,6 @@ respectively."
     (setq company-tooltip-align-annotations t)))
 (bind-keys
  :map rust-mode-map
- ("TAB" . company-indent-or-complete-common)
  ("C-c TAB" . rust-format-buffer))
 
 ;;; Open a few often used files
