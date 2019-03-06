@@ -1,3 +1,0 @@
-redshiftd.service
-xss-deactivate.timer
-dunst.service

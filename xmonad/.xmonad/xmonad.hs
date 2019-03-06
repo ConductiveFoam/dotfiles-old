@@ -59,10 +59,12 @@ maskCS = myModMask .|. shiftMask .|. controlMask
 myTerminal = "alacritty"
 knownTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
-dmenuSysctl cmd = "sysdctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
 trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x" ++ (tail colBackground) ++ " --height 19 --monitor primary; fi"
 makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
 
+promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service"]
+spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
+sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
 promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
 spawnSteam = ("steam steam://run/" ++)
 promptGames = M.fromList $
@@ -212,11 +214,11 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! Systemctl integration
   , ((maskC, xK_s), submap . M.fromList $ -- %! Systemctl submap:
-    [ ((0, xK_s), spawn $ dmenuSysctl "status") -- %! Show unit status
-    , ((0, xK_t), spawn $ dmenuSysctl "toggle") -- %! Toggle unit
-    , ((0, xK_a), spawn $ dmenuSysctl "start") -- %! Start unit
-    , ((0, xK_d), spawn $ dmenuSysctl "stop") -- %! Stop unit
-    , ((0, xK_r), spawn $ dmenuSysctl "restart") -- %! Restart unit
+    [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! Show unit status
+    , ((0, xK_t), sysctlPrompt "Toggle Unit: " "toggle" xpc) -- %! Toggle unit
+    , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! Start unit
+    , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! Stop unit
+    , ((0, xK_r), sysctlPrompt "Restart Unit: " "restart" xpc) -- %! Restart unit
     ])
 
   -- %% ! Quit xmonad, Power control
