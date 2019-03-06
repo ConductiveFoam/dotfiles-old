@@ -1,5 +1,5 @@
 -- Base
-import Data.List(isPrefixOf, isSuffixOf, intercalate)
+import Data.List(isPrefixOf, isSuffixOf, isInfixOf, intercalate)
 import qualified Data.Map as M
 import System.IO
 import System.Exit
@@ -19,6 +19,12 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Spacing
 
+-- Prompt
+import XMonad.Prompt(XPConfig(..), XPPosition(Top))
+import XMonad.Prompt.Shell(shellPrompt)
+import XMonad.Prompt.AssociationPrompt(associationPrompt)
+import XMonad.Prompt.ListCompletedPrompt(listCompletedPrompt)
+
 -- Hotkey config
 import XMonad.Actions.Submap
 import XMonad.Util.EZConfig
@@ -27,8 +33,8 @@ import Graphics.X11.ExtraTypes.XF86
 -- Actions
 import XMonad.Operations
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run(spawnPipe, safeSpawn)
-import XMonad.Util.Paste
+import XMonad.Util.Run(spawnPipe, safeSpawn, runInTerm)
+import XMonad.Util.Paste(pasteSelection)
 
 -- Custom
 import MyColors
@@ -49,16 +55,35 @@ maskS = myModMask .|. shiftMask
 maskC = myModMask .|. controlMask
 maskCS = myModMask .|. shiftMask .|. controlMask
 
--- Terminal, commands & dmenu-prompts
-myTerminal = "alacritty" -- "xfce4-terminal"
+-- Terminal, commands, Prompts & dmenu prompts
+myTerminal = "alacritty"
 knownTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
-dmenuExec = "exe=`dmenu_path | dmenu` && eval \"exec $exe\""
-dmenuApps = "exe=`cat ~/.xmonad/dmenu/preselection.txt | dmenu` && eval \"exec $exe\""
-dmenuGames = "sel=`cut -d@ -f1 ~/.xmonad/dmenu/games.txt | dmenu`; ret=$?; exe=`grep \"$sel\" ~/.xmonad/dmenu/games.txt | cut -d@ -f2`; [ $ret = 1 ] || eval \"$exe\""
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
 dmenuSysctl cmd = "sysdctl.sh " ++ cmd ++ " $(cat ~/.xmonad/dmenu/sysctl_units.txt | dmenu)"
 trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x" ++ (tail colBackground) ++ " --height 19 --monitor primary; fi"
 makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
+
+promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
+spawnSteam = ("steam steam://run/" ++)
+promptGames = M.fromList $
+  [ ("Left 4 Dead 2", "left4gore -2")
+  , ("Stellaris", spawnSteam "281990")
+  , ("Full Bore", spawnSteam "264060")
+  , ("Zen Bound 2",spawnSteam "61600")
+  , ("Portal", spawnSteam "400")
+  , ("Portal 2", spawnSteam "620")
+  , ("Hollow Knight", "$HOME/games/Hollow\\ Knight/start.sh")
+  , ("They Bleed Pixels", spawnSteam "211260")
+  , ("Rex Rocket", spawnSteam "288020")
+  , ("Dustforce", spawnSteam "65300")]
+xpc = def { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
+          , bgColor = colBackground
+          , fgColor = colForeground
+          , bgHLight = colForeground
+          , fgHLight = colBackground
+          , promptBorderWidth = 0
+          , position = Top
+          }
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
@@ -105,12 +130,12 @@ myManageHook = composeOne $
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
-  [ ((maskS, xK_Return), spawn myTerminal) -- %! Launch terminal
-  , ((myModMask, xK_Return), spawn $ myTerminal  ++ " -t \"Terminal\" -e tmux a -t dev") -- %! Launch dev terminal
-  , ((maskC, xK_Return), spawn $ myTerminal ++ " -t \"Terminal - Web\" -e tmux a -t web") -- %! Launch elinks terminal
-  , ((maskS, xK_r), spawn dmenuExec) -- %! Launch curated dmenu
-  , ((myModMask, xK_r), spawn dmenuApps) -- %! Launch app
-  , ((myModMask, xK_g), spawn dmenuGames) -- %! Launch game
+  [ ((maskS, xK_Return), spawn $ terminal conf) -- %! Launch terminal
+  , ((myModMask, xK_Return), runInTerm "-t \"Terminal\"" "tmux a -t dev") -- %! Launch dev terminal
+  , ((maskC, xK_Return), runInTerm "-t \"Terminal - Web\"" "tmux a -t web") -- %! Launch elinks terminal
+  , ((maskS, xK_r), shellPrompt xpc) -- %! Launch app
+  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps spawn xpc) -- %! Launch curated dmenu
+  , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames spawn xpc) -- %! Launch game
   , ((maskS, xK_c), kill) -- %! Close the focused window
 
   , ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms

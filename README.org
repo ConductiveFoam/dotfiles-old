@@ -51,7 +51,7 @@ $ mkdir -p ~/.xprofile.d
 
 ** XMonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib ~/screenshots
+$ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/screenshots
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
