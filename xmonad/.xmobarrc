@@ -2,7 +2,7 @@
 Config { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
        , bgColor = "#002b36"
        , fgColor = "#839496"
-       , position = TopW L 95
+       , position = Static { xpos = 1080, ypos = 0, width = 1844, height = 19}
        , allDesktops = False
 
        , commands =

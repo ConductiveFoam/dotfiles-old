@@ -49,8 +49,8 @@ for row in "${file_replacements[@]}"; do
     fi
 done
 
-# XMonad restart: Kill trayer, restart xmonad and dunst
-pkill trayer
+# XMonad restart: Kill tray, restart xmonad and dunst
+pkill stalonetray
 systemctl --user restart dunst.service 2> /dev/null
 xmonad --recompile 2> /dev/null && xmonad --restart
 

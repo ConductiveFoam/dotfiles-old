@@ -59,7 +59,7 @@ maskCS = myModMask .|. shiftMask .|. controlMask
 myTerminal = "alacritty"
 knownTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
 dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
-trayerCmd = "if [[ ! $(pgrep trayer) ]]; then trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 5 --transparent true --alpha 0 --tint 0x" ++ (tail colBackground) ++ " --height 19 --monitor primary; fi"
+trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
 makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
 
 promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service"]
@@ -253,7 +253,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 -- Main config
 main = do
   spawn $ "nitrogen --restore"
-  spawn trayerCmd
+  spawn trayCmd
   xmproc <- spawnPipe "xmobar"
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
