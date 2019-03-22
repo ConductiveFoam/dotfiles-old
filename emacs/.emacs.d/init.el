@@ -50,7 +50,7 @@
 (sensible-defaults/make-dired-file-sizes-human-readable)
 (sensible-defaults/shorten-yes-or-no)
 (sensible-defaults/always-highlight-code)
-(sensible-defaults/bind-keys-to-change-text-size)
+(sensible-defaults/bind-commenting-and-uncommenting)
 
 ;;; Personal info
 (setq user-full-name "Sam B"
@@ -192,7 +192,10 @@ respectively."
  ;; Navigation
  ("C-c M-m <" . move-to-window-line-top)
  ("C-c M-m |" . move-to-window-line-center)
- ("C-c M-m >" . move-to-window-line-bottom))
+ ("C-c M-m >" . move-to-window-line-bottom)
+
+ ;; Miscellaneous
+ ("C-c l" . org-store-link))
 
 ;;; Prog mode
 (add-hook 'prog-mode-hook 'company-mode)
