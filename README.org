@@ -63,7 +63,7 @@ $ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/screenshots
 
 ** MPD
 #+BEGIN_SRC sh
-$ mkdir -p ~/.mpd
+$ mkdir -p ~/.config/mpd/playlists
 #+END_SRC
 - ~bin/mpd_gen_playlists.zsh~ to create playlists for directories in mpd music library; respects an ~mpd_exclude.txt~ file there
 
