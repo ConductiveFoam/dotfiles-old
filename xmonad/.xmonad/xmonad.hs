@@ -121,6 +121,7 @@ myManageHook = composeOne $
   , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
   , className =? "Matplotlib" -?> doCenterFloat
+  , className =? "feh" -?> doCenterFloat
 
   , isDialog -?> doCenterFloat
   , isFullscreen -?> doFullFloat
