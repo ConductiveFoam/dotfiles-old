@@ -3,7 +3,8 @@ if [[ -z "$TMUX" ]] && \
    [[ -z $(tmux lsw -t dev -F "#W" | grep -o emacs) ]]; then
   sess=$(tmux new -dPF "#S" -t "dev")
   tmux neww -d -n "emacs" -t "dev:2"
-  tmux send -t "dev:2" "emacsclient -a '' -t -e '(progn (switch-to-buffer \"stuff.org\") (split-window-below) (switch-to-buffer \"*scratch*\"))'" C-m
+  tmux send -t "dev:2" "emacsclient -a '' -t -e '(progn (switch-to-buffer \"stuff.org\") (split-window-below) \
+    (switch-to-buffer \"*scratch*\") (global-display-line-numbers-mode t))'" C-m
 fi
 
 # Convenience: PREFIX+l initially switches between windows 1 and 2
