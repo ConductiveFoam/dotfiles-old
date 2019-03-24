@@ -33,7 +33,6 @@
 (setq select-enable-clipboard t)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
-(global-linum-mode t)
 (menu-bar-mode -1)
 
 ;;; Auto-header
