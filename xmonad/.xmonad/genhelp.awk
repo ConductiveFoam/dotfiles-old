@@ -8,9 +8,9 @@ function ltrim(s) {
 function bindmodifiers(s) {
     switch (s) {
         case "myModMask": return "mod-"
-        case "maskS": return "mod-shift-"
-        case "maskC": return "mod-control-"
-        case "maskCS": return "mod-shift-control-"
+        case "myShiftMask": return "mod-shift-"
+        case "myControlMask": return "mod-control-"
+        case "myShiftControlMask": return "mod-shift-control-"
 	case "shiftMask": return "shift-"
 	case "controlMask": return "control-"
         case "0": return "none-"

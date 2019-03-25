@@ -51,35 +51,8 @@ wsMsg = "msg"
 wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
--- Mask shortnames
-myModMask = mod4Mask
-maskS = myModMask .|. shiftMask
-maskC = myModMask .|. controlMask
-maskCS = myModMask .|. shiftMask .|. controlMask
-
--- Terminal, commands, Prompts & dmenu prompts
+-- Terminal, Prompt and modifier config
 myTerminal = "alacritty"
-knownTerminalClasses = ["Alacritty", "Xfce4-terminal"] -- X window classes of terminal emulators
-dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
-trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
-makeScreenshotCmd opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
-
-promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
-spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
-sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
-promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
-spawnSteam = ("steam steam://run/" ++)
-promptGames = M.fromList $
-  [ ("Left 4 Dead 2", "left4gore -2")
-  , ("Stellaris", spawnSteam "281990")
-  , ("Full Bore", spawnSteam "264060")
-  , ("Zen Bound 2",spawnSteam "61600")
-  , ("Portal", spawnSteam "400")
-  , ("Portal 2", spawnSteam "620")
-  , ("Hollow Knight", "$HOME/games/Hollow\\ Knight/start.sh")
-  , ("They Bleed Pixels", spawnSteam "211260")
-  , ("Rex Rocket", spawnSteam "288020")
-  , ("Dustforce", spawnSteam "65300")]
 xpc = def { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
           , bgColor = colBackground
           , fgColor = colForeground
@@ -88,6 +61,7 @@ xpc = def { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
           , promptBorderWidth = 0
           , position = Top
           }
+myModMask = mod4Mask
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
@@ -103,7 +77,7 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 
 -- Manage hook
 myManageHook = composeOne $
-  [ className =? terminal -?> doShift wsDev | terminal <- knownTerminalClasses ] ++ -- Move all terminal emulators to dev workspace
+  [ className =? terminal -?> doShift wsDev | terminal <- knownTerminalWindows ] ++ -- Move all terminal emulators to dev workspace
   [ (className =? "Xmessage" <&&> title =? "XMonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
   , className =? "Xmessage" -?> doRectFloat centerRect
 
@@ -136,44 +110,45 @@ myManageHook = composeOne $
   ]
   where
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
+    knownTerminalWindows = ["Alacritty", "Xfce4-terminal"]
 
 -- Key bindings
 -- %% Modifier is windows (mod4) key
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
-  [ ((maskS, xK_Return), spawn $ terminal conf) -- %! Launch terminal
+  [ ((myShiftMask, xK_Return), spawn $ terminal conf) -- %! Launch terminal
   , ((myModMask, xK_Return), runInTerm "-t \"Terminal\"" "tmux a -t dev") -- %! Launch dev terminal
-  , ((maskC, xK_Return), runInTerm "-t \"Terminal - Web\"" "tmux a -t web") -- %! Launch elinks terminal
-  , ((maskS, xK_r), shellPrompt xpc) -- %! Launch app
+  , ((myControlMask, xK_Return), runInTerm "-t \"Terminal - Web\"" "tmux a -t web") -- %! Launch elinks terminal
+  , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
   , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps spawn xpc) -- %! Launch curated dmenu
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames spawn xpc) -- %! Launch game
-  , ((maskS, xK_c), kill) -- %! Close the focused window
+  , ((myShiftMask, xK_c), kill) -- %! Close the focused window
 
   , ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
-  , ((maskS, xK_space), sendMessage FirstLayout) -- %!  Reset the layouts on the current workspace to default
+  , ((myShiftMask, xK_space), sendMessage FirstLayout) -- %!  Reset the layouts on the current workspace to default
 
   , ((myModMask, xK_n), refresh) -- %! Resize viewed windows to the correct size
 
   -- %% ! Moving focus
   , ((myModMask, xK_Tab), windows W.focusDown) -- %! Move focus to the next window
-  , ((maskS, xK_Tab), windows W.focusUp) -- %! Move focus to the previous window
+  , ((myShiftMask, xK_Tab), windows W.focusUp) -- %! Move focus to the previous window
   , ((myModMask, xK_j), windows W.focusDown) -- %! Move focus to the next window
   , ((myModMask, xK_k), windows W.focusUp) -- %! Move focus to the previous window
   , ((myModMask, xK_m), windows W.focusMaster) -- %! Move focus to the master window
 
   -- %% ! Actions on current window
   , ((myModMask, xK_t), withFocused $ windows . W.sink) -- %! Push window back into tiling
-  , ((maskS, xK_f), withFocused $ windows . (rectFloat maximizeRect)) -- %! Float & maximize
-  , ((maskC, xK_f), withFocused $ float) -- %! Float
+  , ((myShiftMask, xK_f), withFocused $ windows . (rectFloat maximizeRect)) -- %! Float & maximize
+  , ((myControlMask, xK_f), withFocused $ float) -- %! Float
   , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center
-  , ((maskC, xK_t), withFocused $ remanage) -- %! Reapply manage hook
-  , ((maskCS, xK_t), withAll $ remanage) -- %! Reapply manage hook to current workspace
+  , ((myControlMask, xK_t), withFocused $ remanage) -- %! Reapply manage hook
+  , ((myShiftControlMask, xK_t), withAll $ remanage) -- %! Reapply manage hook to current workspace
 
   -- %% ! Modifying the window order
-  , ((maskCS, xK_Return), windows W.swapMaster) -- %! Swap the focused window and the master window
-  , ((maskS, xK_j), windows W.swapDown) -- %! Swap the focused window with the next window
-  , ((maskS, xK_k), windows W.swapUp) -- %! Swap the focused window with the previous window
+  , ((myShiftControlMask, xK_Return), windows W.swapMaster) -- %! Swap the focused window and the master window
+  , ((myShiftMask, xK_j), windows W.swapDown) -- %! Swap the focused window with the next window
+  , ((myShiftMask, xK_k), windows W.swapUp) -- %! Swap the focused window with the previous window
   ] ++
 
   -- %% ! Workspaces & Screens
@@ -199,8 +174,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_l), sendMessage Expand) -- %! Expand the master area
 
   -- %% ! MPD & Audio control
-  , ((maskS, xK_m), spawn dmenuMpcLoadPlaylist) -- %! Load playlist
-  , ((maskC, xK_m), submap . M.fromList $ -- %! Audio Submap:
+  , ((myShiftMask, xK_m), spawn dmenuMpcLoadPlaylist) -- %! Load playlist
+  , ((myControlMask, xK_m), submap . M.fromList $ -- %! Audio Submap:
     [ ((0, xK_p), spawnWithPrefix (\p -> "mpc play " ++ (prefixToString p))) -- %! MPC play $prefix
     , ((0, xK_n), spawn "mpc pause") -- %! MPC pause
     , ((shiftMask, xK_t), spawn "mpc stop") -- %! MPC stop
@@ -222,7 +197,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_AudioPlay), spawn "mpc toggle") -- %! MPC toggle
 
   -- %% ! Systemctl integration
-  , ((maskC, xK_s), submap . M.fromList $ -- %! Systemctl submap:
+  , ((myControlMask, xK_s), submap . M.fromList $ -- %! Systemctl submap:
     [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! Show unit status
     , ((0, xK_t), sysctlPrompt "Toggle Unit: " "toggle" xpc) -- %! Toggle unit
     , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! Start unit
@@ -231,11 +206,11 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     ])
 
   -- %% ! Quit xmonad, Power control
-  , ((maskS, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
+  , ((myShiftMask, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
   , ((myModMask, xK_q), spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
-  , ((maskCS, xK_q), spawn "systemctl poweroff") -- %! Shut off system
+  , ((myShiftControlMask, xK_q), spawn "systemctl poweroff") -- %! Shut off system
   , ((myModMask, xK_z), spawn "xscreensaver-command --lock") -- %! Lock screen
-  , ((maskC, xK_z), spawn "togglexss.sh") -- %! Toggle automatic lock
+  , ((myControlMask, xK_z), spawn "togglexss.sh") -- %! Toggle automatic lock
 
   -- %% ! Notification control
   -- mod-ctrl-n %! Close notification
@@ -243,23 +218,47 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-shift-h %! Show previous notification(s)
 
   -- %% ! Miscellaneous
-  , ((maskC, xK_space), spawn "cyclexlayout.sh") -- %! Cycle keyboard layouts
+  , ((myControlMask, xK_space), spawn "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
-  , ((maskC, xK_h), helpCommand) -- %! XMessage window with key binds
+  , ((myControlMask, xK_h), helpCommand) -- %! XMessage window with key binds
 
   , ((0, xK_Insert), pasteSelection) -- %! Paste selection
 
-  , ((controlMask, xK_Print), spawn $ "sleep 0.2; " ++ (makeScreenshotCmd "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
-  , ((shiftMask, xK_Print), withFocused $ \w -> spawn $ makeScreenshotCmd ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
-  , ((0, xK_Print), spawn $ makeScreenshotCmd "" "") -- %! Make screenshot of whole desktop
+  , ((controlMask, xK_Print), spawn $ "sleep 0.2; " ++ (makeScreenshotCommand "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
+  , ((shiftMask, xK_Print), withFocused $ \w -> spawn $ makeScreenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
+  , ((0, xK_Print), spawn $ makeScreenshotCommand "" "") -- %! Make screenshot of whole desktop
 
-  , ((maskC, xK_g), resetPrefix >> refresh) ] ++ -- %! Reset prefix
+  , ((myControlMask, xK_g), resetPrefix >> refresh) ] ++ -- %! Reset prefix
   -- mod-control-[0..9] %! Extend prefix
-  [((maskC, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
+  [((myControlMask, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
   where
+    myShiftMask = myModMask .|. shiftMask
+    myControlMask = myModMask .|. controlMask
+    myShiftControlMask = myModMask .|. shiftMask .|. controlMask
+
     helpCommand :: X ()
     helpCommand = spawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
       "xmessage -buttons '' -title \"XMonad key binds\" -file -"
+
+    makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
+    dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
+    sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
+    spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
+    spawnSteam = ("steam steam://run/" ++)
+
+    promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
+    promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
+    promptGames = M.fromList $
+      [ ("Left 4 Dead 2", "left4gore -2")
+      , ("Stellaris", spawnSteam "281990")
+      , ("Full Bore", spawnSteam "264060")
+      , ("Zen Bound 2",spawnSteam "61600")
+      , ("Portal", spawnSteam "400")
+      , ("Portal 2", spawnSteam "620")
+      , ("Hollow Knight", "$HOME/games/Hollow\\ Knight/start.sh")
+      , ("They Bleed Pixels", spawnSteam "211260")
+      , ("Rex Rocket", spawnSteam "288020")
+      , ("Dustforce", spawnSteam "65300")]
 
 -- Main config
 main = do
@@ -292,6 +291,8 @@ main = do
     , modMask = myModMask
     , keys = myKeys
     }
+  where
+    trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
 
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
