@@ -33,6 +33,7 @@ import Graphics.X11.ExtraTypes.XF86
 
 -- Actions
 import XMonad.Operations
+import XMonad.Actions.WithAll(withAll)
 import qualified XMonad.StackSet as W
 import XMonad.Util.Run(spawnPipe, safeSpawn, runInTerm)
 import XMonad.Util.Paste(pasteSelection)
@@ -160,7 +161,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((maskS, xK_f), withFocused $ windows . (rectFloat maximizeRect)) -- %! Float & maximize
   , ((maskC, xK_f), withFocused $ float) -- %! Float
   , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center
-  , ((maskC, xK_t), withFocused $ remanage) -- %! Reapply manage Hook
+  , ((maskC, xK_t), withFocused $ remanage) -- %! Reapply manage hook
+  , ((maskCS, xK_t), withAll $ remanage) -- %! Reapply manage hook to current workspace
 
   -- %% ! Modifying the window order
   , ((maskCS, xK_Return), windows W.swapMaster) -- %! Swap the focused window and the master window
