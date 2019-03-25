@@ -1,21 +1,14 @@
 # Import DISPLAY variable
 tmux setenv -g DISPLAY "$DISPLAY"
 
-# Make DISPLAY available in all panes with default-command (i.e. running a shell)
-defcmd=$(tmux show -g default-command | cut -d" " -f2 | sed 's/"//g')
-ofs="$IFS"
-IFS=$'\n'
-for si in $(tmux lsp -a -F "#S:#I.#P #{pane_current_command}"); do
-  if [[ `which $(echo "$si" | cut -d" " -f2)` = "$defcmd" ]]; then
-    # This did not work for whatever reason - called manually afterward works
-    # tmux respawnp -k -t "$(echo "$si" | cut -d" " -f1)"
-    tmux send -t "$(echo "$si" | cut -d" " -f1)" " export DISPLAY='$DISPLAY'" C-m "clear" C-m
-  fi
+# Make DISPLAY available in select panes
+#  Process: Copy currently typed command from shell, then insert the DISPLAY export, an invocation of
+#  clear and the command back into the shell and execute
+for pane in dev:1.0 dev:1.1 dev:4.0 dev:4.1; do
+  tmux copy-mode -t "$pane"
+  tmux send -t "$pane" -X start-of-line
+  tmux send -t "$pane" -X begin-selection
+  tmux send -t "$pane" -X end-of-line
+  tmux send -t "$pane" -X copy-selection-and-cancel
+  tmux send -t "$pane" 'C-a' 'C-k' " export DISPLAY='$DISPLAY'; clear; $(tmux showb | cut -d$ -f2)" C-m
 done
-IFS="$ofs"
-
-# Show repo git status initially
-tmux send-keys -t "dev:4.1" "cd $HOME/dotfiles; clr; git status" C-m
-# Show fortunes in general shell
-tmux send-keys -t "dev:1.0" 'clr; fortune pratchett tao koan' C-m
-tmux send-keys -t "dev:1.1" 'clr; fortune pratchett tao koan' C-m
