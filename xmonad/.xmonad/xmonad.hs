@@ -1,4 +1,5 @@
 -- Base
+import Data.Monoid(appEndo, Endo(..))
 import Data.List(isPrefixOf, isSuffixOf, isInfixOf, intercalate)
 import qualified Data.Map as M
 import System.IO
@@ -168,6 +169,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((maskC, xK_f), withFocused $ float) -- %! Float current window
   , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center current window
 
+  , ((maskC, xK_t), withFocused $ remanage) -- %! Reapply manage Hook to current window
+
   -- %% ! Increase or Decrease number of windows in the master area
   , ((myModMask, xK_comma), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
   , ((myModMask, xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
@@ -295,3 +298,9 @@ maximizeRect = W.RationalRect 0 0 1 1
 centerRect = W.RationalRect 0.13 0.1 0.74 0.8
 largeRect = W.RationalRect 0.13 0.02 0.74 0.98
 largeThinRect = W.RationalRect 0.3 0.02 0.4 0.98
+
+remanage :: Window -> X ()
+remanage w = do
+  mh <- asks (manageHook . config)
+  g <- appEndo <$> userCodeDef (Endo id) (runQuery mh w)
+  windows g
