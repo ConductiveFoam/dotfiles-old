@@ -155,28 +155,20 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_k), windows W.focusUp) -- %! Move focus to the previous window
   , ((myModMask, xK_m), windows W.focusMaster) -- %! Move focus to the master window
 
+  -- %% ! Actions on current window
+  , ((myModMask, xK_t), withFocused $ windows . W.sink) -- %! Push window back into tiling
+  , ((maskS, xK_f), withFocused $ windows . (rectFloat maximizeRect)) -- %! Float & maximize
+  , ((maskC, xK_f), withFocused $ float) -- %! Float
+  , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center
+  , ((maskC, xK_t), withFocused $ remanage) -- %! Reapply manage Hook
+
   -- %% ! Modifying the window order
   , ((maskCS, xK_Return), windows W.swapMaster) -- %! Swap the focused window and the master window
   , ((maskS, xK_j), windows W.swapDown) -- %! Swap the focused window with the next window
   , ((maskS, xK_k), windows W.swapUp) -- %! Swap the focused window with the previous window
+  ] ++
 
-  -- %% ! Resizing the master/slave ratio
-  , ((myModMask, xK_h), sendMessage Shrink) -- %! Shrink the master area
-  , ((myModMask, xK_l), sendMessage Expand) -- %! Expand the master area
-
-  -- %% ! Floating layer support
-  , ((myModMask, xK_t), withFocused $ windows . W.sink) -- %! Push window back into tiling
-  , ((maskS, xK_f), withFocused $ windows . (rectFloat maximizeRect)) -- %! Float & maximize current window
-  , ((maskC, xK_f), withFocused $ float) -- %! Float current window
-  , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center current window
-
-  , ((maskC, xK_t), withFocused $ remanage) -- %! Reapply manage Hook to current window
-
-  -- %% ! Increase or Decrease number of windows in the master area
-  , ((myModMask, xK_comma), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
-  , ((myModMask, xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
-  ]
-  ++
+  -- %% ! Workspaces & Screens
   -- mod-[1..9] %! Switch to workspace N
   -- mod-shift-[1..9] %! Move client to workspace N
   [((m .|. myModMask, k), windows $ f i)
@@ -189,13 +181,17 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   | (key, sc) <- zip [xK_w, xK_e] [0..] --, xK_r
   , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
   ++
-  [ ((maskC, xK_g), resetPrefix >> refresh) ] ++ -- %! Reset prefix
-  -- mod-control-[0..9] %! Extend prefix
-  [((maskC, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
-  ++
+
+  -- %% ! Increasing or Decreasing number of windows in the master area
+  [ ((myModMask, xK_comma), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
+  , ((myModMask, xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
+
+  -- %% ! Resizing the master/slave ratio
+  , ((myModMask, xK_h), sendMessage Shrink) -- %! Shrink the master area
+  , ((myModMask, xK_l), sendMessage Expand) -- %! Expand the master area
 
   -- %% ! MPD & Audio control
-  [ ((maskS, xK_m), spawn dmenuMpcLoadPlaylist) -- %! Load playlist
+  , ((maskS, xK_m), spawn dmenuMpcLoadPlaylist) -- %! Load playlist
   , ((maskC, xK_m), submap . M.fromList $ -- %! Audio Submap:
     [ ((0, xK_p), spawnWithPrefix (\p -> "mpc play " ++ (prefixToString p))) -- %! MPC play $prefix
     , ((0, xK_n), spawn "mpc pause") -- %! MPC pause
@@ -249,7 +245,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), withFocused $ \w -> spawn $ makeScreenshotCmd ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
   , ((0, xK_Print), spawn $ makeScreenshotCmd "" "") -- %! Make screenshot of whole desktop
 
-  ]
+  , ((maskC, xK_g), resetPrefix >> refresh) ] ++ -- %! Reset prefix
+  -- mod-control-[0..9] %! Extend prefix
+  [((maskC, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
   where
     helpCommand :: X ()
     helpCommand = spawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
