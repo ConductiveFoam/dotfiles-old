@@ -119,6 +119,7 @@ myManageHook = composeOne $
   , className =? "TeamSpeak 3" -?> doShift wsMsg
 
   -- Miscellaneous
+  , className =? "Firefox" -?> doShift wsMain
   , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
   , className =? "Matplotlib" -?> doCenterFloat
