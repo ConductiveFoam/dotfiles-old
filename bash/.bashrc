@@ -35,6 +35,7 @@ alias xscreensaver-demo="xscreensaver-demo; mv ~/.xscreensaver ~/dotfiles/xconfi
 alias koan='fortune koan'
 alias tao='fortune tao'
 alias pratchett='fortune pratchett'
+alias empty=' clr; fortune pratchett tao koan'
 
 eval $(thefuck --alias)
 
