@@ -118,9 +118,13 @@ myManageHook = composeOne $
   -- Messenger & Communication
   , className =? "TelegramDesktop" -?> doShift wsMsg
   , className =? "TeamSpeak 3" -?> doShift wsMsg
+  ] ++
+
+  -- Firefox windows
+  [(className =? "Firefox" <&&> title .=.? t) -?> doShift ws | (ts, ws) <- managedFirefoxWindows, t <- ts] ++
+  [ className =? "Firefox" -?> doShift wsMain
 
   -- Miscellaneous
-  , className =? "Firefox" -?> doShift wsMain
   , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
   , className =? "Matplotlib" -?> doCenterFloat
@@ -130,6 +134,8 @@ myManageHook = composeOne $
   , isFullscreen -?> doFullFloat
   , transience
   ]
+  where
+    managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
 
 -- Key bindings
 -- %% Modifier is windows (mod4) key
@@ -290,6 +296,9 @@ main = do
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
 q ..=? x = fmap (x `isPrefixOf`) q
+
+(.=.?) :: Eq a => Query [a] -> [a] -> Query Bool
+q .=.? x = fmap (x `isInfixOf`) q
 
 (=..?) :: Eq a => Query [a] -> [a] -> Query Bool
 q =..? x = fmap (x `isSuffixOf`) q
