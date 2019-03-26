@@ -10,9 +10,9 @@ import XMonad
 import XMonad.Config.Desktop
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageHelpers
 
 -- Layouts
-import XMonad.Hooks.ManageHelpers
 import XMonad.Layout.Accordion
 import XMonad.Layout.Column
 import XMonad.Layout.Mosaic
