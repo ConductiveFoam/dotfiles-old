@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 zmodload zsh/mapfile
-pathprefix="$(gawk "/^music_directory/ {gsub(\"~\", \"$HOME\"); print substr(\$2, 2, length(\$2) - 2);}" ~/.mpdconf)"
+pathprefix="$(gawk "/^music_directory/ {gsub(\"~\", \"$HOME\"); print substr(\$2, 2, length(\$2) - 2);}" ~/.config/mpd/mpd.conf)"
 cd $pathprefix
 excludes=(${(f)mapfile[mpd_exclude.txt]})
 pls=(${(f)"$(mpc lsplaylists)"})
@@ -17,5 +17,5 @@ for fn in *; do
 
     mpc clear
     mpc ls "$fn" | mpc add
-    mpc save "l$fn"
+    mpc save "$fn"
 done
