@@ -96,10 +96,10 @@ myManageHook = composeOne $
 
   -- Firefox windows
   [(className =? "Firefox" <&&> title .=.? t) -?> doShift ws | (ts, ws) <- managedFirefoxWindows, t <- ts] ++
-  [ className =? "Firefox" -?> doShift wsMain
+  [(className =? "Firefox" <&&> title /=? t) -?> doShift wsMain | t <- knownFirefoxDialogs] ++
 
   -- Miscellaneous
-  , className =? "vlc" -?> doShift wsMisc
+  [ className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
   , className =? "Matplotlib" -?> doCenterFloat
   , className =? "feh" -?> doCenterFloat
@@ -110,6 +110,7 @@ myManageHook = composeOne $
   ]
   where
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
+    knownFirefoxDialogs = ["Caret Browsing", "Library", "Open File", "Save As", "Print"]
     knownTerminalWindows = ["Alacritty", "Xfce4-terminal"]
 
 -- Key bindings
