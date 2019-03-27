@@ -6,7 +6,7 @@ module CommandPrefix(
   CommandPrefix(..),
   resetPrefix, modifyPrefix,
   prefixToString,
-  prefixedAction, spawnWithPrefix,
+  prefixedAction, withPrefix,
   logPrefix) where
 
 import Control.Monad
@@ -38,11 +38,13 @@ prefixedAction a = do
     (replicateM_ (prefix - 1) a) >> a
   resetPrefix
   refresh
-spawnWithPrefix f = do
+
+withPrefix f = do
   prefix <- XS.gets commandPrefix
-  spawn $ f prefix
+  f  prefix
   resetPrefix
   refresh
+
 logPrefix :: Logger
 logPrefix = do
   prefix <- XS.gets commandPrefix

@@ -56,8 +56,8 @@ $ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/screenshots
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
 - Enable --user dunst.service
-- Dependencies: ~xmonad-contrib~, ~xmobar~, ~stalonetray~, ~nitrogen~
-  - Commands used in XMonad: ~alacritty~, ~dmenu~, ~maim~, ~mpc~
+- Dependencies: ~xmonad-contrib~, ~xmonad-extras~, ~xmobar~, ~stalonetray~, ~nitrogen~
+  - Commands used in XMonad: ~alacritty~, ~maim~
   - XMobar: ~ddate~, ~amixer~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
   - Integration: ~dunst~, ~notify-send~, ~xmessage~
 

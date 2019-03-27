@@ -1,9 +1,13 @@
 -- Base
+import Control.Monad(liftM)
+import qualified Data.Map as M
 import Data.Monoid(appEndo, Endo(..))
 import Data.List(isPrefixOf, isSuffixOf, isInfixOf, intercalate)
-import qualified Data.Map as M
 import System.IO
 import System.Exit
+
+-- Other
+import qualified Network.MPD as MPD
 
 -- XMonad base
 import XMonad
@@ -22,6 +26,7 @@ import XMonad.Layout.Spacing
 
 -- Prompt
 import XMonad.Prompt(XPConfig(..), XPPosition(Top))
+import XMonad.Prompt.MPD
 import XMonad.Prompt.Shell(shellPrompt)
 import XMonad.Prompt.AssociationPrompt(associationPrompt)
 import XMonad.Prompt.ListCompletedPrompt(listCompletedPrompt)
@@ -122,7 +127,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_Return), runInTerm "-t \"Terminal\"" "tmux a -t dev") -- %! Launch dev terminal
   , ((myControlMask, xK_Return), runInTerm "-t \"Terminal - Web\"" "tmux a -t web") -- %! Launch elinks terminal
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
-  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps spawn xpc) -- %! Launch curated dmenu
+  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps spawn xpc) -- %! Launch app from curated list
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames spawn xpc) -- %! Launch game
   , ((myShiftMask, xK_c), kill) -- %! Close the focused window
 
@@ -175,27 +180,27 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_l), sendMessage Expand) -- %! Expand the master area
 
   -- %% ! MPD & Audio control
-  , ((myShiftMask, xK_m), spawn dmenuMpcLoadPlaylist) -- %! Load playlist
+  , ((myShiftMask, xK_m), loadPlaylist MPD.withMPD xpc) -- %! Load playlist
   , ((myControlMask, xK_m), submap . M.fromList $ -- %! Audio Submap:
-    [ ((0, xK_p), spawnWithPrefix (\p -> "mpc play " ++ (prefixToString p))) -- %! MPC play $prefix
-    , ((0, xK_n), spawn "mpc pause") -- %! MPC pause
-    , ((shiftMask, xK_t), spawn "mpc stop") -- %! MPC stop
-    , ((0, xK_t), spawn "mpc toggle") -- %! MPC toggle
-    , ((0, xK_f), spawn "mpc next") -- %! MPC next
-    , ((0, xK_b), spawn "mpc prev") -- %! MPC previous
+    [ ((0, xK_p), withPrefix $ (\p -> liftMPD_ $ MPD.play (Just p))) -- %! MPC play $prefix
+    , ((0, xK_n), liftMPD_ $ MPD.pause True) -- %! MPC pause
+    , ((shiftMask, xK_t), liftMPD_ $ MPD.stop) -- %! MPC stop
+    , ((0, xK_t), toggle) -- %! MPC toggle
+    , ((0, xK_f), liftMPD_ $ MPD.next) -- %! MPC next
+    , ((0, xK_b), liftMPD_ $ MPD.previous) -- %! MPC previous
 
-    , ((0, xK_s), spawn "mpc random") -- %! MPC random
-    , ((0, xK_r), spawn "mpc repeat") -- %! MPC repeat
-    , ((0, xK_c), spawn "mpc consume") -- %! MPC consume
-    , ((shiftMask, xK_s), spawn "mpc single") -- %! MPC single
+    , ((0, xK_s), invert MPD.stRandom MPD.random) -- %! MPC random
+    , ((0, xK_r), invert MPD.stRepeat MPD.repeat) -- %! MPC repeat
+    , ((0, xK_c), invert MPD.stConsume MPD.consume) -- %! MPC consume
+    , ((shiftMask, xK_s), invert MPD.stSingle MPD.single) -- %! MPC single
 
-    , ((0, xK_Delete), spawnWithPrefix (\p -> "mpc del " ++ (prefixToString p))) -- %! MPC del $prefix
-    , ((controlMask, xK_Delete), spawn "mpc clear") -- %! MPC clear
+    , ((0, xK_Delete), withPrefix (\p -> liftMPD_ $ MPD.delete p)) -- %! MPC del $prefix
+    , ((controlMask, xK_Delete), liftMPD_ $ MPD.clear) -- %! MPC clear
     ])
   , ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") -- %! Increase volume
   , ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") -- %! Decrease volume
   , ((0, xF86XK_AudioMute), spawn "amixer set Master toggle") -- %! Toggle mute
-  , ((0, xF86XK_AudioPlay), spawn "mpc toggle") -- %! MPC toggle
+  , ((0, xF86XK_AudioPlay), toggle) -- %! MPC toggle
 
   -- %% ! Systemctl integration
   , ((myControlMask, xK_s), submap . M.fromList $ -- %! Systemctl submap:
@@ -242,7 +247,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       "xmessage -buttons '' -title \"XMonad key binds\" -file -"
 
     makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%I-%M-%S).png"
-    dmenuMpcLoadPlaylist = "mpc lsplaylists | dmenu | mpc load"
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
     spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
     spawnSteam = ("steam steam://run/" ++)
@@ -260,6 +264,18 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       , ("They Bleed Pixels", spawnSteam "211260")
       , ("Rex Rocket", spawnSteam "288020")
       , ("Dustforce", spawnSteam "65300")]
+
+    liftMPD = liftIO . MPD.withMPD
+    liftMPD_ = liftM (const ()) . liftMPD
+
+    invert g s = liftMPD_ $ do
+      status <- MPD.status
+      s $ not (g status)
+    toggle = liftMPD_ $ do
+      MPD.Status { MPD.stState = s } <- MPD.status
+      case s of
+        MPD.Playing -> MPD.pause True
+        _ -> MPD.play Nothing
 
 -- Main config
 main = do
