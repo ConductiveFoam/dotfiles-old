@@ -83,7 +83,6 @@ $ mkdir -p ~/.config/mpd/playlists
 ** XMonad
 *** More prefix-aware actions
 *** Ideas
-**** Replace dmenu with prompt?
 **** Feedback which submap is active
 **** GPU load in bar
 **** processor frequencies in bar
