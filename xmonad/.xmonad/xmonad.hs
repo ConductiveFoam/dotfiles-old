@@ -101,10 +101,10 @@ myManageHook = composeOne $
 
   -- Firefox windows
   [(className =? "Firefox" <&&> title .=.? t) -?> doShift ws | (ts, ws) <- managedFirefoxWindows, t <- ts] ++
-  [(className =? "Firefox" <&&> title /=? t) -?> doShift wsMain | t <- knownFirefoxDialogs] ++
+  [(className =? "Firefox" <&&> (notQuery isDialog)) -?> doShift wsMain
 
   -- Miscellaneous
-  [ className =? "vlc" -?> doShift wsMisc
+  , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
   , className =? "Matplotlib" -?> doCenterFloat
   , className =? "feh" -?> doCenterFloat
@@ -115,7 +115,6 @@ myManageHook = composeOne $
   ]
   where
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
-    knownFirefoxDialogs = ["Caret Browsing", "Library", "Open File", "Save As", "Print"]
     knownTerminalWindows = ["Alacritty", "Xfce4-terminal"]
 
 -- Key bindings
@@ -320,6 +319,9 @@ q .=.? x = fmap (x `isInfixOf`) q
 
 (=..?) :: Eq a => Query [a] -> [a] -> Query Bool
 q =..? x = fmap (x `isSuffixOf`) q
+
+notQuery :: Query Bool -> Query Bool
+notQuery q = fmap not q
 
 rectFloat r = \w -> W.float w r
 maximizeRect = W.RationalRect 0 0 1 1
