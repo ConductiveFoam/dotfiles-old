@@ -226,6 +226,7 @@ respectively."
 
 ;;; Additional file extensions for modes
 (add-to-list 'auto-mode-alist '("\\.zsh\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("PKGBUILD\\'" . sh-mode))
 
 ;;; Org mode
 (add-hook 'text-mode-hook 'visual-line-mode)
