@@ -1,8 +1,8 @@
 -- Base
-import Control.Monad(liftM)
+import Control.Monad (liftM)
 import qualified Data.Map as M
-import Data.Monoid(appEndo, Endo(..))
-import Data.List(isPrefixOf, isSuffixOf, isInfixOf, intercalate)
+import Data.Monoid (appEndo, Endo(..))
+import Data.List (isPrefixOf, isSuffixOf, isInfixOf, intercalate)
 import System.IO
 import System.Exit
 
@@ -25,11 +25,11 @@ import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Spacing
 
 -- Prompt
-import XMonad.Prompt(XPConfig(..), XPPosition(Top))
+import XMonad.Prompt (XPConfig(..), XPPosition(Top))
 import XMonad.Prompt.MPD
-import XMonad.Prompt.Shell(shellPrompt)
-import XMonad.Prompt.AssociationPrompt(associationPrompt)
-import XMonad.Prompt.ListCompletedPrompt(listCompletedPrompt)
+import XMonad.Prompt.Shell (shellPrompt)
+import XMonad.Prompt.AssociationPrompt (associationPrompt)
+import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
 
 -- Hotkey config
 import XMonad.Actions.Submap
@@ -38,10 +38,10 @@ import Graphics.X11.ExtraTypes.XF86
 
 -- Actions
 import XMonad.Operations
-import XMonad.Actions.WithAll(withAll)
+import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run(spawnPipe, safeSpawn, runInTerm)
-import XMonad.Util.Paste(pasteSelection)
+import XMonad.Util.Run (spawnPipe, safeSpawn, runInTerm)
+import XMonad.Util.Paste (pasteSelection)
 
 -- Custom
 import MyColors
