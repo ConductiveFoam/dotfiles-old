@@ -2,12 +2,15 @@
 import Control.Monad (liftM)
 import qualified Data.Map as M
 import Data.Monoid (appEndo, Endo(..))
-import Data.List (isPrefixOf, isSuffixOf, isInfixOf, intercalate)
-import System.IO
-import System.Exit
+import Data.List (intercalate, isInfixOf, isPrefixOf, isSuffixOf)
+import System.IO (Handle, FilePath, BufferMode(LineBuffering), hPutStrLn, hSetBuffering)
+import System.Posix.IO (FdOption(CloseOnExec), closeFd, createPipe, dupTo, fdToHandle, setFdOption, stdInput)
+import System.Posix.Process (executeFile)
+import System.Exit (exitWith, ExitCode(ExitSuccess))
 
 -- Other
 import qualified Network.MPD as MPD
+import Codec.Binary.UTF8.String (encodeString)
 
 -- XMonad base
 import XMonad
@@ -40,7 +43,7 @@ import Graphics.X11.ExtraTypes.XF86
 import XMonad.Operations
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run (spawnPipe, safeSpawn, runInTerm)
+import XMonad.Util.Run (runInTerm, safeSpawn)
 import XMonad.Util.Paste (pasteSelection)
 
 -- Custom
@@ -56,9 +59,13 @@ wsMsg = "msg"
 wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
--- Terminal, Prompt and modifier config
+-- Miscellaneous config
 myTerminal = "alacritty"
-xpc = def { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
+myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
+myModMask = mod4Mask
+
+-- Prompt config
+xpc = def { font = myFont
           , bgColor = colBackground
           , fgColor = colForeground
           , bgHLight = colForeground
@@ -66,7 +73,6 @@ xpc = def { font = "xft:Fira Code:style=Bold:size=9:antialias=true"
           , promptBorderWidth = 0
           , position = Top
           }
-myModMask = mod4Mask
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
@@ -280,7 +286,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 main = do
   spawn $ "nitrogen --restore"
   spawn trayCmd
-  xmproc <- spawnPipe "xmobar"
+  xmproc <- safeSpawnPipe "xmobar" xmobarConfig
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
     , layoutHook = desktopLayoutModifiers $ myLayout
@@ -309,6 +315,13 @@ main = do
     }
   where
     trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
+    colConfig = "\"-l\", \"" ++ colDBlue ++ "\", \"-n\", \"" ++ colDGreen ++ "\", \"-h\", \"" ++ colDRed ++ "\""
+    xmobarConfig = [ "-B", colBackground, "-F", colForeground
+                   , "-f", myFont
+                   , "-p", "Static { xpos = 1080, ypos = 0, width = 1844, height = 19}"
+                   , "-c", "[Run Cpu [\"-L\", \"15\", \"-H\", \"50\", " ++ colConfig ++ "] 10, Run Memory [\"-t\", \"Mem: <usedratio>\", \"-L\", \"15\", \"-H\", \"50\", " ++ colConfig ++ "] 10, Run Swap [\"-L\", \"15\", \"-H\", \"50\", " ++ colConfig ++ "] 10, Run DynNetwork [\"-t\", \"<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB\"] 10, Run Kbd [(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")], Run Date \"%l:%M %p\" \"time\" 60, Run Uptime [] 60, Run StdinReader]"
+                   , "-t", "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%gettime.sh% %time%</fc> * %uptime% "
+                   ]
 
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
@@ -334,3 +347,15 @@ remanage w = do
   mh <- asks (manageHook . config)
   g <- appEndo <$> userCodeDef (Endo id) (runQuery mh w)
   windows g
+
+safeSpawnPipe :: MonadIO m => FilePath -> [String] -> m Handle
+safeSpawnPipe prog args = io $ do
+  (rd, wr) <- createPipe
+  setFdOption wr CloseOnExec True
+  h <- fdToHandle wr
+  hSetBuffering h LineBuffering
+  _ <- xfork $ do
+    _ <- dupTo rd stdInput
+    executeFile (encodeString prog) True (map encodeString args) Nothing
+  closeFd rd
+  return h
