@@ -27,8 +27,11 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Spacing
 
+-- XMobar
+import qualified XMobar.Config.Types as XMobar (Config(..), Runnable(..), XPosition(..), asList, defaultXMobarConfig)
+
 -- Prompt
-import XMonad.Prompt (XPConfig(..), XPPosition(Top))
+import XMonad.Prompt (XPConfig(..), XPPosition(Top), defaultXPConfig)
 import XMonad.Prompt.MPD
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.AssociationPrompt (associationPrompt)
@@ -64,8 +67,29 @@ myTerminal = "alacritty"
 myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
 myModMask = mod4Mask
 
--- Prompt config
-xpc = def { font = myFont
+-- Auxiliary config
+colConfig = ["-l", colDBlue, "-n", colDGreen, "-h", colDRed]
+xmobarConfig :: XMobar.Config
+xmobarConfig =
+  XMobar.defaultXMobarConfig { XMobar.font = myFont
+      , XMobar.bgColor = colBackground
+      , XMobar.fgColor = colForeground
+      , XMobar.position = XMobar.Static 1080 0 1844 19
+      , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
+                          , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
+                          , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
+                          , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
+
+                          , XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
+                          , XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
+                          , XMobar.Run "Uptime" ["[]", "60"] []
+
+                          , XMobar.Run "StdinReader" [] []
+                          ]
+      , XMobar.template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%gettime.sh% %time%</fc> * %uptime% "
+      }
+xpc :: XPConfig
+xpc = defaultXPConfig { font = myFont
           , bgColor = colBackground
           , fgColor = colForeground
           , bgHLight = colForeground
@@ -286,7 +310,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 main = do
   spawn $ "nitrogen --restore"
   spawn trayCmd
-  xmproc <- safeSpawnPipe "xmobar" xmobarConfig
+  xmproc <- safeSpawnPipe "xmobar" (XMobar.asList xmobarConfig)
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
     , layoutHook = desktopLayoutModifiers $ myLayout
@@ -315,13 +339,6 @@ main = do
     }
   where
     trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
-    colConfig = "\"-l\", \"" ++ colDBlue ++ "\", \"-n\", \"" ++ colDGreen ++ "\", \"-h\", \"" ++ colDRed ++ "\""
-    xmobarConfig = [ "-B", colBackground, "-F", colForeground
-                   , "-f", myFont
-                   , "-p", "Static { xpos = 1080, ypos = 0, width = 1844, height = 19}"
-                   , "-c", "[Run Cpu [\"-L\", \"15\", \"-H\", \"50\", " ++ colConfig ++ "] 10, Run Memory [\"-t\", \"Mem: <usedratio>\", \"-L\", \"15\", \"-H\", \"50\", " ++ colConfig ++ "] 10, Run Swap [\"-L\", \"15\", \"-H\", \"50\", " ++ colConfig ++ "] 10, Run DynNetwork [\"-t\", \"<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB\"] 10, Run Kbd [(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")], Run Date \"%l:%M %p\" \"time\" 60, Run Uptime [] 60, Run StdinReader]"
-                   , "-t", "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%gettime.sh% %time%</fc> * %uptime% "
-                   ]
 
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
