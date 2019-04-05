@@ -6,10 +6,3 @@ if [[ -z "$TMUX" ]] && \
   tmux send -t "dev:2" "emacsclient -a '' -t -e '(progn (global-display-line-numbers-mode t) \
     (switch-to-buffer \"stuff.org\") (split-window-below) (switch-to-buffer \"*scratch*\"))'" C-m
 fi
-
-# Convenience: PREFIX+l initially switches between windows 1 and 2
-tmux has -t "dev" 2> /dev/null
-if [[ $? -eq 0 ]]; then
-  tmux selectw -t "dev:2"
-  tmux selectw -t "dev:1"
-fi
