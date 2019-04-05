@@ -7,48 +7,27 @@ module XMobar.Config.Types
 import Data.Default
 import Data.List (intercalate)
 
--- import Xmobar.Run.Runnable (Runnable(..))
-
 data Config =
-  Config { font :: String         -- ^ Font
-         , additionalFonts :: [String] -- ^ List of alternative fonts
-         , wmClass :: String      -- ^ X11 WM_CLASS property value
-         , wmName :: String       -- ^ X11 WM_NAME property value
-         , bgColor :: String      -- ^ Backgroud color
-         , fgColor :: String      -- ^ Default font color
-         , position :: XPosition  -- ^ Top Bottom or Static
-         , textOffset :: Int      -- ^ Offset from top of window for text
-         , textOffsets :: [Int]   -- ^ List of offsets for additionalFonts
-         , iconOffset :: Int      -- ^ Offset from top of window for icons
-         , border :: Border       -- ^ NoBorder TopB BottomB or FullB
-         , borderColor :: String  -- ^ Border color
-         , borderWidth :: Int     -- ^ Border width
-         , alpha :: Int           -- ^ Transparency from 0 (transparent)
-                    --   to 255 (opaque)
-         , hideOnStart :: Bool    -- ^ Hide (Unmap) the window on
-                          --   initialization
-         , allDesktops :: Bool    -- ^ Tell the WM to map to all desktops
-         , overrideRedirect :: Bool -- ^ Needed for dock behaviour in some
-                               --   non-tiling WMs
-         , pickBroadest :: Bool   -- ^ Use the broadest display
-                           --   instead of the first one by
-                           --   default
-         , lowerOnStart :: Bool   -- ^ lower to the bottom of the
-                           --   window stack on initialization
-         , persistent :: Bool     -- ^ Whether automatic hiding should
-                         --   be enabled or disabled
-         , iconRoot :: FilePath   -- ^ Root folder for icons
-         , commands :: [Runnable] -- ^ For setting the command,
-                       --   the command arguments
-                       --   and refresh rate for the programs
-                       --   to run (optional)
-         , sepChar :: String      -- ^ The character to be used for indicating
-                      --   commands in the output template
-                      --   (default '%')
-         , alignSep :: String     -- ^ Separators for left, center and
-                       --   right text alignment
-         , template :: String     -- ^ The output template
-         , verbose :: Bool        -- ^ Emit additional debug messages
+  Config { font :: String
+         , iconRoot :: FilePath
+         , wmClass :: String
+         , wmName :: String
+
+         , position :: XPosition
+         , screen :: String
+         , bgColor :: String
+         , fgColor :: String
+         , alpha :: Int
+
+         , commands :: [Runnable]
+         , sepChar :: String
+         , alignSep :: String
+         , template :: String
+
+         , verbose :: Bool
+         , dock :: Bool
+
+         , file :: String
          }
 
 instance Default Config where
@@ -57,47 +36,55 @@ instance Default Config where
 defaultXMobarConfig :: Config
 defaultXMobarConfig =
   Config { font = ""
-         , additionalFonts = []
+         , iconRoot = "."
          , wmClass = "xmobar"
          , wmName = "xmobar"
+
+         , position = Top
+         , screen = "0"
          , bgColor = ""
          , fgColor = ""
-         , position = Top
-         , textOffset = 0
-         , textOffsets = []
-         , iconOffset = 0
-         , border = NoBorder
-         , borderColor = ""
-         , borderWidth = 0
          , alpha = 255
-         , hideOnStart = False
-         , allDesktops = True
-         , overrideRedirect = True
-         , pickBroadest = False
-         , lowerOnStart = False
-         , persistent = False
-         , iconRoot = "."
+
          , commands = []
          , sepChar = "%"
          , alignSep = "}{"
          , template = "%StdinReader% }{ "
+
          , verbose = False
+         , dock = False
+
+         , file = ""
          }
 
 asList :: Config -> [String]
-asList Config { font = font
-               , bgColor = bgColor
-               , fgColor = fgColor
-               , position = position
-               , commands = commands
-               , template = template
-               } =
-  [ "-B", bgColor, "-F", fgColor
-  , "-f", font
-  , "-p", (show position)
-  , "-c", (show commands)
-  , "-t", template
-  ]
+asList conf =
+  [ "-f", font conf
+  , "-i", iconRoot conf
+  , "-w", wmClass conf
+  , "-n", wmName conf
+
+  , "-p", (show $ position conf)
+  , "-x", screen conf
+  , "-B", bgColor conf
+  , "-F", fgColor conf
+  , "-A", (show $ alpha conf)
+
+  , "-c", (show $ commands conf)
+  , "-s", sepChar conf
+  , "-a", alignSep conf
+  , "-t", template conf
+  ] ++
+  verbose' ++
+  dock' ++
+  file'
+  where
+    file' | (file conf) == "" = []
+           | otherwise = [file conf]
+    verbose' | verbose conf = ["-V"]
+             | otherwise = []
+    dock' | dock conf = ["-d"]
+          | otherwise = []
 
 data Runnable =
   Run { name :: String

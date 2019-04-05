@@ -69,26 +69,39 @@ myModMask = mod4Mask
 
 -- Auxiliary config
 colConfig = ["-l", colDBlue, "-n", colDGreen, "-h", colDRed]
-xmobarConfig :: XMobar.Config
-xmobarConfig =
-  XMobar.defaultXMobarConfig { XMobar.font = myFont
-      , XMobar.bgColor = colBackground
-      , XMobar.fgColor = colForeground
-      , XMobar.position = XMobar.Static 1080 0 1844 19
-      , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                          , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
-                          , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                          , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
+myDefaultXMobar = XMobar.defaultXMobarConfig
+  { XMobar.font = myFont
+  , XMobar.bgColor = colBackground
+  , XMobar.fgColor = colForeground
+  }
+xmobarConfig = myDefaultXMobar
+  { XMobar.position = XMobar.Static 1080 0 1844 19
+  , XMobar.wmName = "XMobar - Main"
+  , XMobar.commands = [ XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
+                      , XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
+                      , XMobar.Run "Uptime" ["[]", "60"] []
 
-                          , XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
-                          , XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
-                          , XMobar.Run "Uptime" ["[]", "60"] []
-
-                          , XMobar.Run "StdinReader" [] []
-                          ]
-      , XMobar.template = "%StdinReader% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% | %dynnetwork%   XSS %xssmode.sh% | %getvolume.sh% %mpcstatus.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%gettime.sh% %time%</fc> * %uptime% "
-      }
-xpc :: XPConfig
+                      , XMobar.Run "StdinReader" [] []
+                      ]
+  , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%gettime.sh% %time%</fc> * %uptime% "
+  }
+secondBar = myDefaultXMobar
+  { XMobar.position = XMobar.Top
+  , XMobar.screen = "1"
+  , XMobar.wmName = "XMobar - Load"
+  , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
+                      , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
+                      , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
+                      , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
+                      ]
+  , XMobar.template = " %dynnetwork% | XSS %xssmode.sh% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% "
+  }
+thirdBar = myDefaultXMobar
+  { XMobar.position = XMobar.Bottom
+  , XMobar.screen = "1"
+  , XMobar.wmName = "XMobar - Music"
+  , XMobar.template = " %mpcstatus.sh% }{ %getvolume.sh% "
+  }
 xpc = defaultXPConfig { font = myFont
           , bgColor = colBackground
           , fgColor = colForeground
@@ -242,7 +255,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! Quit xmonad, Power control
   , ((myShiftMask, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
-  , ((myModMask, xK_q), spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
+  , ((myModMask, xK_q), spawn "if type xmonad; then xmonad --recompile && (pkill xmobar; xmonad --restart); else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
   , ((myShiftControlMask, xK_q), spawn "systemctl poweroff") -- %! Shut off system
   , ((myModMask, xK_z), spawn "xscreensaver-command --lock") -- %! Lock screen
   , ((myControlMask, xK_z), spawn "togglexss.sh") -- %! Toggle automatic lock
@@ -310,6 +323,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 main = do
   spawn $ "nitrogen --restore"
   spawn trayCmd
+  safeSpawn "xmobar" (XMobar.asList thirdBar)
+  safeSpawn "xmobar" (XMobar.asList secondBar)
   xmproc <- safeSpawnPipe "xmobar" (XMobar.asList xmobarConfig)
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
@@ -318,7 +333,7 @@ main = do
       { ppCurrent = xmobarColor colDBlue "" . wrap "[" "]"
       , ppVisible = wrap "(" ")"
       , ppUrgent = xmobarColor colDRed colDYellow
-      , ppTitle = xmobarColor colDMagenta "" . shorten 70
+      , ppTitle = xmobarColor colDMagenta "" . shorten 150
 
       , ppSep = " | "
       , ppExtras = [logPrefix]
