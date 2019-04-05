@@ -325,11 +325,10 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
 -- Main config
 main = do
-  spawn $ "nitrogen --restore"
-  spawn trayCmd
-  -- spawn $ "notify-send '" ++ (show $ XMobar.asList secondBar) ++ "'"
-  safeSpawn "xmobar" (XMobar.asList thirdBar)
-  safeSpawn "xmobar" (XMobar.asList secondBar)
+  safeSpawnOnce "stalonetray" ["-bg", wrap "'" "'" colBackground]
+
+  mapM_ (\ (cmd, ps) -> safeSpawn cmd ps) startupApplications
+
   xmproc <- safeSpawnPipe "xmobar" (XMobar.asList xmobarConfig)
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
@@ -359,7 +358,12 @@ main = do
     }
   where
     titleLength = 150
-    trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
+    safeSpawnOnce cmd ps = spawn $
+      "if [[ ! $(pgrep " ++ cmd ++ ") ]]; then " ++ cmd ++ (intercalate " " ps) ++ ";fi"
+    xmobar cfg = ("xmobar", XMobar.asList cfg)
+    startupApplications = [ ("nitrogen", ["--restore"])
+                          , xmobar secondBar
+                          , xmobar thirdBar]
 
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
