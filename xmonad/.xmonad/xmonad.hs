@@ -74,6 +74,10 @@ myDefaultXMobar = XMobar.defaultXMobarConfig
   , XMobar.bgColor = colBackground
   , XMobar.fgColor = colForeground
   }
+secondaryScreenBar = myDefaultXMobar
+  { XMobar.screen = "1"
+  , XMobar.alpha = 220
+  }
 xmobarConfig = myDefaultXMobar
   { XMobar.position = XMobar.Static 1080 0 1844 19
   , XMobar.wmName = "XMobar - Main"
@@ -85,9 +89,8 @@ xmobarConfig = myDefaultXMobar
                       ]
   , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%gettime.sh% %time%</fc> * %uptime% "
   }
-secondBar = myDefaultXMobar
+secondBar = secondaryScreenBar
   { XMobar.position = XMobar.Top
-  , XMobar.screen = "1"
   , XMobar.wmName = "XMobar - Load"
   , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
                       , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
@@ -96,9 +99,8 @@ secondBar = myDefaultXMobar
                       ]
   , XMobar.template = " %dynnetwork% | XSS %xssmode.sh% }{ %cpu% * Temp: %getcoretemp.sh% | %memory%%getgpumem.sh% * %swap% "
   }
-thirdBar = myDefaultXMobar
+thirdBar = secondaryScreenBar
   { XMobar.position = XMobar.Bottom
-  , XMobar.screen = "1"
   , XMobar.wmName = "XMobar - Music"
   , XMobar.template = " %getmpcstatus.sh% }{ %getvolume.sh% "
   }
