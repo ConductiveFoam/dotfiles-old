@@ -167,6 +167,8 @@ respectively."
  ("C-c C-p p" . sp-prefix-pair-object))
 
 ;;; Movement helpers
+(require 'windmove)
+
 (defun move-to-window-line-top ()
   (interactive)
   (move-to-window-line 0))
@@ -188,10 +190,16 @@ respectively."
  ("C-c C-w h" . (lambda () (interactive) (window-resize (selected-window) +1 1)))
  ("C-c C-w l" . (lambda () (interactive) (window-resize (selected-window) -1 1)))
 
- ;; Navigation
+ ;; Intra-window navigation
  ("C-c M-m <" . move-to-window-line-top)
  ("C-c M-m |" . move-to-window-line-center)
  ("C-c M-m >" . move-to-window-line-bottom)
+
+ ;; Inter-window navigation
+ ("C-c p" . windmove-up)
+ ("C-c n" . windmove-down)
+ ("C-c b" . windmove-left)
+ ("C-c f" . windmove-right)
 
  ;; Miscellaneous
  ("C-c l" . org-store-link))
