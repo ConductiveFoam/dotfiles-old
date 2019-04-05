@@ -1,16 +1,15 @@
 #!/bin/bash
-
-function getcolumn() {
-    amixer get Master | head -n6 | tail -n1 | cut -d' ' -f$1
+format='NR == 6 {
+  volume = substr($5, 2, length($5) - 3)
+  if ($6 == "[on]") {
+    color = "#859900"
+    status = "[on] "
+  } else {
+    color = "#dc322f"
+    status = $6
+  }
+  print "Vol: <fc=#268bd2>" volume "</fc>% <fc=" color ">" status "</fc>"
 }
+'
 
-vol=$(getcolumn 7 | grep -o '[0-9]*')
-status=$(getcolumn 8)
-if [ "$status" == "[on]" ]; then
-    color="#859900"
-    status="$status "
-else
-    color="#dc322f"
-fi
-
-echo "Vol: <fc=#268bd2>${vol}</fc>% <fc=${color}>${status}</fc> "
+echo "$(amixer get Master | awk "$format")"

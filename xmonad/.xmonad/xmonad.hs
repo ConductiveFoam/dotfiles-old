@@ -100,7 +100,7 @@ thirdBar = myDefaultXMobar
   { XMobar.position = XMobar.Bottom
   , XMobar.screen = "1"
   , XMobar.wmName = "XMobar - Music"
-  , XMobar.template = " %mpcstatus.sh% }{ %getvolume.sh% "
+  , XMobar.template = " %getmpcstatus.sh% }{ %getvolume.sh% "
   }
 xpc = defaultXPConfig { font = myFont
           , bgColor = colBackground
@@ -231,10 +231,12 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_f), liftMPD_ $ MPD.next) -- %! MPC next
     , ((0, xK_b), liftMPD_ $ MPD.previous) -- %! MPC previous
 
+    , ((0, xK_l), spawn $ "notify-send \"$(mpc playlist | awk '{ print (NR - 1) \": \" $0 }')\"") -- %! Notify of current playlist
+
     , ((0, xK_s), invert MPD.stRandom MPD.random) -- %! MPC random
     , ((0, xK_r), invert MPD.stRepeat MPD.repeat) -- %! MPC repeat
     , ((0, xK_c), invert MPD.stConsume MPD.consume) -- %! MPC consume
-    , ((shiftMask, xK_s), invert MPD.stSingle MPD.single) -- %! MPC single
+    , ((0, xK_o), invert MPD.stSingle MPD.single) -- %! MPC single
 
     , ((0, xK_Delete), withPrefix (\p -> liftMPD_ $ MPD.delete p)) -- %! MPC del $prefix
     , ((controlMask, xK_Delete), liftMPD_ $ MPD.clear) -- %! MPC clear
@@ -323,6 +325,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 main = do
   spawn $ "nitrogen --restore"
   spawn trayCmd
+  -- spawn $ "notify-send '" ++ (show $ XMobar.asList secondBar) ++ "'"
   safeSpawn "xmobar" (XMobar.asList thirdBar)
   safeSpawn "xmobar" (XMobar.asList secondBar)
   xmproc <- safeSpawnPipe "xmobar" (XMobar.asList xmobarConfig)
