@@ -128,7 +128,7 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 -- Manage hook
 myManageHook = composeOne $
   [ className =? terminal -?> doShift wsDev | terminal <- knownTerminalWindows ] ++ -- Move all terminal emulators to dev workspace
-  [ (className =? "Xmessage" <&&> title =? "XMonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
+  [ (className =? "Xmessage" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
   , className =? "Xmessage" -?> doRectFloat centerRect
 
   -- Gaming related
@@ -178,7 +178,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
   , ((myShiftMask, xK_space), sendMessage FirstLayout) -- %!  Reset the layouts on the current workspace to default
 
-  , ((myModMask, xK_n), refresh) -- %! Resize viewed windows to the correct size
+  , ((myModMask, xK_n), refresh) -- %! Refresh xmonad
 
   -- %% ! Moving focus
   , ((myModMask, xK_Tab), windows W.focusDown) -- %! Move focus to the next window
@@ -290,7 +290,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
     helpCommand :: X ()
     helpCommand = spawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
-      "xmessage -buttons '' -title \"XMonad key binds\" -file -"
+      "xmessage -buttons '' -title \"xmonad key binds\" -file -"
 
     makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
@@ -338,7 +338,7 @@ main = do
       { ppCurrent = xmobarColor colDBlue "" . wrap "[" "]"
       , ppVisible = wrap "(" ")"
       , ppUrgent = xmobarColor colDRed colDYellow
-      , ppTitle = xmobarColor colDMagenta "" . shorten 150
+      , ppTitle = xmobarColor colDMagenta "" . shorten titleLength
 
       , ppSep = " | "
       , ppExtras = [logPrefix]
@@ -358,6 +358,7 @@ main = do
     , keys = myKeys
     }
   where
+    titleLength = 150
     trayCmd = "if [[ ! $(pgrep stalonetray) ]]; then stalonetray -bg '" ++ colBackground ++ "'; fi"
 
 -- Utilities
