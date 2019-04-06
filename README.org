@@ -54,7 +54,7 @@ $ mkdir -p ~/.xprofile.d
 $ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/.xmonad/lib/XMobar/Config ~/screenshots
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
-- XMobar configuration is not very robust: info scripts in ~bin/~ are platform-dependent to varying degrees and ~.xmobarrc~ needs some love
+- XMobar installation assumes no compilation flags and relies on scripts instead
 - Enable --user dunst.service
 - Dependencies: ~xmonad-contrib~, ~xmonad-extras~, ~xmobar~, ~stalonetray~, ~nitrogen~
   - Commands used in XMonad: ~alacritty~, ~maim~

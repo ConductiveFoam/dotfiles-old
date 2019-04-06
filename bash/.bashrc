@@ -48,5 +48,6 @@ export VISUAL="emacsclient"
 
 PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:$PATH"
 export PATH
+export AWKPATH=".:$HOME/bin:/usr/local/share/awk"
 
 export BUILDDIR="$HOME/build"
