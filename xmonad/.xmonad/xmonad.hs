@@ -359,7 +359,7 @@ main = do
   where
     titleLength = 150
     safeSpawnOnce cmd ps = spawn $
-      "if [[ ! $(pgrep " ++ cmd ++ ") ]]; then " ++ cmd ++ (intercalate " " ps) ++ ";fi"
+      "if [[ ! $(pgrep " ++ cmd ++ ") ]]; then " ++ cmd ++ " " ++ (intercalate " " ps) ++ ";fi"
     xmobar cfg = ("xmobar", XMobar.asList cfg)
     startupApplications = [ ("nitrogen", ["--restore"])
                           , xmobar secondBar
