@@ -57,7 +57,7 @@ import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseV
 -- Imports: Actions
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run (runInTerm, safeSpawn)
+import XMonad.Util.Run (runInTerm, unsafeSpawn, safeSpawn)
 import XMonad.Util.Paste (pasteSelection)
 
 -- Imports: Custom
@@ -78,6 +78,7 @@ wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
 -- Terminal window titles
+termTitle = "Terminal"
 termTitleTmux = "Terminal - Dev"
 termTitleWeb = "Terminal - Web"
 
@@ -146,12 +147,12 @@ myManageHook = composeOne $
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
-  [ ((myShiftMask, xK_Return), spawn $ terminal conf) -- %! Launch terminal
-  , ((myModMask, xK_Return), runInTerm ("-t \"" ++ termTitleTmux ++ "\"") "tmux a -t dev") -- %! Launch dev terminal
-  , ((myControlMask, xK_Return), runInTerm ("-t \"" ++ termTitleWeb ++ "\"") "tmux a -t web") -- %! Launch elinks terminal
+  [ ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Launch terminal
+  , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmux a -t dev") -- %! Launch dev terminal
+  , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmux a -t web") -- %! Launch elinks terminal
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
-  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps spawn xpc) -- %! Launch app from curated list
-  , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames spawn xpc) -- %! Launch game
+  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps unsafeSpawn xpc) -- %! Launch app from curated list
+  , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Launch game
   , ((myShiftMask, xK_c), kill) -- %! Close the focused window
 
   , ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
@@ -212,7 +213,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_f), liftMPD_ $ MPD.next) -- %! MPC next
     , ((0, xK_b), liftMPD_ $ MPD.previous) -- %! MPC previous
 
-    , ((0, xK_l), spawn $ "notify-send \"$(mpc playlist | awk '{ print (NR - 1) \": \" $0 }')\"") -- %! Notify of current playlist
+    , ((0, xK_l), unsafeSpawn $ "notify-send \"$(mpc playlist | awk '{ print (NR - 1) \": \" $0 }')\"") -- %! Notify of current playlist
 
     , ((0, xK_s), invert MPD.stRandom MPD.random) -- %! MPC random
     , ((0, xK_r), invert MPD.stRepeat MPD.repeat) -- %! MPC repeat
@@ -222,9 +223,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_Delete), withPrefix (\p -> liftMPD_ $ MPD.delete p)) -- %! MPC del $prefix
     , ((controlMask, xK_Delete), liftMPD_ $ MPD.clear) -- %! MPC clear
     ])
-  , ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") -- %! Increase volume
-  , ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") -- %! Decrease volume
-  , ((0, xF86XK_AudioMute), spawn "amixer set Master toggle") -- %! Toggle mute
+  , ((0, xF86XK_AudioRaiseVolume), unsafeSpawn "amixer set Master 2%+") -- %! Increase volume
+  , ((0, xF86XK_AudioLowerVolume), unsafeSpawn "amixer set Master 2%-") -- %! Decrease volume
+  , ((0, xF86XK_AudioMute), unsafeSpawn "amixer set Master toggle") -- %! Toggle mute
   , ((0, xF86XK_AudioPlay), toggle) -- %! MPC toggle
 
   -- %% ! Systemctl integration
@@ -238,10 +239,10 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! Quit xmonad, Power control
   , ((myShiftMask, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
-  , ((myModMask, xK_q), spawn "if type xmonad; then xmonad --recompile && (pkill xmobar; xmonad --restart); else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
-  , ((myShiftControlMask, xK_q), spawn "systemctl poweroff") -- %! Shut off system
-  , ((myModMask, xK_z), spawn "xscreensaver-command --lock") -- %! Lock screen
-  , ((myControlMask, xK_z), spawn "togglexss.sh") -- %! Toggle automatic lock
+  , ((myModMask, xK_q), unsafeSpawn "if type xmonad; then xmonad --recompile && (pkill xmobar; xmonad --restart); else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
+  , ((myShiftControlMask, xK_q), unsafeSpawn "systemctl poweroff") -- %! Shut off system
+  , ((myModMask, xK_z), unsafeSpawn "xscreensaver-command --lock") -- %! Lock screen
+  , ((myControlMask, xK_z), unsafeSpawn "togglexss.sh") -- %! Toggle automatic lock
 
   -- %% ! Notification control
   -- mod-ctrl-n %! Close notification
@@ -249,15 +250,15 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-shift-h %! Show previous notification(s)
 
   -- %% ! Miscellaneous
-  , ((myControlMask, xK_space), spawn "cyclexlayout.sh") -- %! Cycle keyboard layouts
+  , ((myControlMask, xK_space), unsafeSpawn "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
   , ((myControlMask, xK_h), helpCommand) -- %! XMessage window with key binds
 
   , ((0, xK_Insert), pasteSelection) -- %! Paste selection
 
-  , ((controlMask, xK_Print), spawn $ "sleep 0.2; " ++ (makeScreenshotCommand "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
-  , ((shiftMask, xK_Print), withFocused $ \w -> spawn $ makeScreenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
-  , ((0, xK_Print), spawn $ makeScreenshotCommand "" "") -- %! Make screenshot of whole desktop
+  , ((controlMask, xK_Print), unsafeSpawn $ "sleep 0.2; " ++ (makeScreenshotCommand "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
+  , ((shiftMask, xK_Print), withFocused $ \w -> unsafeSpawn $ makeScreenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
+  , ((0, xK_Print), unsafeSpawn $ makeScreenshotCommand "" "") -- %! Make screenshot of whole desktop
 
   , ((myControlMask, xK_g), resetPrefix >> refresh)
   ] ++ -- %! Reset prefix
@@ -269,7 +270,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     myShiftControlMask = myModMask .|. shiftMask .|. controlMask
 
     helpCommand :: X ()
-    helpCommand = spawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
+    helpCommand = unsafeSpawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
       "xmessage -buttons '' -title \"xmonad key binds\" -file -"
 
     -- Prompt
@@ -283,6 +284,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       , XPrompt.position = XPrompt.Top
       }
 
+    spawnTerminal title cmd = runInTerm ("-t \"" ++ title ++ "\"") cmd
     makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
     spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
