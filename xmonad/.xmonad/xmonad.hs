@@ -77,6 +77,10 @@ wsMsg = "msg"
 wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
+-- Terminal window titles
+termTitleTmux = "Terminal - Dev"
+termTitleWeb = "Terminal - Web"
+
 -- Miscellaneous config
 myTerminal = "alacritty"
 myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
@@ -96,7 +100,11 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 
 -- Manage hook
 myManageHook = composeOne $
-  [ className =? terminal -?> doShift wsDev | terminal <- knownTerminalWindows ] ++ -- Move all terminal emulators to dev workspace
+  -- Terminal and xmessage
+  [ (className =? terminal <&&> title =? t) -?> action
+  | terminal <- knownTerminalClasses
+  , (t, action) <- managedTerminalWindows
+  ] ++
   [ (className =? "Xmessage" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
   , className =? "Xmessage" -?> doRectFloat centerRect
 
@@ -128,8 +136,10 @@ myManageHook = composeOne $
   , transience
   ]
   where
+    knownTerminalClasses = ["Alacritty", "Xfce4-terminal"]
+    managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead)]
+
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
-    knownTerminalWindows = ["Alacritty", "Xfce4-terminal"]
 
 -- Key bindings
 -- %% Modifier is windows (mod4) key
@@ -137,8 +147,8 @@ myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
   [ ((myShiftMask, xK_Return), spawn $ terminal conf) -- %! Launch terminal
-  , ((myModMask, xK_Return), runInTerm "-t \"Terminal\"" "tmux a -t dev") -- %! Launch dev terminal
-  , ((myControlMask, xK_Return), runInTerm "-t \"Terminal - Web\"" "tmux a -t web") -- %! Launch elinks terminal
+  , ((myModMask, xK_Return), runInTerm ("-t \"" ++ termTitleTmux ++ "\"") "tmux a -t dev") -- %! Launch dev terminal
+  , ((myControlMask, xK_Return), runInTerm ("-t \"" ++ termTitleWeb ++ "\"") "tmux a -t web") -- %! Launch elinks terminal
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
   , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps spawn xpc) -- %! Launch app from curated list
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames spawn xpc) -- %! Launch game
@@ -175,14 +185,14 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-shift-[1..9] %! Move client to workspace N
   [((m .|. myModMask, k), windows $ f i)
   | (i, k) <- zip (myWorkspaces) [xK_1 .. xK_9]
-  , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-  ++
+  , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
+  ] ++
   -- mod-{w,e} %! Switch to physical/Xinerama screens 1, 2
   -- mod-shift-{w,e} %! Move client to screen 1, 2
   [((m .|. myModMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
   | (key, sc) <- zip [xK_w, xK_e] [0..] --, xK_r
-  , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
-  ++
+  , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]
+  ] ++
 
   -- %% ! Increasing or Decreasing number of windows in the master area
   [ ((myModMask, xK_comma), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
@@ -249,7 +259,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), withFocused $ \w -> spawn $ makeScreenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
   , ((0, xK_Print), spawn $ makeScreenshotCommand "" "") -- %! Make screenshot of whole desktop
 
-  , ((myControlMask, xK_g), resetPrefix >> refresh) ] ++ -- %! Reset prefix
+  , ((myControlMask, xK_g), resetPrefix >> refresh)
+  ] ++ -- %! Reset prefix
   -- mod-control-[0..9] %! Extend prefix
   [((myControlMask, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
   where
