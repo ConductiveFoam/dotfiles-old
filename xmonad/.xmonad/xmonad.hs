@@ -1,57 +1,72 @@
--- Base
+-- Imports: Base
 import Control.Monad (liftM)
+import Data.Default (def)
 import qualified Data.Map as M
 import Data.Monoid (appEndo, Endo(..))
 import Data.List (intercalate, isInfixOf, isPrefixOf, isSuffixOf)
 import System.IO (Handle, FilePath, BufferMode(LineBuffering), hPutStrLn, hSetBuffering)
-import System.Posix.IO (FdOption(CloseOnExec), closeFd, createPipe, dupTo, fdToHandle, setFdOption, stdInput)
+import System.Posix.IO (FdOption(CloseOnExec), setFdOption
+                       , createPipe, fdToHandle, closeFd
+                       , dupTo, stdInput
+                       )
 import System.Posix.Process (executeFile)
 import System.Exit (exitWith, ExitCode(ExitSuccess))
 
--- Other
+-- Imports: Other
 import qualified Network.MPD as MPD
 import Codec.Binary.UTF8.String (encodeString)
 
--- XMonad base
+-- Imports: XMonad base
 import XMonad
-import XMonad.Config.Desktop
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageHelpers
+import XMonad.Config.Desktop (desktopConfig, desktopLayoutModifiers)
+import XMonad.Hooks.EwmhDesktops (ewmh)
+import XMonad.Hooks.DynamicLog (dynamicLogWithPP
+                               , ppCurrent, ppExtras, ppOrder, ppOutput
+                               , ppSep, ppTitle, ppUrgent, ppVisible
+                               , xmobarColor
+                               , shorten, wrap
+                               )
+import XMonad.Hooks.ManageHelpers (composeOne, (-?>)
+                                  , isDialog, isFullscreen, transience
+                                  , doRectFloat, doHideIgnore, doCenterFloat, doFullFloat
+                                  )
 
--- Layouts
-import XMonad.Layout.Accordion
-import XMonad.Layout.Column
-import XMonad.Layout.Mosaic
-import XMonad.Layout.NoBorders
-import XMonad.Layout.PerWorkspace
-import XMonad.Layout.Spacing
+-- Imports: Layouts
+import XMonad.Layout.Accordion (Accordion(Accordion))
+import XMonad.Layout.Column (Column(Column))
+import XMonad.Layout.Mosaic (mosaic)
+import XMonad.Layout.NoBorders (noBorders)
+import XMonad.Layout.PerWorkspace (onWorkspace)
 
--- XMobar
-import qualified XMobar.Config.Types as XMobar (Config(..), Runnable(..), XPosition(..), asList, defaultXMobarConfig)
+-- Imports: XMobar
+import qualified XMobar.Config as XMobar
 
--- Prompt
-import XMonad.Prompt (XPConfig(..), XPPosition(Top), defaultXPConfig)
-import XMonad.Prompt.MPD
+-- Imports: Prompt
+import qualified XMonad.Prompt as XPrompt
+import XMonad.Prompt.MPD (loadPlaylist)
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.AssociationPrompt (associationPrompt)
 import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
 
--- Hotkey config
-import XMonad.Actions.Submap
-import XMonad.Util.EZConfig
-import Graphics.X11.ExtraTypes.XF86
+-- Imports: Hotkey config
+import XMonad.Actions.Submap (submap)
+import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
+                                    , xF86XK_AudioMute, xF86XK_AudioPlay
+                                    )
 
--- Actions
-import XMonad.Operations
+-- Imports: Actions
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
 import XMonad.Util.Run (runInTerm, safeSpawn)
 import XMonad.Util.Paste (pasteSelection)
 
--- Custom
-import MyColors
-import CommandPrefix
+-- Imports: Custom
+import MyColors (colBackground, colForeground
+                , colDBlue, colDGreen
+                , colDMagenta, colDRed
+                , colDYellow
+                )
+import CommandPrefix (modifyPrefix, resetPrefix, withPrefix, logPrefix)
 
 -- Workspaces
 wsMain = "main"
@@ -66,52 +81,6 @@ myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 myTerminal = "alacritty"
 myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
 myModMask = mod4Mask
-
--- Auxiliary config
-colConfig = ["-l", colDBlue, "-n", colDGreen, "-h", colDRed]
-myDefaultXMobar = XMobar.defaultXMobarConfig
-  { XMobar.font = myFont
-  , XMobar.bgColor = colBackground
-  , XMobar.fgColor = colForeground
-  }
-secondaryScreenBar = myDefaultXMobar
-  { XMobar.screen = "1"
-  , XMobar.alpha = 220
-  }
-xmobarConfig = myDefaultXMobar
-  { XMobar.position = XMobar.Static 1080 0 1844 19
-  , XMobar.wmName = "XMobar - Main"
-  , XMobar.commands = [ XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
-                      , XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
-                      , XMobar.Run "Uptime" ["[]", "60"] []
-
-                      , XMobar.Run "StdinReader" [] []
-                      ]
-  , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%xmobar_time.sh% %time%</fc> * %uptime% "
-  }
-secondBar = secondaryScreenBar
-  { XMobar.position = XMobar.Top
-  , XMobar.wmName = "XMobar - Load"
-  , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                      , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
-                      , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
-                      , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                      ]
-  , XMobar.template = " %dynnetwork% | XSS %xmobar_xssmode.sh% }{ %cpu% * Temp: %xmobar_coretemp.sh% | %memory%%xmobar_gpumem.sh% * %swap% "
-  }
-thirdBar = secondaryScreenBar
-  { XMobar.position = XMobar.Bottom
-  , XMobar.wmName = "XMobar - Music"
-  , XMobar.template = " %xmobar_mpcstatus.sh% }{ %xmobar_volume.sh% "
-  }
-xpc = defaultXPConfig { font = myFont
-          , bgColor = colBackground
-          , fgColor = colForeground
-          , bgHLight = colForeground
-          , fgHLight = colBackground
-          , promptBorderWidth = 0
-          , position = Top
-          }
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
@@ -292,6 +261,17 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     helpCommand = spawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
       "xmessage -buttons '' -title \"xmonad key binds\" -file -"
 
+    -- Prompt
+    xpc = def
+      { XPrompt.font = myFont
+      , XPrompt.bgColor = colBackground
+      , XPrompt.fgColor = colForeground
+      , XPrompt.bgHLight = colForeground
+      , XPrompt.fgHLight = colBackground
+      , XPrompt.promptBorderWidth = 0
+      , XPrompt.position = XPrompt.Top
+      }
+
     makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
     spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
@@ -311,6 +291,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       , ("Rex Rocket", spawnSteam "288020")
       , ("Dustforce", spawnSteam "65300")]
 
+    -- MPD
     liftMPD = liftIO . MPD.withMPD
     liftMPD_ = liftM (const ()) . liftMPD
 
@@ -329,7 +310,7 @@ main = do
 
   mapM_ (\ (cmd, ps) -> safeSpawn cmd ps) startupApplications
 
-  xmproc <- safeSpawnPipe "xmobar" (XMobar.asList xmobarConfig)
+  xmproc <- safeSpawnPipe "xmobar" (XMobar.asList primaryBar)
   xmonad $ ewmh $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
     , layoutHook = desktopLayoutModifiers $ myLayout
@@ -358,12 +339,54 @@ main = do
     }
   where
     titleLength = 150
+
+    -- Startup
     safeSpawnOnce cmd ps = spawn $
       "if [[ ! $(pgrep " ++ cmd ++ ") ]]; then " ++ cmd ++ " " ++ (intercalate " " ps) ++ ";fi"
-    xmobar cfg = ("xmobar", XMobar.asList cfg)
     startupApplications = [ ("nitrogen", ["--restore"])
-                          , xmobar secondBar
-                          , xmobar thirdBar]
+                          , xmobar loadBar
+                          , xmobar musicBar
+                          ]
+
+    -- XMobar
+    xmobar cfg = ("xmobar", XMobar.asList cfg)
+
+    colConfig = ["-l", colDBlue, "-n", colDGreen, "-h", colDRed]
+    myDefaultXMobar = def
+      { XMobar.font = myFont
+      , XMobar.bgColor = colBackground
+      , XMobar.fgColor = colForeground
+      }
+    secondaryScreenBar = myDefaultXMobar
+      { XMobar.screen = "1"
+      , XMobar.alpha = 220
+      }
+    primaryBar = myDefaultXMobar
+      { XMobar.position = XMobar.Static 1080 0 1844 19
+      , XMobar.wmName = "XMobar - Main"
+      , XMobar.commands = [ XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
+                          , XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
+                          , XMobar.Run "Uptime" ["[]", "60"] []
+
+                          , XMobar.Run "StdinReader" [] []
+                          ]
+      , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%xmobar_time.sh% %time%</fc> * %uptime% "
+      }
+    loadBar = secondaryScreenBar
+      { XMobar.position = XMobar.Top
+      , XMobar.wmName = "XMobar - Load"
+      , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
+                          , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
+                          , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
+                          , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
+                          ]
+      , XMobar.template = " %dynnetwork% | XSS %xmobar_xssmode.sh% }{ %cpu% * Temp: %xmobar_coretemp.sh% | %memory%%xmobar_gpumem.sh% * %swap% "
+      }
+    musicBar = secondaryScreenBar
+      { XMobar.position = XMobar.Bottom
+      , XMobar.wmName = "XMobar - Music"
+      , XMobar.template = " %xmobar_mpcstatus.sh% }{ %xmobar_volume.sh% "
+      }
 
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
@@ -378,7 +401,9 @@ q =..? x = fmap (x `isSuffixOf`) q
 notQuery :: Query Bool -> Query Bool
 notQuery q = fmap not q
 
+rectFloat :: Ord a => W.RationalRect -> a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
 rectFloat r = \w -> W.float w r
+
 maximizeRect = W.RationalRect 0 0 1 1
 centerRect = W.RationalRect 0.13 0.1 0.74 0.8
 largeRect = W.RationalRect 0.13 0.02 0.74 0.98

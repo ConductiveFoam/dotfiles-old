@@ -1,6 +1,6 @@
--- Solarized colors
 module MyColors where
 
+-- Solarized colors
 colDBlue = "#268bd2"
 colLBlue = "#839496"
 colDBlack = "#073642"

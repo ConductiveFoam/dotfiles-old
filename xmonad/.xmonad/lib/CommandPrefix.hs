@@ -9,6 +9,7 @@ module CommandPrefix(
   prefixedAction, withPrefix,
   logPrefix) where
 
+-- Imports
 import Control.Monad
 
 import MyColors
@@ -19,6 +20,8 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Util.Loggers
 import qualified XMonad.Util.ExtensibleState as XS
 
+
+-- CommandPrefix
 newtype CommandPrefix = CommandPrefix { commandPrefix :: Int } deriving (Typeable, Read, Show)
 instance ExtensionClass CommandPrefix where
   initialValue = CommandPrefix 0

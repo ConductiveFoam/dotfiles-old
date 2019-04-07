@@ -1,11 +1,15 @@
-module XMonad.Prompt.AssociationPrompt where
+module XMonad.Prompt.AssociationPrompt
+  (AssociationPrompt(..), associationPrompt
+  ) where
 
+-- Imports
 import qualified Data.Map as M
 
 import XMonad.Core(X)
 
 import XMonad.Prompt(XPrompt(..), XPConfig, mkXPrompt, mkComplFunFromList)
 
+-- AssociationPrompt
 data AssociationPrompt = AssociationPrompt String
 instance XPrompt AssociationPrompt where
   showXPrompt (AssociationPrompt name) = name

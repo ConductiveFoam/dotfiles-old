@@ -1,12 +1,14 @@
-module XMobar.Config.Types
+module XMobar.Config
     ( Config (..)
     , XPosition (..), Align (..), Border(..), Runnable(..)
     , asList, defaultXMobarConfig
     ) where
 
+-- Imports
 import Data.Default
 import Data.List (intercalate)
 
+-- Config
 data Config =
   Config { font :: String
          , iconRoot :: FilePath
@@ -86,6 +88,7 @@ asList conf =
     dock' | dock conf = ["-d"]
           | otherwise = []
 
+-- Runnable
 data Runnable =
   Run { name :: String
            , literal :: [String]
@@ -100,6 +103,7 @@ instance Show Runnable where
               | otherwise = "[" ++ (intercalate ", " (map quote quoted)) ++ "]"
       literals' = intercalate " " literals
 
+-- Auxiliaries
 data XPosition = Top
                | TopW Align Int
                | TopSize Align Int Int

@@ -1,9 +1,13 @@
-module XMonad.Prompt.ListCompletedPrompt where
+module XMonad.Prompt.ListCompletedPrompt
+  (ListCompletedPrompt, listCompletedPrompt
+  ) where
 
+-- Imports
 import XMonad.Core(X)
 
 import XMonad.Prompt(XPrompt(..), XPConfig, mkXPrompt, mkComplFunFromList)
 
+-- ListCompletedPrompt
 data ListCompletedPrompt = ListCompletedPrompt String
 instance XPrompt ListCompletedPrompt where
   showXPrompt (ListCompletedPrompt name) = name

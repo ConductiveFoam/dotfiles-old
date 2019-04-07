@@ -51,7 +51,7 @@ $ mkdir -p ~/.xprofile.d
 
 ** XMonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/.xmonad/lib/XMobar/Config ~/screenshots
+$ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/.xmonad/lib/XMobar/ ~/screenshots
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar installation assumes no compilation flags and relies on scripts instead
