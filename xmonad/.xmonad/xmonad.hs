@@ -52,9 +52,11 @@ import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
 import XMonad.Actions.Submap (submap)
 import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
                                     , xF86XK_AudioMute, xF86XK_AudioPlay
+                                    , xF86XK_Launch5
                                     )
 
 -- Imports: Actions
+import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
 import XMonad.Util.Run (runInTerm, unsafeSpawn, safeSpawn)
@@ -81,6 +83,7 @@ myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 termTitle = "Terminal"
 termTitleTmux = "Terminal - Dev"
 termTitleWeb = "Terminal - Web"
+termTitleNotes = "Notes"
 
 -- Miscellaneous config
 myTerminal = "alacritty"
@@ -138,7 +141,7 @@ myManageHook = composeOne $
   ]
   where
     knownTerminalClasses = ["Alacritty", "Xfce4-terminal"]
-    managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead)]
+    managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
 
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
 
@@ -150,6 +153,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   [ ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Launch terminal
   , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmux a -t dev") -- %! Launch dev terminal
   , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmux a -t web") -- %! Launch elinks terminal
+  , ((0, xF86XK_Launch5), -- %! Launch note taking terminal
+      raiseMaybe (spawnTerminal termTitleNotes "tmux a -t notes") (title =? termTitleNotes))
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
   , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps unsafeSpawn xpc) -- %! Launch app from curated list
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Launch game
@@ -421,6 +426,7 @@ maximizeRect = W.RationalRect 0 0 1 1
 centerRect = W.RationalRect 0.13 0.1 0.74 0.8
 largeRect = W.RationalRect 0.13 0.02 0.74 0.98
 largeThinRect = W.RationalRect 0.3 0.02 0.4 0.98
+notesRect = W.RationalRect 0.60 0.02 0.37 0.7
 
 remanage :: Window -> X ()
 remanage w = do

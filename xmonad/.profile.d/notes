@@ -1,0 +1,6 @@
+if [[ -z "$TMUX" ]] && \
+   [[ -z $(tmux ls -F "#S" | grep -o notes) ]]; then
+    tmux new -d -s notes -c "$HOME/Documents"
+    tmux renamew -t "notes:1" emacs
+    tmux send -t notes "emacsclient -a '' -t -e '(progn (global-display-line-numbers-mode t) (switch-to-buffer \"stuff.org\"))'" C-m
+fi

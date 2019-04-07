@@ -264,7 +264,7 @@ respectively."
  ("C-c TAB" . rust-format-buffer))
 
 ;;; Open a few often used files
-(find-file "~/stuff.org")
+(find-file "~/Documents/stuff.org")
 (find-file "~/dotfiles/xmonad/.xmonad/xmonad.hs")
 (find-file "~/dotfiles/emacs/.emacs.d/init.el")
 (find-file "~/dotfiles/README.org")
