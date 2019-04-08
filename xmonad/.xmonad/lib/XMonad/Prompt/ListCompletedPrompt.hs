@@ -1,11 +1,11 @@
-module XMonad.Prompt.ListCompletedPrompt
-  (ListCompletedPrompt, listCompletedPrompt
+module XMonad.Prompt.ListCompletedPrompt (
+  ListCompletedPrompt, listCompletedPrompt
   ) where
 
 -- Imports
-import XMonad.Core(X)
+import XMonad.Core (X)
 
-import XMonad.Prompt(XPrompt(..), XPConfig, mkXPrompt, mkComplFunFromList)
+import XMonad.Prompt (XPrompt(showXPrompt), XPConfig, mkXPrompt, mkComplFunFromList)
 
 -- ListCompletedPrompt
 data ListCompletedPrompt = ListCompletedPrompt String

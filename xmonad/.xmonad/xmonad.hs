@@ -1,10 +1,12 @@
 -- Imports: Base
+import Control.Applicative (pure)
 import Control.Monad (liftM)
 import Data.Default (def)
-import qualified Data.Map as M
-import Data.Monoid (appEndo, Endo(..))
+import Data.Foldable (foldl')
 import Data.List (intercalate, isInfixOf, isPrefixOf, isSuffixOf)
-import System.IO (Handle, FilePath, BufferMode(LineBuffering), hPutStrLn, hSetBuffering)
+import qualified Data.Map as M
+import Data.Monoid (Endo(..), appEndo)
+import System.IO (BufferMode(LineBuffering), FilePath, Handle, hPutStrLn, hSetBuffering)
 import System.Posix.IO (FdOption(CloseOnExec), setFdOption
                        , createPipe, fdToHandle, closeFd
                        , dupTo, stdInput
@@ -26,7 +28,7 @@ import XMonad.Hooks.DynamicLog (dynamicLogWithPP
                                , xmobarColor
                                , shorten, wrap
                                )
-import XMonad.Hooks.ManageHelpers (composeOne, (-?>)
+import XMonad.Hooks.ManageHelpers ((-?>), composeOne
                                   , isDialog, isFullscreen, transience
                                   , doRectFloat, doHideIgnore, doCenterFloat, doFullFloat
                                   )
@@ -79,11 +81,14 @@ wsMsg = "msg"
 wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
--- Terminal window titles
+-- Terminal config
 termTitle = "Terminal"
 termTitleTmux = "Terminal - Dev"
 termTitleWeb = "Terminal - Web"
 termTitleNotes = "Notes"
+knownTerminalWindowClasses = ["Alacritty", "Xfce4-terminal"]
+isTerminal :: Query Bool
+isTerminal = anyOf (className =?) knownTerminalWindowClasses
 
 -- Miscellaneous config
 myTerminal = "alacritty"
@@ -105,9 +110,8 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 -- Manage hook
 myManageHook = composeOne $
   -- Terminal and xmessage
-  [ (className =? terminal <&&> title =? t) -?> action
-  | terminal <- knownTerminalClasses
-  , (t, action) <- managedTerminalWindows
+  [ (isTerminal <&&> title =? t) -?> action
+  | (t, action) <- managedTerminalWindows
   ] ++
   [ (className =? "Xmessage" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
   , className =? "Xmessage" -?> doRectFloat centerRect
@@ -140,10 +144,8 @@ myManageHook = composeOne $
   , transience
   ]
   where
-    knownTerminalClasses = ["Alacritty", "Xfce4-terminal"]
-    managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
-
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
+    managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
 
 -- Key bindings
 -- %% Modifier is windows (mod4) key
@@ -154,7 +156,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmux a -t dev") -- %! Launch dev terminal
   , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmux a -t web") -- %! Launch elinks terminal
   , ((0, xF86XK_Launch5), -- %! Launch note taking terminal
-      raiseMaybe (spawnTerminal termTitleNotes "tmux a -t notes") (title =? termTitleNotes))
+      raiseMaybe (spawnTerminal termTitleNotes "tmux a -t notes") notesWindowQuery)
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
   , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps unsafeSpawn xpc) -- %! Launch app from curated list
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Launch game
@@ -277,6 +279,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     helpCommand :: X ()
     helpCommand = unsafeSpawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
       "xmessage -buttons '' -title \"xmonad key binds\" -file -"
+
+    notesWindowQuery = isTerminal <&&> title =? termTitleNotes
 
     -- Prompt
     xpc = def
@@ -418,6 +422,9 @@ q =..? x = fmap (x `isSuffixOf`) q
 
 notQuery :: Query Bool -> Query Bool
 notQuery q = fmap not q
+
+anyOf :: (a -> Query Bool) -> [a] -> Query Bool
+anyOf q rs = foldl' (<||>) (pure False) $ q <$> rs
 
 rectFloat :: Ord a => W.RationalRect -> a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
 rectFloat r = \w -> W.float w r
