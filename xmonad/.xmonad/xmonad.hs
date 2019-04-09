@@ -58,7 +58,7 @@ import qualified XMonad.Actions.MPD as MPD
 import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run (runInTerm, unsafeSpawn, safeSpawn)
+import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, safeSpawnProg)
 import XMonad.Util.Paste (pasteSelection)
 
 -- Imports: Custom
@@ -246,9 +246,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Quit xmonad, Power control
   , ((myShiftMask, xK_q), liftIO (exitWith ExitSuccess)) -- %! Quit xmonad
   , ((myModMask, xK_q), unsafeSpawn "if type xmonad; then xmonad --recompile && (pkill xmobar; xmonad --restart); else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
-  , ((myShiftControlMask, xK_q), unsafeSpawn "systemctl poweroff") -- %! Shut off system
-  , ((myModMask, xK_z), unsafeSpawn "xscreensaver-command --lock") -- %! Lock screen
-  , ((myControlMask, xK_z), unsafeSpawn "togglexss.sh") -- %! Toggle automatic lock
+  , ((myShiftControlMask, xK_q), safeSpawn "systemctl" ["poweroff"]) -- %! Shut off system
+  , ((myModMask, xK_z), safeSpawn "xscreensaver-command" ["--lock"]) -- %! Lock screen
+  , ((myControlMask, xK_z), safeSpawnProg "togglexss.sh") -- %! Toggle automatic lock
 
   -- %% ! Notification control
   -- mod-ctrl-n %! Close notification
@@ -256,7 +256,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-shift-h %! Show previous notification(s)
 
   -- %% ! Miscellaneous
-  , ((myControlMask, xK_space), unsafeSpawn "cyclexlayout.sh") -- %! Cycle keyboard layouts
+  , ((myControlMask, xK_space), safeSpawnProg "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
   , ((myControlMask, xK_h), helpCommand) -- %! XMessage window with key binds
 
@@ -266,8 +266,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), withFocused $ \w -> unsafeSpawn $ makeScreenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
   , ((0, xK_Print), unsafeSpawn $ makeScreenshotCommand "" "") -- %! Make screenshot of whole desktop
 
-  , ((myControlMask, xK_g), resetPrefix >> refresh)
-  ] ++ -- %! Reset prefix
+  , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
+  ] ++
   -- mod-control-[0..9] %! Extend prefix
   [((myControlMask, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
   where
@@ -294,9 +294,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
     spawnTerminal title cmd = runInTerm ("-t \"" ++ title ++ "\"") cmd
     makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
-    sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (spawnSysctl cmd) xpc
-    spawnSysctl cmd unit = spawn $ "sysdctl.sh " ++ cmd ++ " " ++ unit
     spawnSteam = ("steam steam://run/" ++)
+    sysctlAction cmd unit = runProcessWithInput "systemctl" ["--user", cmd, unit] ""
+    sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits ((notifyOf name) . sysctlAction cmd) xpc
 
     promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
     promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
