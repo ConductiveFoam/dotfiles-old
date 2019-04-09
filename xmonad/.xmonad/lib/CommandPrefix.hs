@@ -2,39 +2,39 @@
   DeriveDataTypeable
   #-}
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
-module CommandPrefix(
+module CommandPrefix (
   CommandPrefix(..),
   resetPrefix, modifyPrefix,
   prefixToString,
   prefixedAction, withPrefix,
-  logPrefix) where
+  logPrefix
+  ) where
 
 -- Imports
-import Control.Monad
+import Control.Monad (replicateM_)
 
-import MyColors
-
-import XMonad
-import XMonad.Config.Prime(ExtensionClass,StateExtension(..))
-import XMonad.Hooks.DynamicLog
-import XMonad.Util.Loggers
-import qualified XMonad.Util.ExtensibleState as XS
-
+import XMonad (refresh)
+import XMonad.Config.Prime
+  ( ExtensionClass(initialValue), StateExtension
+  , Typeable
+  )
+import XMonad.Hooks.DynamicLog (xmobarColor)
+import XMonad.Util.Loggers (Logger)
+import XMonad.Util.ExtensibleState (gets, modify, put)
 
 -- CommandPrefix
 newtype CommandPrefix = CommandPrefix { commandPrefix :: Int } deriving (Typeable, Read, Show)
 instance ExtensionClass CommandPrefix where
   initialValue = CommandPrefix 0
-  extensionType = StateExtension
 
-resetPrefix = XS.put $ CommandPrefix 0
-modifyPrefix n = XS.modify $ CommandPrefix . (\c -> c * 10 + n) . commandPrefix
+resetPrefix = put (initialValue :: CommandPrefix)
+modifyPrefix n = modify $ CommandPrefix . (\c -> c * 10 + n) . commandPrefix
 prefixToString :: Int -> String
 prefixToString 0 = ""
 prefixToString n = show n
 
 prefixedAction a = do
-  prefix <- XS.gets commandPrefix
+  prefix <- gets commandPrefix
   if prefix == 0 then
     a
     else
@@ -43,12 +43,12 @@ prefixedAction a = do
   refresh
 
 withPrefix f = do
-  prefix <- XS.gets commandPrefix
-  f  prefix
+  prefix <- gets commandPrefix
+  f prefix
   resetPrefix
   refresh
 
-logPrefix :: Logger
-logPrefix = do
-  prefix <- XS.gets commandPrefix
-  return . Just $ xmobarColor colDYellow "" $ prefixToString prefix
+logPrefix :: String -> Logger
+logPrefix col = do
+  prefix <- gets commandPrefix
+  return . Just $ xmobarColor col "" $ prefixToString prefix

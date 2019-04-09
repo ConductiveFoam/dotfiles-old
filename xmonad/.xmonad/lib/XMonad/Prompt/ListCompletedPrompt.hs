@@ -1,5 +1,5 @@
-module XMonad.Prompt.ListCompletedPrompt (
-  ListCompletedPrompt, listCompletedPrompt
+module XMonad.Prompt.ListCompletedPrompt
+  ( ListCompletedPrompt, listCompletedPrompt
   ) where
 
 -- Imports

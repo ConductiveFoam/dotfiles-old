@@ -1,5 +1,5 @@
-module XMonad.Prompt.AssociationPrompt (
-  AssociationPrompt(..), associationPrompt
+module XMonad.Prompt.AssociationPrompt
+  ( AssociationPrompt(..), associationPrompt
   ) where
 
 -- Imports

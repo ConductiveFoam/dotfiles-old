@@ -343,7 +343,7 @@ main = do
       , ppTitle = xmobarColor colDMagenta "" . shorten titleLength
 
       , ppSep = " | "
-      , ppExtras = [logPrefix]
+      , ppExtras = [logPrefix colDYellow]
       , ppOrder = \(ws:_:t:ex) -> ex ++ [ws,t]
       , ppOutput = hPutStrLn xmproc
       }
