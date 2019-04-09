@@ -51,12 +51,13 @@ $ mkdir -p ~/.xprofile.d
 
 ** XMonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib/XMonad/Prompt ~/.xmonad/lib/XMobar/ ~/screenshots
+$ mkdir -p ~/.xmonad/lib/XMonad/{Prompt,Actions} ~/.xmonad/lib/XMobar/ ~/screenshots
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar installation assumes no compilation flags and relies on scripts instead
 - Enable --user dunst.service
 - Dependencies: ~xmonad-contrib~, ~xmonad-extras~, ~xmobar~, ~stalonetray~, ~nitrogen~
+  - Other Haskell libs: ~fdo-notify~
   - Commands used in XMonad: ~alacritty~, ~maim~
   - XMobar: ~ddate~, ~amixer~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
   - Integration: ~dunst~, ~notify-send~, ~xmessage~

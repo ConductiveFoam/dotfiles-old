@@ -48,7 +48,7 @@ withPrefix f = do
   resetPrefix
   refresh
 
-logPrefix :: String -> Logger
-logPrefix col = do
+logPrefix :: (Int -> String) -> Logger
+logPrefix fmt = do
   prefix <- gets commandPrefix
-  return . Just $ xmobarColor col "" $ prefixToString prefix
+  return . Just $ fmt prefix

@@ -1,6 +1,5 @@
 -- Imports: Base
 import Control.Applicative (pure)
-import Control.Monad (liftM)
 import Data.Default (def)
 import Data.Foldable (foldl')
 import Data.List (intercalate, isInfixOf, isPrefixOf, isSuffixOf)
@@ -15,7 +14,6 @@ import System.Posix.Process (executeFile)
 import System.Exit (exitWith, ExitCode(ExitSuccess))
 
 -- Imports: Other
-import qualified Network.MPD as MPD
 import Codec.Binary.UTF8.String (encodeString)
 
 -- Imports: XMonad base
@@ -40,10 +38,8 @@ import XMonad.Layout.Mosaic (mosaic)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)
 
--- Imports: XMobar
+-- Imports: Auxiliaries
 import qualified XMobar.Config as XMobar
-
--- Imports: Prompt
 import qualified XMonad.Prompt as XPrompt
 import XMonad.Prompt.MPD (loadPlaylist)
 import XMonad.Prompt.Shell (shellPrompt)
@@ -58,6 +54,7 @@ import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseV
                                     )
 
 -- Imports: Actions
+import qualified XMonad.Actions.MPD as MPD
 import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
@@ -70,7 +67,9 @@ import MyColors (colBackground, colForeground
                 , colDMagenta, colDRed
                 , colDYellow
                 )
-import CommandPrefix (modifyPrefix, resetPrefix, withPrefix, logPrefix)
+import CommandPrefix (logPrefix, modifyPrefix, prefixToString, resetPrefix, withPrefix)
+
+import qualified DBus.Notify as Notify
 
 -- Workspaces
 wsMain = "main"
@@ -213,27 +212,27 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! MPD & Audio control
   , ((myShiftMask, xK_m), loadPlaylist MPD.withMPD xpc) -- %! Load playlist
   , ((myControlMask, xK_m), submap . M.fromList $ -- %! Audio Submap:
-    [ ((0, xK_p), withPrefix $ (\p -> liftMPD_ $ MPD.play (Just p))) -- %! MPC play $prefix
-    , ((0, xK_n), liftMPD_ $ MPD.pause True) -- %! MPC pause
-    , ((shiftMask, xK_t), liftMPD_ $ MPD.stop) -- %! MPC stop
-    , ((0, xK_t), toggle) -- %! MPC toggle
-    , ((0, xK_f), liftMPD_ $ MPD.next) -- %! MPC next
-    , ((0, xK_b), liftMPD_ $ MPD.previous) -- %! MPC previous
+    [ ((0, xK_p), withPrefix MPD.play) -- %! MPC play $prefix
+    , ((0, xK_n), MPD.pause True) -- %! MPC pause
+    , ((shiftMask, xK_t), MPD.stop) -- %! MPC stop
+    , ((0, xK_t), MPD.toggle) -- %! MPC toggle
+    , ((0, xK_f), MPD.next) -- %! MPC next
+    , ((0, xK_b), MPD.previous) -- %! MPC previous
 
-    , ((0, xK_l), unsafeSpawn $ "notify-send \"$(mpc playlist | awk '{ print (NR - 1) \": \" $0 }')\"") -- %! Notify of current playlist
+    , ((0, xK_l), notifyOf "MPD - Playlist" MPD.showPlaylists) -- %! Notify of current playlist
 
-    , ((0, xK_s), invert MPD.stRandom MPD.random) -- %! MPC random
-    , ((0, xK_r), invert MPD.stRepeat MPD.repeat) -- %! MPC repeat
-    , ((0, xK_c), invert MPD.stConsume MPD.consume) -- %! MPC consume
-    , ((0, xK_o), invert MPD.stSingle MPD.single) -- %! MPC single
+    , ((0, xK_s), MPD.invert MPD.Random) -- %! MPC random
+    , ((0, xK_r), MPD.invert MPD.Repeat) -- %! MPC repeat
+    , ((0, xK_c), MPD.invert MPD.Consume) -- %! MPC consume
+    , ((0, xK_o), MPD.invert MPD.Single) -- %! MPC single
 
-    , ((0, xK_Delete), withPrefix (\p -> liftMPD_ $ MPD.delete p)) -- %! MPC del $prefix
-    , ((controlMask, xK_Delete), liftMPD_ $ MPD.clear) -- %! MPC clear
+    , ((0, xK_Delete), withPrefix MPD.delete) -- %! MPC del $prefix
+    , ((controlMask, xK_Delete), MPD.clear) -- %! MPC clear
     ])
   , ((0, xF86XK_AudioRaiseVolume), unsafeSpawn "amixer set Master 2%+") -- %! Increase volume
   , ((0, xF86XK_AudioLowerVolume), unsafeSpawn "amixer set Master 2%-") -- %! Decrease volume
   , ((0, xF86XK_AudioMute), unsafeSpawn "amixer set Master toggle") -- %! Toggle mute
-  , ((0, xF86XK_AudioPlay), toggle) -- %! MPC toggle
+  , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
 
   -- %% ! Systemctl integration
   , ((myControlMask, xK_s), submap . M.fromList $ -- %! Systemctl submap:
@@ -245,7 +244,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     ])
 
   -- %% ! Quit xmonad, Power control
-  , ((myShiftMask, xK_q), io (exitWith ExitSuccess)) -- %! Quit xmonad
+  , ((myShiftMask, xK_q), liftIO (exitWith ExitSuccess)) -- %! Quit xmonad
   , ((myModMask, xK_q), unsafeSpawn "if type xmonad; then xmonad --recompile && (pkill xmobar; xmonad --restart); else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
   , ((myShiftControlMask, xK_q), unsafeSpawn "systemctl poweroff") -- %! Shut off system
   , ((myModMask, xK_z), unsafeSpawn "xscreensaver-command --lock") -- %! Lock screen
@@ -313,19 +312,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       , ("Rex Rocket", spawnSteam "288020")
       , ("Dustforce", spawnSteam "65300")]
 
-    -- MPD
-    liftMPD = liftIO . MPD.withMPD
-    liftMPD_ = liftM (const ()) . liftMPD
-
-    invert g s = liftMPD_ $ do
-      status <- MPD.status
-      s $ not (g status)
-    toggle = liftMPD_ $ do
-      MPD.Status { MPD.stState = s } <- MPD.status
-      case s of
-        MPD.Playing -> MPD.pause True
-        _ -> MPD.play Nothing
-
 -- Main config
 main = do
   safeSpawnOnce "stalonetray" ["-bg", wrap "'" "'" colBackground]
@@ -343,7 +329,7 @@ main = do
       , ppTitle = xmobarColor colDMagenta "" . shorten titleLength
 
       , ppSep = " | "
-      , ppExtras = [logPrefix colDYellow]
+      , ppExtras = [logPrefix $ (xmobarColor colDYellow "") . prefixToString]
       , ppOrder = \(ws:_:t:ex) -> ex ++ [ws,t]
       , ppOutput = hPutStrLn xmproc
       }
@@ -427,7 +413,7 @@ anyOf :: (a -> Query Bool) -> [a] -> Query Bool
 anyOf q rs = foldl' (<||>) (pure False) $ q <$> rs
 
 rectFloat :: Ord a => W.RationalRect -> a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
-rectFloat r = \w -> W.float w r
+rectFloat = flip W.float
 
 maximizeRect = W.RationalRect 0 0 1 1
 centerRect = W.RationalRect 0.13 0.1 0.74 0.8
@@ -442,7 +428,7 @@ remanage w = do
   windows g
 
 safeSpawnPipe :: MonadIO m => FilePath -> [String] -> m Handle
-safeSpawnPipe prog args = io $ do
+safeSpawnPipe prog args = liftIO $ do
   (rd, wr) <- createPipe
   setFdOption wr CloseOnExec True
   h <- fdToHandle wr
@@ -452,3 +438,16 @@ safeSpawnPipe prog args = io $ do
     executeFile (encodeString prog) True (map encodeString args) Nothing
   closeFd rd
   return h
+
+notify :: MonadIO m => String -> String -> m ()
+notify s b = notifyOf s (return b)
+
+notifyOf :: MonadIO m => String -> IO String -> m ()
+notifyOf s a = liftIO $ do
+  b <- a
+  client <- Notify.connectSession
+  let note = Notify.blankNote { Notify.summary = s
+                              , Notify.body = (Just $ Notify.Text b)
+                              }
+  notification <- Notify.notify client note
+  return ()
