@@ -1,10 +1,12 @@
 -- Imports: Base
+import Codec.Binary.UTF8.String (encodeString)
 import Control.Applicative (pure)
 import Data.Default (def)
 import Data.Foldable (foldl')
 import Data.List (intercalate, isInfixOf, isPrefixOf, isSuffixOf)
 import qualified Data.Map as M
 import Data.Monoid (Endo(..), appEndo)
+import qualified DBus.Notify as Notify
 import System.IO (BufferMode(LineBuffering), FilePath, Handle, hPutStrLn, hSetBuffering)
 import System.Posix.IO (FdOption(CloseOnExec), setFdOption
                        , createPipe, fdToHandle, closeFd
@@ -12,13 +14,10 @@ import System.Posix.IO (FdOption(CloseOnExec), setFdOption
                        )
 import System.Posix.Process (executeFile)
 import System.Exit (exitWith, ExitCode(ExitSuccess))
-
--- Imports: Other
-import Codec.Binary.UTF8.String (encodeString)
-
--- Imports: XMonad base
 import XMonad
 import XMonad.Config.Desktop (desktopConfig, desktopLayoutModifiers)
+
+-- Imports: Hooks
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP
                                , ppCurrent, ppExtras, ppOrder, ppOutput
@@ -38,20 +37,21 @@ import XMonad.Layout.Mosaic (mosaic)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)
 
--- Imports: Auxiliaries
-import qualified XMobar.Config as XMobar
-import qualified XMonad.Prompt as XPrompt
-import XMonad.Prompt.MPD (loadPlaylist)
-import XMonad.Prompt.Shell (shellPrompt)
-import XMonad.Prompt.AssociationPrompt (associationPrompt)
-import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
-
 -- Imports: Hotkey config
 import XMonad.Actions.Submap (submap)
 import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
                                     , xF86XK_AudioMute, xF86XK_AudioPlay
                                     , xF86XK_Launch5
                                     )
+
+-- Imports: Auxiliaries
+import qualified XMobar.Config as XMobar
+import qualified XMonad.Prompt as XPrompt
+import XMonad.Prompt.AssociationPrompt (associationPrompt)
+import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
+import XMonad.Prompt.MPD (loadPlaylist)
+import XMonad.Prompt.Shell (shellPrompt)
+import XMonad.Prompt.Window (WindowPrompt(Goto, Bring), allWindows, windowPrompt)
 
 -- Imports: Actions
 import qualified XMonad.Actions.MPD as MPD
@@ -62,14 +62,12 @@ import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, 
 import XMonad.Util.Paste (pasteSelection)
 
 -- Imports: Custom
+import CommandPrefix (logPrefix, modifyPrefix, prefixToString, resetPrefix, withPrefix)
 import MyColors (colBackground, colForeground
                 , colDBlue, colDGreen
                 , colDMagenta, colDRed
                 , colDYellow
                 )
-import CommandPrefix (logPrefix, modifyPrefix, prefixToString, resetPrefix, withPrefix)
-
-import qualified DBus.Notify as Notify
 
 -- Workspaces
 wsMain = "main"
@@ -157,7 +155,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_Launch5), -- %! Launch note taking terminal
       raiseMaybe (spawnTerminal termTitleNotes "tmux a -t notes") notesWindowQuery)
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
-  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps unsafeSpawn xpc) -- %! Launch app from curated list
+  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! Launch app from curated list
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Launch game
   , ((myShiftMask, xK_c), kill) -- %! Close the focused window
 
@@ -172,6 +170,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_j), windows W.focusDown) -- %! Move focus to the next window
   , ((myModMask, xK_k), windows W.focusUp) -- %! Move focus to the previous window
   , ((myModMask, xK_m), windows W.focusMaster) -- %! Move focus to the master window
+  , ((myModMask, xK_g), windowPrompt xpc Goto allWindows) -- %! Prompt for window and move focus there
+  , ((myModMask, xK_b), windowPrompt xpc Bring allWindows) -- %! Prompt for window and bring it
 
   -- %% ! Actions on current window
   , ((myModMask, xK_t), withFocused $ windows . W.sink) -- %! Push window back into tiling
@@ -229,15 +229,14 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_Delete), withPrefix MPD.delete) -- %! MPC del $prefix
     , ((controlMask, xK_Delete), MPD.clear) -- %! MPC clear
     ])
-  , ((0, xF86XK_AudioRaiseVolume), unsafeSpawn "amixer set Master 2%+") -- %! Increase volume
-  , ((0, xF86XK_AudioLowerVolume), unsafeSpawn "amixer set Master 2%-") -- %! Decrease volume
-  , ((0, xF86XK_AudioMute), unsafeSpawn "amixer set Master toggle") -- %! Toggle mute
+  , ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" ["set", "Master", "2%+"]) -- %! Increase volume
+  , ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" ["set", "Master", "2%-"]) -- %! Decrease volume
+  , ((0, xF86XK_AudioMute), safeSpawn "amixer" ["set", "Master", "toggle"]) -- %! Toggle mute
   , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
 
   -- %% ! Systemctl integration
   , ((myControlMask, xK_s), submap . M.fromList $ -- %! Systemctl submap:
     [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! Show unit status
-    , ((0, xK_t), sysctlPrompt "Toggle Unit: " "toggle" xpc) -- %! Toggle unit
     , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! Start unit
     , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! Stop unit
     , ((0, xK_r), sysctlPrompt "Restart Unit: " "restart" xpc) -- %! Restart unit
@@ -296,7 +295,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
     spawnSteam = ("steam steam://run/" ++)
     sysctlAction cmd unit = runProcessWithInput "systemctl" ["--user", cmd, unit] ""
-    sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits ((notifyOf name) . sysctlAction cmd) xpc
+    sysctlPrompt name "status" xpc = listCompletedPrompt name promptSysUnits ((notifyOf name) . sysctlAction "status") xpc
+    sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (\u -> sysctlAction cmd u >> notify name u) xpc
 
     promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
     promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
