@@ -25,6 +25,7 @@ import XMonad.Hooks.DynamicLog (dynamicLogWithPP
                                , xmobarColor
                                , shorten, wrap
                                )
+import XMonad.Hooks.ManageDocks (avoidStruts, docks)
 import XMonad.Hooks.ManageHelpers ((-?>), composeOne
                                   , isDialog, isFullscreen, transience
                                   , doRectFloat, doHideIgnore, doCenterFloat, doFullFloat
@@ -319,9 +320,9 @@ main = do
   mapM_ (\ (cmd, ps) -> safeSpawn cmd ps) startupApplications
 
   xmproc <- safeSpawnPipe "xmobar" (XMobar.asList primaryBar)
-  xmonad $ ewmh $ desktopConfig
+  xmonad $ ewmh $ docks $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
-    , layoutHook = desktopLayoutModifiers $ myLayout
+    , layoutHook = avoidStruts $ desktopLayoutModifiers myLayout
     , logHook = dynamicLogWithPP def
       { ppCurrent = xmobarColor colDBlue "" . wrap "[" "]"
       , ppVisible = wrap "(" ")"
