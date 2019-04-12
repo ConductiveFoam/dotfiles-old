@@ -4,11 +4,11 @@ tmux setenv -g DISPLAY "$DISPLAY"
 # Make DISPLAY available in select panes
 #  Process: Copy currently typed command from shell, then insert the DISPLAY export, an invocation of
 #  clear and the command back into the shell and execute
-for pane in dev:1.0 dev:1.1 dev:4.0 dev:4.1; do
+for pane in dev:1.0 dev:1.1 dev:4.0 dev:4.1 notes:1.0; do
   tmux copy-mode -t "$pane"
-  tmux send -t "$pane" -X start-of-line
+  tmux send -t "$pane" -X top-line
   tmux send -t "$pane" -X begin-selection
-  tmux send -t "$pane" -X end-of-line
+  tmux send -t "$pane" -X bottom-line
   tmux send -t "$pane" -X copy-selection-and-cancel
-  tmux send -t "$pane" 'C-a' 'C-k' " export DISPLAY='$DISPLAY'; clear; $(tmux showb | cut -d$ -f2)" C-m
+  tmux send -t "$pane" 'C-a' 'C-k' " export DISPLAY='$DISPLAY'; clear; $(tmux showb | awk -F'$' 'BEGIN { out = "" }; /\$/ { $1 = "" }; { out = out $0 }; END { print out }')" C-m
 done
