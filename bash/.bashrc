@@ -15,9 +15,9 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+alias cd.='cd ~/dotfiles'
 alias cd..='cd ..'
 alias cd...='cd ../..'
-alias cd~.='cd ~/dotfiles'
 alias rmi='rm -i'
 
 alias clr='clear'
