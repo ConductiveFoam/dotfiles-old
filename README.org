@@ -71,25 +71,3 @@ $ mkdir -p ~/.config/mpd/playlists
 
 ** terminals
 - Configuration of terminal emulators, currently ~xfce4-terminal~ and ~alacritty~
-
-* Stuff to do
-** Bash
-
-** tmux
-*** Make startup more robust: may insert windows into wrong sessions
-
-** X config
-*** Move to DM
-
-** XMonad
-*** More prefix-aware actions
-*** Ideas
-**** Feedback which submap is active
-**** GPU load in bar
-**** processor frequencies in bar
-
-** General
-*** System status overview
-
-** Merge configs
-*** LXQt (& SDDM)
