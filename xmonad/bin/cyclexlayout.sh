@@ -13,4 +13,4 @@ case $layout in
 	;;
 esac
 
-setxkbmap -layout "$layout" -option ctrl:nocaps -option compose:ralt
+setkeyboard.sh "$layout"
