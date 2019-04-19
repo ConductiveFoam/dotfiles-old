@@ -300,7 +300,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (\u -> sysctlAction cmd u >> notify name u) xpc
 
     promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
-    promptApps = ["firefox", "steam", "alacritty", "telegram-desktop", "teamspeak3", "vlc", "pavucontrol-qt", "libreoffice"]
+    promptApps = ["alacritty", "firefox", "gimp", "inkscape", "libreoffice", "pavucontrol-qt", "steam", "telegram-desktop", "teamspeak3", "vlc"]
     promptGames = M.fromList $
       [ ("Left 4 Dead 2", "left4gore -2")
       , ("Stellaris", spawnSteam "281990")
