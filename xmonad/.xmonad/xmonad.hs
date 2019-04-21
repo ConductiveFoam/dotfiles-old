@@ -107,12 +107,12 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 
 -- Manage hook
 myManageHook = composeOne $
-  -- Terminal and xmessage
+  -- Terminal and notification windows
   [ (isTerminal <&&> title =? t) -?> action
   | (t, action) <- managedTerminalWindows
   ] ++
-  [ (className =? "Xmessage" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.3 0 0.4 1)
-  , className =? "Xmessage" -?> doRectFloat centerRect
+  [ (className =? "Zenity" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.15 0.03 0.7 0.94)
+  , className =? "Zenity" -?> doRectFloat centerRect
 
   -- Gaming related
   , (className =? "Steam" <&&> title =? "Steam" ) -?> doShift wsGame
@@ -128,22 +128,21 @@ myManageHook = composeOne $
   ] ++
 
   -- Firefox windows
-  [(className =? "Firefox" <&&> title .=.? t) -?> doShift ws | (ts, ws) <- managedFirefoxWindows, t <- ts] ++
+  [(className =? "Firefox" <&&> anyOf (title .=.?) ts) -?> doShift ws | (ts, ws) <- managedFirefoxWindows] ++
   [(className =? "Firefox" <&&> (notQuery isDialog)) -?> doShift wsMain
 
   -- Miscellaneous
   , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
-  , className =? "Matplotlib" -?> doCenterFloat
-  , className =? "feh" -?> doCenterFloat
 
-  , isDialog -?> doCenterFloat
+  , (isDialog <||> anyOf (className =?) managedDialogWindows) -?> doCenterFloat
   , isFullscreen -?> doFullFloat
   , transience
   ]
   where
     managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
     managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
+    managedDialogWindows = ["Matplotlib", "feh"]
 
 -- Key bindings
 -- %% Modifier is windows (mod4) key
@@ -212,6 +211,11 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! MPD & Audio control
   , ((myShiftMask, xK_m), loadPlaylist MPD.withMPD xpc) -- %! Load playlist
+  , ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" ["set", "Master", "2%+"]) -- %! Increase volume
+  , ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" ["set", "Master", "2%-"]) -- %! Decrease volume
+  , ((0, xF86XK_AudioMute), safeSpawn "amixer" ["set", "Master", "toggle"]) -- %! Toggle mute
+  , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
+
   , ((myControlMask, xK_m), submap . M.fromList $ -- %! Audio Submap:
     [ ((0, xK_p), withPrefix MPD.play) -- %! MPC play $prefix
     , ((0, xK_n), MPD.pause True) -- %! MPC pause
@@ -230,10 +234,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_Delete), withPrefix MPD.delete) -- %! MPC del $prefix
     , ((controlMask, xK_Delete), MPD.clear) -- %! MPC clear
     ])
-  , ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" ["set", "Master", "2%+"]) -- %! Increase volume
-  , ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" ["set", "Master", "2%-"]) -- %! Decrease volume
-  , ((0, xF86XK_AudioMute), safeSpawn "amixer" ["set", "Master", "toggle"]) -- %! Toggle mute
-  , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
 
   -- %% ! Systemctl integration
   , ((myControlMask, xK_s), submap . M.fromList $ -- %! Systemctl submap:
@@ -245,7 +245,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
   -- %% ! Quit xmonad, Power control
   , ((myShiftMask, xK_q), liftIO (exitWith ExitSuccess)) -- %! Quit xmonad
-  , ((myModMask, xK_q), unsafeSpawn "if type xmonad; then xmonad --recompile && (pkill xmobar; xmonad --restart); else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad
+  , ((myModMask, xK_q), safeSpawnProg "restart_xmonad.sh") -- %! Restart xmonad
   , ((myShiftControlMask, xK_q), safeSpawn "systemctl" ["poweroff"]) -- %! Shut off system
   , ((myModMask, xK_z), safeSpawn "xscreensaver-command" ["--lock"]) -- %! Lock screen
   , ((myControlMask, xK_z), safeSpawnProg "togglexss.sh") -- %! Toggle automatic lock
@@ -255,16 +255,18 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-ctrl-shift-n %! Close all notifications
   -- mod-shift-h %! Show previous notification(s)
 
+  , ((myModMask, xK_semicolon), safeSpawn "alacritty" ["-t", "foo", "-e", "less", "$(", "awk", "-f", "/home/sam/.xmonad/genhelp.awk", "/home/sam/.xmonad/xmonad.hs", ")"])
+
   -- %% ! Miscellaneous
   , ((myControlMask, xK_space), safeSpawnProg "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
-  , ((myControlMask, xK_h), helpCommand) -- %! XMessage window with key binds
+  , ((myControlMask, xK_h), unsafeSpawn helpCommand) -- %! Key bind info window
 
   , ((0, xK_Insert), pasteSelection) -- %! Paste selection
 
-  , ((controlMask, xK_Print), unsafeSpawn $ "sleep 0.2; " ++ (makeScreenshotCommand "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
-  , ((shiftMask, xK_Print), withFocused $ \w -> unsafeSpawn $ makeScreenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
-  , ((0, xK_Print), unsafeSpawn $ makeScreenshotCommand "" "") -- %! Make screenshot of whole desktop
+  , ((controlMask, xK_Print), unsafeSpawn $ "sleep 0.2; " ++ (screenshotCommand "-s -c 0.42,0.44,0.77 -b 2" "-selection")) -- %! Select window or rectangle, make screenshot of it
+  , ((shiftMask, xK_Print), withFocused $ \w -> unsafeSpawn $ screenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
+  , ((0, xK_Print), unsafeSpawn $ screenshotCommand "" "") -- %! Make screenshot of whole desktop
 
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
   ] ++
@@ -274,10 +276,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     myShiftMask = myModMask .|. shiftMask
     myControlMask = myModMask .|. controlMask
     myShiftControlMask = myModMask .|. shiftMask .|. controlMask
-
-    helpCommand :: X ()
-    helpCommand = unsafeSpawn $ "awk -f $HOME/.xmonad/genhelp.awk $HOME/.xmonad/xmonad.hs | " ++
-      "xmessage -buttons '' -title \"xmonad key binds\" -file -"
 
     notesWindowQuery = isTerminal <&&> title =? termTitleNotes
 
@@ -292,9 +290,12 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       , XPrompt.position = XPrompt.Top
       }
 
+    screenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
+    helpCommand = "zenity --info --no-wrap --title=\"xmonad key binds\"" ++
+      " --text=\"$(awk -f ~/.xmonad/genhelp.awk ~/.xmonad/xmonad.hs | sed 's/&/&amp;/')\""
+    steamCommand = ("steam steam://run/" ++)
+
     spawnTerminal title cmd = runInTerm ("-t \"" ++ title ++ "\"") cmd
-    makeScreenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
-    spawnSteam = ("steam steam://run/" ++)
     sysctlAction cmd unit = runProcessWithInput "systemctl" ["--user", cmd, unit] ""
     sysctlPrompt name "status" xpc = listCompletedPrompt name promptSysUnits ((notifyOf name) . sysctlAction "status") xpc
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (\u -> sysctlAction cmd u >> notify name u) xpc
@@ -303,15 +304,15 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     promptApps = ["alacritty", "firefox", "gimp", "inkscape", "libreoffice", "pavucontrol-qt", "steam", "telegram-desktop", "teamspeak3", "vlc"]
     promptGames = M.fromList $
       [ ("Left 4 Dead 2", "left4gore -2")
-      , ("Stellaris", spawnSteam "281990")
-      , ("Full Bore", spawnSteam "264060")
-      , ("Zen Bound 2",spawnSteam "61600")
-      , ("Portal", spawnSteam "400")
-      , ("Portal 2", spawnSteam "620")
+      , ("Stellaris", steamCommand "281990")
+      , ("Full Bore", steamCommand "264060")
+      , ("Zen Bound 2",steamCommand "61600")
+      , ("Portal", steamCommand "400")
+      , ("Portal 2", steamCommand "620")
       , ("Hollow Knight", "$HOME/games/Hollow\\ Knight/start.sh")
-      , ("They Bleed Pixels", spawnSteam "211260")
-      , ("Rex Rocket", spawnSteam "288020")
-      , ("Dustforce", spawnSteam "65300")]
+      , ("They Bleed Pixels", steamCommand "211260")
+      , ("Rex Rocket", steamCommand "288020")
+      , ("Dustforce", steamCommand "65300")]
 
 -- Main config
 main = do

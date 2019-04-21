@@ -18,10 +18,14 @@ function bindmodifiers(s) {
     }
 }
 
+function printbind(bind, desc) {
+    printf "%25s  %s\n", bind, desc
+}
+
 #-- %% Are comments without binding
 /^\s*--\s+%%/ {
     $1 = $2 = ""
-    if ($3 == "!") {
+    if ($3 == "!") { #-- %% ! Are section headers
 	print ""
 	$3 = ""
     }
@@ -31,22 +35,23 @@ function bindmodifiers(s) {
 #-- %! Are bindings with their combination in line
 /^.*--\s+%!/ {
     mod = bindmodifiers(substr($2, 3, length($2) - 3))
-    bind = mod substr($3, 4, length($3) - 5)
-    desc = substr($0, index($0, "%! ") + 3)
-
-    print "\t" bind "\t" desc
+    if ($3 ~ /^xK_/) { #
+        bind = mod substr($3, 4, length($3) - 5)
+    } else {
+        bind = mod substr($3, 8, length($3) - 9)
+    }
+    printbind(bind, substr($0, index($0, "%! ") + 3))
 }
 
 #-- [bind] %! Are bindings with their combination elsewhere
 /^.*--\s+[^[:blank:]]+\s+%!/ {
     if ($1 == "--") {
-	$1 = $3 = ""
-	$4 = "\t" ltrim($4)
-	print "\t" ltrim($0)
+	bind = ltrim($2)
+	$1 = $2 = $3 = ""
+	printbind(bind, ltrim($0))
     } else {
 	i = index($0, "-- ") + 3
 	j = index($0, "%! ")
-	bind = substr($0, i, j - i)
-	print "\t" bind "\t" substr($0, j + 3)
+	printbind(substr($0, i, j - i), substr($0, j + 3))
     }
 }

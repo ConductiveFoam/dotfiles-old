@@ -60,7 +60,7 @@ $ mkdir -p ~/.xmonad/lib/XMonad/{Prompt,Actions} ~/.xmonad/lib/XMobar/ ~/screens
   - Other Haskell libs: ~fdo-notify~
   - Commands used in XMonad: ~alacritty~, ~maim~
   - XMobar: ~ddate~, ~amixer~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
-  - Integration: ~dunst~, ~xmessage~
+  - Integration: ~dunst~, ~zenity~
 
 ** MPD
 #+BEGIN_SRC sh
