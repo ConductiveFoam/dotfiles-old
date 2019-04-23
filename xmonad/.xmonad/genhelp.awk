@@ -19,7 +19,7 @@ function bindmodifiers(s) {
 }
 
 function printbind(bind, desc) {
-    printf "%25s  %s\n", bind, desc
+    printf "  %-25s  %s\n", bind, desc
 }
 
 #-- %% Are comments without binding

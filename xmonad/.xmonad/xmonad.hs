@@ -160,7 +160,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myShiftMask, xK_c), kill) -- %! Close the focused window
 
   , ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
-  , ((myShiftMask, xK_space), sendMessage FirstLayout) -- %!  Reset the layouts on the current workspace to default
+  , ((myShiftMask, xK_space), sendMessage FirstLayout) -- %! Reset the layouts on the current workspace to default
 
   , ((myModMask, xK_n), refresh) -- %! Refresh xmonad
 
