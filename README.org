@@ -1,7 +1,13 @@
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
-Pretty much everything in here depends on tmux.
-~mkdir~ invocations for packages indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree)
+Pretty much everything in here depends on ~tmux~.
+~mkdir~ invocations indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree)
+
+Other dependencies:
+- ~tmuxinator~
+#+BEGIN_SRC sh
+$ mkdir -p ~/.config/tmuxinator
+#+END_SRC
 
 * Package specific instructions
 ** Bash
@@ -14,7 +20,6 @@ $ mkdir -p ~/.profile.d
 ** tmux
 - Needs [[https://github.com/tmux-plugins/tpm][TPM]]
 #+BEGIN_SRC sh
-$ mkdir -p ~/.profile.d ~/.xprofile.d
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm ~/.profile.d
 #+END_SRC
 - Autostarts sessions on sourcing of ~$HOME/.bash_profile~
@@ -23,7 +28,7 @@ $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm ~/.profi
 
 ** Emacs
 #+BEGIN_SRC sh
-$ mkdir -p ~/src/emacs ~/.emacs.d/lib ~/.profile.d
+$ mkdir -p ~/src/emacs ~/.emacs.d/lib
 #+END_SRC
 - tmux integration starts server when window is created
 - Expects the emacswiki.org and hrs/sensible-defaults.el repos in ~$HOME/src/emacs/~:
@@ -35,7 +40,7 @@ $ git clone https://github.com/hrs/sensible-defaults.el.git ~/src/emacs/sensible
 
 ** Elinks
 #+BEGIN_SRC sh
-$ mkdir -p ~/.elinks ~/.profile.d
+$ mkdir -p ~/.elinks
 #+END_SRC
 - Key binds and session resume
 - Autostart through tmux
@@ -46,13 +51,13 @@ $ mkdir -p ~/.xprofile.d ~/bin
 #+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~compton~
-- Configured to start XMonad in ~.xinitrc~
+- +Configured to start XMonad in ~.xinitrc~+
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
 - Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~compton~
 
 ** XMonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib/XMonad/{Prompt,Actions} ~/.xmonad/lib/XMobar/ ~/screenshots ~/.xprofile.d ~/.local/share/awk ~/.local/bin ~/bin
+$ mkdir -p ~/.xmonad/lib/XMonad/{Prompt,Actions} ~/.xmonad/lib/XMobar/ ~/screenshots ~/.local/share/awk ~/.local/bin ~/bin
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar installation assumes no compilation flags and relies on scripts instead

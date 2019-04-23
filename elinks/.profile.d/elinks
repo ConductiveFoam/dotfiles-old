@@ -1,7 +1,0 @@
-if [[ -z "$TMUX" ]]; then
-  web="web"
-  tmux has-session -t "$web" 2> /dev/null
-  if [[ $? -ne 0 ]]; then
-    tmux new-session -d -s "$web" -c ~ elinks
-  fi
-fi

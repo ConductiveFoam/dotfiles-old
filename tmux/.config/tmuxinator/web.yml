@@ -1,0 +1,7 @@
+# /home/sam/.config/tmuxinator/web.yml
+
+name: web
+root: ~/
+
+windows:
+  - elinks: elinks

@@ -1,0 +1,7 @@
+# /home/sam/.config/tmuxinator/notes.yml
+
+name: notes
+root: ~/Documents
+
+windows:
+  - emacs: emacsclient -t -e '(progn (global-display-line-numbers-mode t) (switch-to-buffer "stuff.org"))'

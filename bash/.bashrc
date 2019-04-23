@@ -46,7 +46,7 @@ PS1='[\u@\h \W]\$ '
 export EDITOR="emacsclient -nw"
 export VISUAL="emacsclient"
 
-PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:$PATH"
+PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cabal/bin:$HOME/.cargo/bin:$(ruby -e 'puts Gem.user_dir')/bin:$PATH"
 export PATH
 export AWKPATH=".:$HOME/.local/share/awk:/usr/local/share/awk"
 

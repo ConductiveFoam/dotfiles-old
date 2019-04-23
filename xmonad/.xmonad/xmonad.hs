@@ -150,10 +150,10 @@ myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching and Killing programs
   [ ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Launch terminal
-  , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmux a -t dev") -- %! Launch dev terminal
-  , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmux a -t web") -- %! Launch elinks terminal
-  , ((0, xF86XK_Launch5), -- %! Launch note taking terminal
-      raiseMaybe (spawnTerminal termTitleNotes "tmux a -t notes") notesWindowQuery)
+  , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmuxinator start dev") -- %! Launch dev terminal
+  , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmuxinator start web") -- %! Launch elinks terminal
+  , ((0, xF86XK_Launch5), -- none-Hotkey1 %! Launch note taking terminal
+      raiseMaybe (spawnTerminal termTitleNotes "tmuxinator start notes") notesWindowQuery)
   , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
   , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! Launch app from curated list
   , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Launch game
