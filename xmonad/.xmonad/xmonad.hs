@@ -325,9 +325,9 @@ main = do
     { manageHook = myManageHook <+> manageHook desktopConfig
     , layoutHook = avoidStruts $ desktopLayoutModifiers myLayout
     , logHook = dynamicLogWithPP def
-      { ppCurrent = xmobarColor colDBlue "" . wrap "[" "]"
-      , ppVisible = wrap "(" ")"
-      , ppUrgent = xmobarColor colDRed colDYellow
+      { ppCurrent = xmobarColor colDYellow "" . wrap "[" "]"
+      , ppVisible = xmobarColor colDBlue "" . wrap "(" ")"
+      , ppUrgent = xmobarColor colDRed ""
       , ppTitle = xmobarColor colDMagenta "" . shorten titleLength
 
       , ppSep = " | "
@@ -374,23 +374,24 @@ main = do
     primaryBar = myDefaultXMobar
       { XMobar.position = XMobar.Static 1080 0 1844 19
       , XMobar.wmName = "XMobar - Main"
-      , XMobar.commands = [ XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
-                          , XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
+      , XMobar.commands = [ XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
                           , XMobar.Run "Uptime" ["[]", "60"] []
 
                           , XMobar.Run "StdinReader" [] []
                           ]
-      , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%kbd%</fc> | <fc=" ++ colDMagenta ++ ">%xmobar_time.sh% %time%</fc> * %uptime% "
+      , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%xmobar_time.sh% %time%</fc> * %uptime% "
       }
     loadBar = secondaryScreenBar
       { XMobar.position = XMobar.Top
       , XMobar.wmName = "XMobar - Load"
-      , XMobar.commands = [ XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                          , XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
+      , XMobar.commands = [ XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
+                          , XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
+
+                          , XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
                           , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
                           , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
                           ]
-      , XMobar.template = " %dynnetwork% | XSS %xmobar_xssmode.sh% }{ %cpu% * Temp: %xmobar_coretemp.sh% | %memory%%xmobar_gpumem.sh% * %swap% "
+      , XMobar.template = " %dynnetwork% | XSS %xmobar_xssmode.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc> }{ %cpu% * Temp: %xmobar_coretemp.sh% | %memory%%xmobar_gpumem.sh% * %swap% "
       }
     musicBar = secondaryScreenBar
       { XMobar.position = XMobar.Bottom
