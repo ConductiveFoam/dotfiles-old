@@ -8,12 +8,12 @@ startup_pane: 1
 windows:
   - shell:
       panes:
-        - clr; fortune pratchett tao koan
-        - clr; fortune pratchett tao koan
+        - empty
+        - empty
   - emacs: emacsclient -a '' -t -e '(progn (global-display-line-numbers-mode t) (switch-to-buffer "stuff.org") (split-window-below) (switch-to-buffer "*scratch*"))'
   - "~.":
       root: ~/dotfiles
       panes:
-        - tmux movew -s dev:4 -t dev:5 ; tmux movew -s dev:3 -t dev:4 ; clr
-        - clr; git status
-  - man: tmux selectw -t dev:2 ; tmux selectw -t dev:1 ; clr
+        - tmux move-window -s dev:4 -t dev:5 ; tmux move-window -s dev:3 -t dev:4 ; clr
+        - git?
+  - man: (tmux_dev_preselect_window.sh &); clr
