@@ -255,8 +255,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-ctrl-shift-n %! Close all notifications
   -- mod-shift-h %! Show previous notification(s)
 
-  , ((myModMask, xK_semicolon), safeSpawn "alacritty" ["-t", "foo", "-e", "less", "$(", "awk", "-f", "/home/sam/.xmonad/genhelp.awk", "/home/sam/.xmonad/xmonad.hs", ")"])
-
   -- %% ! Miscellaneous
   , ((myControlMask, xK_space), safeSpawnProg "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
