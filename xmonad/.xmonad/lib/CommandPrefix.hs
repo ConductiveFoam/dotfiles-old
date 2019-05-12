@@ -2,12 +2,12 @@
   DeriveDataTypeable
   #-}
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
-module CommandPrefix (
-  CommandPrefix(..),
-  resetPrefix, modifyPrefix,
-  prefixToString,
-  prefixedAction, withPrefix,
-  logPrefix
+module CommandPrefix
+  ( CommandPrefix(..)
+  , resetPrefix, modifyPrefix
+  , prefixToString
+  , prefixedAction, withPrefix
+  , logPrefix
   ) where
 
 -- Imports
