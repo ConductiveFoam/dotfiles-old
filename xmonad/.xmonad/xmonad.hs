@@ -96,7 +96,7 @@ myModMask = mod4Mask
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
            onWorkspace wsGame (noBorders Full) $ onWorkspace wsMsg msg $
-           onWorkspace wsMisc Accordion $ tiled ||| Mirror tiled
+           onWorkspace wsMisc Accordion $ tiled ||| (Mirror col) ||| (Mirror tiled)
   where
     col = Column 1
     read = Mirror $ (Tall 2 delta (1/3)) ||| (mosaic 2 [2, 1])
