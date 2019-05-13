@@ -171,7 +171,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_j), windows W.focusDown) -- %! Move focus to the next window
   , ((myModMask, xK_k), windows W.focusUp) -- %! Move focus to the previous window
   , ((myModMask, xK_m), windows W.focusMaster) -- %! Move focus to the master window
-  , ((myModMask, xK_g), windowPrompt xpc Goto allWindows) -- %! Prompt for window and move focus there
+  , ((myControlMask, xK_b), windowPrompt xpc Goto allWindows) -- %! Prompt for window and move focus there
   , ((myModMask, xK_b), windowPrompt xpc Bring allWindows) -- %! Prompt for window and bring it
 
   -- %% ! Actions on current window
