@@ -18,16 +18,12 @@ newtype ActionState = ActionState { actionState :: Maybe String } deriving (Type
 instance ExtensionClass ActionState where
   initialValue = ActionState Nothing
 
-loggedAction name sub = do
+loggedAction name a = do
   (put . ActionState . Just) name
   refresh
-  sub
+  a
   (put . ActionState) Nothing
   refresh
 
 logAction :: Logger
-logAction = do
-  action <- gets actionState
-  case action of
-    Nothing -> return Nothing
-    j -> return j
+logAction = gets actionState
