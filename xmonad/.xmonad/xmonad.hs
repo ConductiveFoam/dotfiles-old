@@ -64,7 +64,7 @@ import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, 
 import XMonad.Util.Paste (pasteSelection)
 
 -- Imports: Custom
-import CommandPrefix (logPrefix, modifyPrefix, prefixToString, resetPrefix, withPrefix)
+import CommandPrefix (logPrefix, modifyPrefix, prependToPrefix, prefixToString, resetPrefix, withPrefix)
 import MyColors (colBackground, colForeground
                 , colDBlue, colDGreen
                 , colDMagenta, colDRed
@@ -218,7 +218,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
 
   , ((myControlMask, xK_m), loggedAction (colored colDGreen "MPD") $ submap $ M.fromList -- %! Audio Submap:
-    [ ((0, xK_p), withPrefix MPD.play) -- %! MPC play $prefix
+    [ ((0, xK_p), modifyPrefix (\n -> n - 1) >> withPrefix MPD.play) -- %! MPC play $prefix
     , ((0, xK_n), MPD.pause True) -- %! MPC pause
     , ((shiftMask, xK_t), MPD.stop) -- %! MPC stop
     , ((0, xK_t), MPD.toggle) -- %! MPC toggle
@@ -232,7 +232,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((0, xK_c), MPD.invert MPD.Consume) -- %! MPC consume
     , ((0, xK_o), MPD.invert MPD.Single) -- %! MPC single
 
-    , ((0, xK_Delete), withPrefix MPD.delete) -- %! MPC del $prefix
+    , ((0, xK_Delete), modifyPrefix (\n -> n - 1) >> withPrefix MPD.delete) -- %! MPC del $prefix
     , ((controlMask, xK_Delete), MPD.clear) -- %! MPC clear
     ])
 
@@ -270,7 +270,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
   ] ++
   -- mod-control-[0..9] %! Extend prefix
-  [((myControlMask, key), (modifyPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
+  [((myControlMask, key), (prependToPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
   where
     myShiftMask = myModMask .|. shiftMask
     myControlMask = myModMask .|. controlMask

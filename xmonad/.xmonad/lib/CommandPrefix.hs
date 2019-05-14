@@ -4,7 +4,7 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 module CommandPrefix
   ( CommandPrefix(..)
-  , resetPrefix, modifyPrefix
+  , resetPrefix, modifyPrefix, prependToPrefix
   , prefixToString
   , prefixedAction, withPrefix
   , logPrefix
@@ -28,7 +28,9 @@ instance ExtensionClass CommandPrefix where
   initialValue = CommandPrefix 0
 
 resetPrefix = put (initialValue :: CommandPrefix)
-modifyPrefix n = modify $ CommandPrefix . (\c -> c * 10 + n) . commandPrefix
+modifyPrefix f = modify $ CommandPrefix . f . commandPrefix
+prependToPrefix n = modifyPrefix (\c -> c * 10 + n)
+
 prefixToString :: Int -> String
 prefixToString 0 = ""
 prefixToString n = show n
