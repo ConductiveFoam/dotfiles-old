@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $(ddate +'%a %b %d %YYOLD%N (%H)')
+echo $(ddate +'%a %d %b %YYOLD%N (%H)')
