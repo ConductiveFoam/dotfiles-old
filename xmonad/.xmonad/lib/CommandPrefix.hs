@@ -15,28 +15,38 @@ import Control.Monad (replicateM_)
 
 import XMonad (refresh)
 import XMonad.Config.Prime
-  ( ExtensionClass(initialValue), StateExtension
+  ( ExtensionClass(initialValue)
   , Typeable
+  , X
   )
-import XMonad.Hooks.DynamicLog (xmobarColor)
+import qualified XMonad.Util.ExtensibleState as XS
 import XMonad.Util.Loggers (Logger)
-import XMonad.Util.ExtensibleState (gets, modify, put)
+import XMonad.Util.PureX (XLike(toX))
 
 -- CommandPrefix
 newtype CommandPrefix = CommandPrefix { commandPrefix :: Int } deriving (Typeable, Read, Show)
 instance ExtensionClass CommandPrefix where
   initialValue = CommandPrefix 0
 
-resetPrefix = put (initialValue :: CommandPrefix)
-modifyPrefix f = modify $ CommandPrefix . f . commandPrefix
+getPrefix :: XLike m => m Int
+getPrefix = XS.gets commandPrefix
+
+modifyPrefix :: XLike m => (Int -> Int) -> m ()
+modifyPrefix f = XS.modify $ CommandPrefix . f . commandPrefix
+
+prependToPrefix :: XLike m => Int -> m ()
 prependToPrefix n = modifyPrefix (\c -> c * 10 + n)
+
+resetPrefix :: XLike m => m ()
+resetPrefix = XS.put (initialValue :: CommandPrefix)
 
 prefixToString :: Int -> String
 prefixToString 0 = ""
 prefixToString n = show n
 
+prefixedAction :: X a -> X ()
 prefixedAction a = do
-  prefix <- gets commandPrefix
+  prefix <- getPrefix
   if prefix == 0 then
     a
     else
@@ -44,13 +54,15 @@ prefixedAction a = do
   resetPrefix
   refresh
 
+withPrefix :: (Int -> X a) -> X a
 withPrefix f = do
-  prefix <- gets commandPrefix
-  f prefix
+  prefix <- getPrefix
+  a <- f prefix
   resetPrefix
   refresh
+  return a
 
 logPrefix :: (Int -> String) -> Logger
 logPrefix fmt = do
-  prefix <- gets commandPrefix
+  prefix <- getPrefix
   return . Just $ fmt prefix
