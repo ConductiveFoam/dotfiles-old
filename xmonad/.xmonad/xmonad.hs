@@ -444,14 +444,14 @@ safeSpawnPipe prog args = liftIO $ do
 notify :: MonadIO m => String -> String -> m ()
 notify s b = notifyOf s (return b)
 
-notifyOf :: MonadIO m => String -> IO String -> m ()
-notifyOf s a = liftIO $ do
+notifyOf :: MonadIO m => String -> m String -> m ()
+notifyOf s a = do
   b <- a
-  client <- Notify.connectSession
+  client <- liftIO Notify.connectSession
   let note = Notify.blankNote { Notify.summary = s
                               , Notify.body = (Just $ Notify.Text b)
                               }
-  notification <- Notify.notify client note
+  notification <- liftIO $ Notify.notify client note
   return ()
 
 colored :: String -> String -> String
