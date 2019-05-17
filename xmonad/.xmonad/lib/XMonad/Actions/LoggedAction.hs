@@ -3,7 +3,7 @@
   #-}
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 module XMonad.Actions.LoggedAction
-  ( loggedAction
+  ( withLog
   , logAction
   ) where
 import XMonad.Config.Prime
@@ -18,7 +18,7 @@ newtype ActionState = ActionState { actionState :: Maybe String } deriving (Type
 instance ExtensionClass ActionState where
   initialValue = ActionState Nothing
 
-loggedAction name a = do
+withLog name a = do
   (put . ActionState . Just) name
   refresh
   a

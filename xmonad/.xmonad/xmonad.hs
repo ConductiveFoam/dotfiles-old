@@ -40,7 +40,7 @@ import XMonad.Layout.PerWorkspace (onWorkspace)
 
 -- Imports: Hotkey config
 import XMonad.Actions.Submap (submap)
-import XMonad.Actions.LoggedAction (loggedAction, logAction)
+import XMonad.Actions.LoggedAction (withLog, logAction)
 import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
                                     , xF86XK_AudioMute, xF86XK_AudioPlay
                                     , xF86XK_Launch5
@@ -217,7 +217,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_AudioMute), safeSpawn "amixer" ["set", "Master", "toggle"]) -- %! Toggle mute
   , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
 
-  , ((myControlMask, xK_m), loggedAction (colored colDGreen "MPD") $ submap $ M.fromList -- %! Audio Submap:
+  , ((myControlMask, xK_m), withLog (colored colDGreen "MPD") $ submap $ M.fromList -- %! Audio Submap:
     [ ((0, xK_p), modifyPrefix (\n -> n - 1) >> withPrefix MPD.play) -- %! MPC play $prefix
     , ((0, xK_n), MPD.pause True) -- %! MPC pause
     , ((shiftMask, xK_t), MPD.stop) -- %! MPC stop
@@ -237,7 +237,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     ])
 
   -- %% ! Systemctl integration
-  , ((myControlMask, xK_s), loggedAction (colored colDGreen "Unit") $ submap $ M.fromList -- %! Systemctl submap:
+  , ((myControlMask, xK_s), withLog (colored colDGreen "Unit") $ submap $ M.fromList -- %! Systemctl submap:
     [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! Show unit status
     , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! Start unit
     , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! Stop unit
