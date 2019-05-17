@@ -5,6 +5,7 @@
 module CommandPrefix
   ( CommandPrefix(..)
   , resetPrefix, modifyPrefix, prependToPrefix
+  , incrementPrefix, decrementPrefix
   , prefixToString
   , prefixedAction, withPrefix
   , logPrefix
@@ -33,6 +34,10 @@ getPrefix = XS.gets commandPrefix
 
 modifyPrefix :: XLike m => (Int -> Int) -> m ()
 modifyPrefix f = XS.modify $ CommandPrefix . f . commandPrefix
+
+incrementPrefix, decrementPrefix :: XLike m => Int -> m ()
+incrementPrefix n = modifyPrefix (+ n)
+decrementPrefix n = incrementPrefix (- n)
 
 prependToPrefix :: XLike m => Int -> m ()
 prependToPrefix n = modifyPrefix (\c -> c * 10 + n)
