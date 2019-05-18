@@ -64,7 +64,10 @@ import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, 
 import XMonad.Util.Paste (pasteSelection)
 
 -- Imports: Custom
-import CommandPrefix (logPrefix, modifyPrefix, prependToPrefix, prefixToString, resetPrefix, withPrefix)
+import CommandPrefix (resetPrefix, decrementPrefix, prependToPrefix
+                     , logPrefix, prefixToString
+                     , prefixedAction, withPrefix
+                     )
 import MyColors (colBackground, colForeground
                 , colDBlue, colDGreen
                 , colDMagenta, colDRed
@@ -215,25 +218,26 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" ["set", "Master", "2%+"]) -- %! Increase volume
   , ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" ["set", "Master", "2%-"]) -- %! Decrease volume
   , ((0, xF86XK_AudioMute), safeSpawn "amixer" ["set", "Master", "toggle"]) -- %! Toggle mute
-  , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPC toggle
+  , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPD toggle
 
   , ((myControlMask, xK_m), withLog (colored colDGreen "MPD") $ submap $ M.fromList -- %! Audio Submap:
-    [ ((0, xK_p), modifyPrefix (\n -> n - 1) >> withPrefix MPD.play) -- %! MPC play $prefix
-    , ((0, xK_n), MPD.pause True) -- %! MPC pause
-    , ((shiftMask, xK_t), MPD.stop) -- %! MPC stop
-    , ((0, xK_t), MPD.toggle) -- %! MPC toggle
-    , ((0, xK_f), MPD.next) -- %! MPC next
-    , ((0, xK_b), MPD.previous) -- %! MPC previous
+    [ ((0, xK_p), decrementPrefix 1 >> withPrefix MPD.play) -- %! MPD play $prefix
+    , ((0, xK_n), MPD.pause True) -- %! MPD pause
+    , ((shiftMask, xK_t), MPD.stop) -- %! MPD stop
+    , ((0, xK_t), MPD.toggle) -- %! MPD toggle
+    , ((0, xK_f), prefixedAction MPD.next) -- %! MPD next
+    , ((0, xK_b), prefixedAction MPD.previous) -- %! MPD previous
 
-    , ((0, xK_l), notifyOf "MPD - Playlist" MPD.showPlaylists) -- %! Notify of current playlist
+    , ((0, xK_l), notifyOf "MPD - Playlist" MPD.showPlaylist) -- %! Notify of current playlist
+    , ((0, xK_s), withPrefix notifySong) -- %! Notify of song $prefix
 
-    , ((0, xK_s), MPD.invert MPD.Random) -- %! MPC random
-    , ((0, xK_r), MPD.invert MPD.Repeat) -- %! MPC repeat
-    , ((0, xK_c), MPD.invert MPD.Consume) -- %! MPC consume
-    , ((0, xK_o), MPD.invert MPD.Single) -- %! MPC single
+    , ((shiftMask, xK_s), MPD.toggleStatus MPD.Random) -- %! MPD random
+    , ((shiftMask, xK_r), MPD.toggleStatus MPD.Repeat) -- %! MPD repeat
+    , ((shiftMask, xK_c), MPD.toggleStatus MPD.Consume) -- %! MPD consume
+    , ((shiftMask, xK_o), MPD.toggleStatus MPD.Single) -- %! MPD single
 
-    , ((0, xK_Delete), modifyPrefix (\n -> n - 1) >> withPrefix MPD.delete) -- %! MPC del $prefix
-    , ((controlMask, xK_Delete), MPD.clear) -- %! MPC clear
+    , ((0, xK_Delete), withPrefix deleteSong) -- %! MPD del $prefix
+    , ((controlMask, xK_Delete), MPD.clear) -- %! MPD clear
     ])
 
   -- %% ! Systemctl integration
@@ -293,6 +297,11 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     helpCommand = "zenity --info --no-wrap --title=\"xmonad key binds\"" ++
       " --text=\"$(awk -f ~/.xmonad/genhelp.awk ~/.xmonad/xmonad.hs | sed 's/&/&amp;/')\""
     steamCommand = ("steam steam://run/" ++)
+
+    notifySong 0 = MPD.currentSong >>= (maybe (notify "MPD" "No song") (notifySong . (+ 1)))
+    notifySong p = notifyOf ("MPD - Song #" ++ (show p)) $ MPD.showSong (p - 1)
+    deleteSong 0 = MPD.currentSong >>= (maybe (return ()) MPD.delete)
+    deleteSong p = MPD.delete $ p - 1
 
     spawnTerminal title cmd = runInTerm ("-t \"" ++ title ++ "\"") cmd
     sysctlAction cmd unit = runProcessWithInput "systemctl" ["--user", cmd, unit] ""
@@ -395,7 +404,7 @@ main = do
     musicBar = secondaryScreenBar
       { XMobar.position = XMobar.Bottom
       , XMobar.wmName = "XMobar - Music"
-      , XMobar.template = " %xmobar_mpcstatus.sh% }{ %xmobar_volume.sh% "
+      , XMobar.template = " %xmobar_mpdstatus.sh% }{ %xmobar_volume.sh% "
       }
 
 -- Utilities

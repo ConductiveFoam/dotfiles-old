@@ -1,13 +1,18 @@
 module XMonad.Actions.MPD
-  ( Toggleable(..)
+  ( Status(..)
+  , MPD.Song(..)
+  , MPD.State(..)
   , liftMPD, liftMPD_
-  , invert, toggle
-  , play, pause, stop
+  , state, toggle, play, pause, stop
   , next, previous
+  , status, toggleStatus
+  , consume, random, repeat, single
   , delete, clear
-  , showPlaylists
+  , currentSong
+  , showPlaylist, showSong
   , MPD.withMPD
   ) where
+import Prelude hiding (repeat)
 
 import Control.Monad (liftM)
 import Data.List (intercalate)
@@ -18,7 +23,9 @@ import XMonad (MonadIO(liftIO))
 import qualified Network.MPD as MPD
 import qualified Network.MPD.Commands.Extensions as Cmd
 
-data Toggleable = Random | Repeat | Consume | Single
+-- Note: Network.MPD uses 0-indexing while mpd uses 1-indexing
+
+data Status = Random | Repeat | Consume | Single
   deriving ( Show, Read, Eq )
 
 liftMPD :: MonadIO m => MPD.MPD a -> m (MPD.Response a)
@@ -27,44 +34,69 @@ liftMPD = liftIO . MPD.withMPD
 liftMPD_ :: MonadIO m => MPD.MPD a -> m ()
 liftMPD_ = liftM (const ()) . liftMPD
 
-invert :: MonadIO m => Toggleable -> m ()
-invert Random = liftMPD_ $ invert' MPD.stRandom MPD.random
-invert Repeat = liftMPD_ $ invert' MPD.stRepeat MPD.repeat
-invert Consume = liftMPD_ $ invert' MPD.stConsume MPD.consume
-invert Single = liftMPD_ $ invert' MPD.stSingle MPD.single
+status :: MonadIO m => Status -> m Bool
+status Random = status'' MPD.stRandom
+status Repeat = status'' MPD.stRandom
+status Consume = status'' MPD.stRandom
+status Single = status'' MPD.stRandom
 
-invert' :: MPD.MonadMPD m => (MPD.Status -> Bool) -> (Bool -> m ())  -> m ()
-invert' g s = do
+state :: MonadIO m => m MPD.State
+state = status' MPD.Stopped MPD.stState
+
+status' :: MonadIO m => a -> (MPD.Status -> a) -> m a
+status' d g = (liftMPD MPD.status) >>= return . (either (const d) g)
+status'' :: MonadIO m => (MPD.Status -> Bool) -> m Bool
+status'' = status' False
+
+toggleStatus :: MonadIO m => Status -> m ()
+toggleStatus Random = toggleStatus' MPD.stRandom MPD.random
+toggleStatus Repeat = toggleStatus' MPD.stRepeat MPD.repeat
+toggleStatus Consume = toggleStatus' MPD.stConsume MPD.consume
+toggleStatus Single = toggleStatus' MPD.stSingle MPD.single
+
+toggleStatus' :: MonadIO m => (MPD.Status -> Bool) -> (Bool -> MPD.MPD ())  -> m ()
+toggleStatus' g s = liftMPD_ $ do
   status <- MPD.status
   s $ not (g status)
-
-toggle :: MonadIO m => m ()
-toggle = liftMPD_ Cmd.toggle
 
 play, delete :: MonadIO m => Int -> m ()
 play = liftMPD_ . MPD.play . Just
 delete = liftMPD_ . MPD.delete
 
-pause :: MonadIO m => Bool -> m ()
+random, single, consume, repeat, pause :: MonadIO m => Bool -> m ()
+random = liftMPD_ . MPD.random
+single = liftMPD_ . MPD.single
+consume = liftMPD_ . MPD.consume
+repeat = liftMPD_ . MPD.repeat
 pause = liftMPD_ . MPD.pause
-stop, next, previous, clear :: MonadIO m => m ()
+toggle, stop, next, previous, clear :: MonadIO m => m ()
+toggle = liftMPD_ Cmd.toggle
 stop = liftMPD_ MPD.stop
 next = liftMPD_ MPD.next
 previous = liftMPD_ MPD.previous
 clear = liftMPD_ MPD.clear
 
-showPlaylists :: MonadIO m => m String
-showPlaylists = liftIO $ do
-  response <- MPD.withMPD $ MPD.playlistInfo Nothing
-  case response of
-    Left e -> return $ show e
-    Right is -> return . unlines $ enumerate <$> is
-      where
-        showValue = intercalate ", " . (MPD.toString <$>)
-        showMeta meta tags = maybe "" showValue $ M.lookup meta tags
-        enumerate MPD.Song { MPD.sgTags = tags, MPD.sgIndex = index} =
-          (maybe "" ((++ ": ") . show) index) ++
-          (showMeta MPD.Artist tags) ++ " -- " ++
-          (showMeta MPD.Album tags) ++ " #" ++
-          (showMeta MPD.Track tags) ++ " -- " ++
-          (showMeta MPD.Title tags)
+currentSong :: MonadIO m => m (Maybe Int)
+currentSong = status' Nothing MPD.stSongPos
+
+showPlaylist :: MonadIO m => m String
+showPlaylist = liftIO $ (MPD.withMPD $ MPD.playlistInfo Nothing) >>= return . (either show right)
+  where
+    right [] = "No playlist"
+    right ls = unlines $ enumerate <$> ls
+    enumerate song = (maybe "" ((++ ": ") . show . (+ 1)) $ MPD.sgIndex song) ++ (showSong' song)
+
+showSong :: MonadIO m => Int -> m String
+showSong i = liftIO $ do
+    response <- MPD.withMPD . MPD.playlistInfo $ Just i
+    return $ either show (showSong' . (!! 0)) response
+
+showSong' :: MPD.Song -> String
+showSong' MPD.Song { MPD.sgTags = tags } =
+    (showMeta MPD.Artist tags) ++ " -- " ++
+    (showMeta MPD.Album tags) ++ " #" ++
+    (showMeta MPD.Track tags) ++ " -- " ++
+    (showMeta MPD.Title tags)
+  where
+    showValue = intercalate ", " . (MPD.toString <$>)
+    showMeta meta tags = maybe "" showValue $ M.lookup meta tags

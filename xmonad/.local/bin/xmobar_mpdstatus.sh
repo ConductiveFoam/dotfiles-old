@@ -15,7 +15,7 @@ NR == 1 {
   }
   playstate = $2 " * " $3
 }
-/^volume/ && NR != 1 {
+/^volume/ {
   if ($4 == "on") {
     mpdstate = mpdstate "R"
   }
@@ -31,7 +31,7 @@ NR == 1 {
 }
 END {
   if (NR == 1) {
-    print "<fc=" col ">No playlist loaded</fc>"
+    print mpdstate " | <fc=" col ">No playlist loaded</fc>"
   } else {
     print mpdstate " | " playstate " | <fc=" col ">" track "</fc>"
   }
