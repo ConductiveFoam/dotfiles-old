@@ -130,7 +130,7 @@ myManageHook = composeOne $
 
   -- Firefox windows
   [(className =? "Firefox" <&&> anyOf (title .=.?) ts) -?> doShift ws | (ts, ws) <- managedFirefoxWindows] ++
-  [(className =? "Firefox" <&&> (notQuery isDialog)) -?> doShift wsMain
+  [(className =? "Firefox" <&&> (fmap not isDialog)) -?> doShift wsMain
 
   -- Miscellaneous
   , className =? "vlc" -?> doShift wsMisc
@@ -407,9 +407,6 @@ q .=.? x = fmap (x `isInfixOf`) q
 
 (=..?) :: Eq a => Query [a] -> [a] -> Query Bool
 q =..? x = fmap (x `isSuffixOf`) q
-
-notQuery :: Query Bool -> Query Bool
-notQuery q = fmap not q
 
 anyOf :: (a -> Query Bool) -> [a] -> Query Bool
 anyOf q rs = foldl' (<||>) (pure False) $ q <$> rs
