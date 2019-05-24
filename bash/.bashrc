@@ -23,6 +23,7 @@ alias rmi='rm -i'
 alias clr='clear'
 
 alias git?='clear; git status'
+alias git-amend='git commit --amend --no-edit'
 
 alias sysdctl='systemctl --user'
 
