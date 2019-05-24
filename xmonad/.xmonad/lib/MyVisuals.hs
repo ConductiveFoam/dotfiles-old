@@ -1,4 +1,6 @@
-module MyColors where
+module MyVisuals where
+
+myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
 
 -- Solarized colors
 colDBlue = "#268bd2"

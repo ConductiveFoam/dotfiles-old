@@ -17,6 +17,10 @@ import System.Exit (exitWith, ExitCode(ExitSuccess))
 import XMonad
 import XMonad.Config.Desktop (desktopConfig, desktopLayoutModifiers)
 
+-- X11
+import Graphics.X11.Xlib.Types (Rectangle(..))
+import Graphics.X11.Xinerama (getScreenInfo)
+
 -- Imports: Hooks
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP
@@ -47,6 +51,7 @@ import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseV
                                     )
 
 -- Imports: Auxiliaries
+import qualified MyBars
 import qualified XMobar.Config as XMobar
 import qualified XMonad.Prompt as XPrompt
 import XMonad.Prompt.AssociationPrompt (associationPrompt)
@@ -60,19 +65,21 @@ import qualified XMonad.Actions.MPD as MPD
 import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, safeSpawnProg)
 import XMonad.Util.Paste (pasteSelection)
+import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, safeSpawnProg)
+import XMonad.Util.SpawnOnce (spawnOnce)
 
 -- Imports: Custom
 import CommandPrefix (resetPrefix, decrementPrefix, prependToPrefix
                      , logPrefix, prefixToString
                      , prefixedAction, withPrefix
                      )
-import MyColors (colBackground, colForeground
-                , colDBlue, colDGreen
-                , colDMagenta, colDRed
-                , colDYellow
-                )
+import MyVisuals ( myFont
+                 , colBackground, colForeground
+                 , colDBlue, colDGreen
+                 , colDMagenta, colDRed
+                 , colDYellow
+                 )
 
 -- Workspaces
 wsMain = "main"
@@ -94,7 +101,6 @@ isTerminal = anyOf (className =?) knownTerminalWindowClasses
 
 -- Miscellaneous config
 myTerminal = "alacritty"
-myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
 myModMask = mod4Mask
 
 -- Layout hook
@@ -324,11 +330,16 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
 -- Main config
 main = do
-  safeSpawnOnce "stalonetray" ["-bg", wrap "'" "'" colBackground]
+  -- Monitor-dependent infobar config
+  dpy <- openDisplay ""
+  rects <- getScreenInfo dpy
+  let (primaryBarConfig, secondaryBarsConfig) = if (length rects) == 2 && (screenOrientation $ rects !! 1) == Vertical then
+        (MyBars.mainScreenBar, [MyBars.loadBar, MyBars.musicBar])
+        else
+        (MyBars.primaryBar, [MyBars.secondaryBar])
 
-  mapM_ (\ (cmd, ps) -> safeSpawn cmd ps) startupApplications
-
-  xmproc <- safeSpawnPipe "xmobar" (XMobar.asList primaryBar)
+  -- Main setup
+  hInfoBar <- safeSpawnPipe "xmobar" $ XMobar.asList primaryBarConfig
   xmonad $ ewmh $ docks $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
     , layoutHook = avoidStruts $ desktopLayoutModifiers myLayout
@@ -341,8 +352,9 @@ main = do
       , ppSep = " | "
       , ppExtras = [logAction, logPrefix $ (colored colDYellow) . prefixToString]
       , ppOrder = \(ws:_:t:ex) -> ex ++ [ws,t]
-      , ppOutput = hPutStrLn xmproc
+      , ppOutput = hPutStrLn hInfoBar
       }
+    , startupHook = mapM_ id $ [tray, nitrogen] ++ (xmobar <$> secondaryBarsConfig)
 
     , terminal = myTerminal
 
@@ -358,54 +370,9 @@ main = do
   where
     titleLength = 150
 
-    -- Startup
-    safeSpawnOnce cmd ps = spawn $
-      "if [[ ! $(pgrep " ++ cmd ++ ") ]]; then " ++ cmd ++ " " ++ (intercalate " " ps) ++ ";fi"
-    startupApplications = [ ("nitrogen", ["--restore"])
-                          , xmobar loadBar
-                          , xmobar musicBar
-                          ]
-
-    -- XMobar
-    xmobar cfg = ("xmobar", XMobar.asList cfg)
-
-    colConfig = ["-l", colDBlue, "-n", colDGreen, "-h", colDRed]
-    myDefaultXMobar = def
-      { XMobar.font = myFont
-      , XMobar.bgColor = colBackground
-      , XMobar.fgColor = colForeground
-      }
-    secondaryScreenBar = myDefaultXMobar
-      { XMobar.screen = "1"
-      , XMobar.alpha = 220
-      }
-    primaryBar = myDefaultXMobar
-      { XMobar.position = XMobar.Static 1080 0 1844 19
-      , XMobar.wmName = "XMobar - Main"
-      , XMobar.commands = [ XMobar.Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
-                          , XMobar.Run "Uptime" ["[]", "60"] []
-
-                          , XMobar.Run "StdinReader" [] []
-                          ]
-      , XMobar.template = " %StdinReader% }{ <fc=" ++ colDMagenta ++ ">%xmobar_time.sh% %time%</fc> * %uptime% "
-      }
-    loadBar = secondaryScreenBar
-      { XMobar.position = XMobar.Top
-      , XMobar.wmName = "XMobar - Load"
-      , XMobar.commands = [ XMobar.Run "DynNetwork" ["10"] ["-t", "<dev>: <fc=" ++ colDBlue ++ "><rx></fc>;<fc=" ++ colDBlue ++ "><tx></fc>KB"]
-                          , XMobar.Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] []
-
-                          , XMobar.Run "Cpu" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                          , XMobar.Run "Memory" ["10"] $ colConfig ++ ["-L", "15", "-H", "50", "-t", "Mem: <usedratio>"]
-                          , XMobar.Run "Swap" ["10"] $ colConfig ++ ["-L", "15", "-H", "50"]
-                          ]
-      , XMobar.template = " %dynnetwork% | XSS %xmobar_xssmode.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc> }{ %cpu% * Temp: %xmobar_coretemp.sh% | %memory%%xmobar_gpumem.sh% * %swap% "
-      }
-    musicBar = secondaryScreenBar
-      { XMobar.position = XMobar.Bottom
-      , XMobar.wmName = "XMobar - Music"
-      , XMobar.template = " %xmobar_mpdstatus.sh% }{ %xmobar_volume.sh% "
-      }
+    tray = spawnOnce $ "stalonetray -bg " ++  colBackground
+    nitrogen = safeSpawn "nitrogen" ["--restore"]
+    xmobar cfg = safeSpawn "xmobar" $ XMobar.asList cfg
 
 -- Utilities
 (..=?) :: Eq a => Query [a] -> [a] -> Query Bool
@@ -462,3 +429,11 @@ notifyOf s a = do
 
 colored :: String -> String -> String
 colored col = xmobarColor col ""
+
+data ScreenOrientation = Horizontal | Vertical
+  deriving (Eq, Show, Read)
+
+screenOrientation :: Rectangle -> ScreenOrientation
+screenOrientation Rectangle { rect_width = w, rect_height = h }
+  | h < w = Horizontal
+  | otherwise = Vertical
