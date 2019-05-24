@@ -8,7 +8,7 @@ import qualified Data.Map as M
 import Data.Monoid (Endo(..), appEndo)
 import qualified DBus.Notify as Notify
 import System.IO (BufferMode(LineBuffering), FilePath, Handle, hPutStrLn, hSetBuffering)
-import System.Posix.IO (FdOption(CloseOnExec), setFdOption
+import System.Posix.IO ( FdOption(CloseOnExec), setFdOption
                        , createPipe, fdToHandle, closeFd
                        , dupTo, stdInput
                        )
@@ -23,14 +23,14 @@ import Graphics.X11.Xinerama (getScreenInfo)
 
 -- Imports: Hooks
 import XMonad.Hooks.EwmhDesktops (ewmh)
-import XMonad.Hooks.DynamicLog (dynamicLogWithPP
+import XMonad.Hooks.DynamicLog ( dynamicLogWithPP
                                , ppCurrent, ppExtras, ppOrder, ppOutput
                                , ppSep, ppTitle, ppUrgent, ppVisible
                                , xmobarColor
                                , shorten, wrap
                                )
 import XMonad.Hooks.ManageDocks (avoidStruts, docks)
-import XMonad.Hooks.ManageHelpers ((-?>), composeOne
+import XMonad.Hooks.ManageHelpers ( (-?>), composeOne
                                   , isDialog, isFullscreen, transience
                                   , doRectFloat, doHideIgnore, doCenterFloat, doFullFloat
                                   )
@@ -45,7 +45,7 @@ import XMonad.Layout.PerWorkspace (onWorkspace)
 -- Imports: Hotkey config
 import XMonad.Actions.Submap (submap)
 import XMonad.Actions.LoggedAction (withLog, logAction)
-import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
+import Graphics.X11.ExtraTypes.XF86 ( xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
                                     , xF86XK_AudioMute, xF86XK_AudioPlay
                                     , xF86XK_Launch5
                                     )
@@ -66,20 +66,17 @@ import XMonad.Actions.WindowGo (raiseMaybe)
 import XMonad.Actions.WithAll (withAll)
 import qualified XMonad.StackSet as W
 import XMonad.Util.Paste (pasteSelection)
-import XMonad.Util.Run (runInTerm, runProcessWithInput, unsafeSpawn, safeSpawn, safeSpawnProg)
+import XMonad.Util.Run ( runInTerm, runProcessWithInput
+                       , unsafeSpawn, safeSpawn, safeSpawnProg
+                       )
 import XMonad.Util.SpawnOnce (spawnOnce)
 
 -- Imports: Custom
-import CommandPrefix (resetPrefix, decrementPrefix, prependToPrefix
+import CommandPrefix ( resetPrefix, decrementPrefix, prependToPrefix
                      , logPrefix, prefixToString
                      , prefixedAction, withPrefix
                      )
-import MyVisuals ( myFont
-                 , colBackground, colForeground
-                 , colDBlue, colDGreen
-                 , colDMagenta, colDRed
-                 , colDYellow
-                 )
+import MyVisuals
 
 -- Workspaces
 wsMain = "main"
@@ -91,6 +88,7 @@ wsMisc = "misc"
 myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
 
 -- Terminal config
+myTerminal = "alacritty"
 termTitle = "Terminal"
 termTitleTmux = "Terminal - Dev"
 termTitleWeb = "Terminal - Web"
@@ -100,7 +98,6 @@ isTerminal :: Query Bool
 isTerminal = anyOf (className =?) knownTerminalWindowClasses
 
 -- Miscellaneous config
-myTerminal = "alacritty"
 myModMask = mod4Mask
 
 -- Layout hook
@@ -333,14 +330,15 @@ main = do
   -- Monitor-dependent infobar config
   dpy <- openDisplay ""
   rects <- getScreenInfo dpy
-  let (primaryBarConfig, secondaryBarsConfig) = if (length rects) == 2 && (screenOrientation $ rects !! 1) == Vertical then
-        (MyBars.mainScreenBar, [MyBars.loadBar, MyBars.musicBar])
+  let (primaryBarConfig, secondaryBarsConfig) =
+        if (length rects) == 2 && (screenOrientation $ rects !! 1) == Vertical then
+          (MyBars.mainScreenBar, [MyBars.loadBar, MyBars.musicBar])
         else
-        (MyBars.primaryBar, [MyBars.secondaryBar])
+          (MyBars.primaryBar, [MyBars.secondaryBar])
 
   -- Main setup
   hInfoBar <- safeSpawnPipe "xmobar" $ XMobar.asList primaryBarConfig
-  xmonad $ ewmh $ docks $ desktopConfig
+  xmonad . ewmh . docks $ desktopConfig
     { manageHook = myManageHook <+> manageHook desktopConfig
     , layoutHook = avoidStruts $ desktopLayoutModifiers myLayout
     , logHook = dynamicLogWithPP def
