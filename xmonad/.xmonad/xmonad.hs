@@ -368,7 +368,7 @@ main = do
   where
     titleLength = 150
 
-    tray = spawnOnce $ "stalonetray -bg " ++  colBackground
+    tray = spawnOnce $ "stalonetray -bg \"" ++  colBackground ++ "\""
     nitrogen = safeSpawn "nitrogen" ["--restore"]
     xmobar cfg = safeSpawn "xmobar" $ XMobar.asList cfg
 
