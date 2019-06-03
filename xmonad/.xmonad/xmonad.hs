@@ -82,10 +82,10 @@ import MyVisuals
 wsMain = "main"
 wsDev = "dev"
 wsRead = "read"
-wsGame = "game"
+wsMedia = "media"
 wsMsg = "msg"
 wsMisc = "misc"
-myWorkspaces = [ wsMain, wsDev, wsRead, wsGame, wsMsg, wsMisc ]
+myWorkspaces = [ wsMain, wsDev, wsRead, wsMedia, wsMsg, wsMisc ]
 
 -- Terminal config
 myTerminal = "alacritty"
@@ -102,7 +102,7 @@ myModMask = mod4Mask
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
-           onWorkspace wsGame (noBorders Full) $ onWorkspace wsMsg msg $
+           onWorkspace wsMedia (noBorders Full) $ onWorkspace wsMsg msg $
            onWorkspace wsMisc Accordion $ tiled ||| (Mirror col) ||| (Mirror tiled)
   where
     col = Column 1
@@ -116,40 +116,51 @@ myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
 myManageHook = composeOne $
   -- Terminal and notification windows
   [ (isTerminal <&&> title =? t) -?> action
-  | (t, action) <- managedTerminalWindows
+  | (t, action) <- terminalWindows
   ] ++
   [ (className =? "Zenity" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.15 0.03 0.7 0.94)
   , className =? "Zenity" -?> doRectFloat centerRect
 
   -- Gaming related
-  , (className =? "Steam" <&&> title =? "Steam" ) -?> doShift wsGame
+  , (className =? "Steam" <&&> title =? "Steam" ) -?> doShift wsMedia
   , (className =? "Steam" <&&> title ..=? "Friends List") -?> doShift wsMsg
   , (className =? "Steam" <&&> title ..=? "Steam - News") -?> doHideIgnore
-  , className =? "Steam" -?> doShift wsGame
-  , className =? "Dustforce.bin.x86_64" -?> doFullFloat
-  , className =? "hollow_knight.x86_64" -?> doShift wsGame
+  ] ++
+  [ className =? t -?> action
+  | (t, action) <- gameWindows
+  ] ++
+
+  -- Multimedia
+  [ className =? cls -?> doShift wsMedia
+  | cls <- multimediaWindows
+  ] ++
 
   -- Messenger & Communication
-  , className =? "TelegramDesktop" -?> doShift wsMsg
+  [ className =? "TelegramDesktop" -?> doShift wsMsg
   , className =? "TeamSpeak 3" -?> doShift wsMsg
   ] ++
 
   -- Firefox windows
-  [(className =? "Firefox" <&&> anyOf (title .=.?) ts) -?> doShift ws | (ts, ws) <- managedFirefoxWindows] ++
+  [(className =? "Firefox" <&&> anyOf (title .=.?) ts) -?> doShift ws | (ts, ws) <- firefoxWindows] ++
   [(className =? "Firefox" <&&> (fmap not isDialog)) -?> doShift wsMain
 
   -- Miscellaneous
-  , className =? "vlc" -?> doShift wsMisc
   , className =? "Thunderbird" -?> doShift wsMisc
 
-  , (isDialog <||> anyOf (className =?) managedDialogWindows) -?> doCenterFloat
+  , (isDialog <||> anyOf (className =?) dialogWindows) -?> doCenterFloat
   , isFullscreen -?> doFullFloat
   , transience
   ]
   where
-    managedFirefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
-    managedTerminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
-    managedDialogWindows = ["Matplotlib", "feh"]
+    terminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
+    gameWindows =
+      [ ("Steam", doShift wsMedia)
+      , ("Dustforce.bin.x86_64", doFullFloat >> doShift wsMedia)
+      , ("hollow_knight.x86_64", doShift wsMedia)
+      ]
+    multimediaWindows = ["Blender", "vlc", "Inkscape"]
+    firefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
+    dialogWindows = ["Matplotlib", "feh"]
 
 -- Key bindings
 -- %% Modifier is windows (mod4) key
@@ -312,7 +323,13 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (\u -> sysctlAction cmd u >> notify name u) xpc
 
     promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
-    promptApps = ["alacritty", "firefox", "gimp", "inkscape", "libreoffice", "pavucontrol-qt", "steam", "telegram-desktop", "teamspeak3", "vlc"]
+    promptApps =
+      [ "firefox"
+      , "alacritty"
+      , "blender", "gimp", "inkscape", "libreoffice", "steam", "vlc"
+      , "telegram-desktop", "teamspeak3"
+      , "pavucontrol-qt"
+      ]
     promptGames = M.fromList $
       [ ("Left 4 Dead 2", "left4gore -2")
       , ("Stellaris", steamCommand "281990")
