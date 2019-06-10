@@ -37,7 +37,7 @@ primaryBar = myDefaultXMobar
   , wmName = "XMobar - Primary"
   , commands = [ Run "StdinReader" [] []
                       ] ++ (fst infoMisc) ++ (fst infoTime)
-  , template = " %StdinReader% }{ " ++ infoVolume ++ " | " ++ (snd infoMisc) ++ (snd infoTime) ++ " "
+  , template = " %StdinReader% }{ " ++ infoVolume ++ " | " ++ (snd infoMisc) ++ " | " ++ (snd infoTime) ++ " "
   }
 secondaryBar = myDefaultXMobar
   { position = Bottom
