@@ -9,6 +9,6 @@ if [ -d ~/.profile.d ]; then
   done
 fi
 
-#if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-#  exec startx
-#fi
+if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
+  startx
+fi
