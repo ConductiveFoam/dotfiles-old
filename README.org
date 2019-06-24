@@ -26,6 +26,12 @@ $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm ~/.profi
 - Assumes that session names don't contain dashes or spaces (for session cleanup)
 - Dependencies: ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~), ~fortune~
 
+** appconfig
+#+BEGIN_SRC sh
+$ mkdir -p ~/{.local/bin,.config}
+#+END_SRC
+- Dependencies: ~aria2~
+
 ** Emacs
 #+BEGIN_SRC sh
 $ mkdir -p ~/src/emacs ~/.emacs.d/lib
