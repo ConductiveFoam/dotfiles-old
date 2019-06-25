@@ -53,7 +53,7 @@ $ mkdir -p ~/.elinks
 
 ** XConfig
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xprofile.d ~/bin
+$ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin
 #+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~compton~
@@ -63,7 +63,7 @@ $ mkdir -p ~/.xprofile.d ~/bin
 
 ** XMonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/screenshots ~/.local/{share/awk,bin} ~/bin
+$ mkdir -p ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/screenshots ~/.config ~/.local/{share/awk,bin} ~/.Xresources.d ~/bin
 #+END_SRC
 - No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
 - XMobar installation assumes no compilation flags and relies on scripts instead
@@ -72,7 +72,7 @@ $ mkdir -p ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/screenshots ~/.
   - Other Haskell libs: ~fdo-notify~
   - Commands used in XMonad: ~alacritty~, ~maim~
   - XMobar: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
-  - Integration: ~dunst~, ~zenity~
+  - Integration: ~dunst~, ~zenity~, ~xvkbd~, ~xzoom~
 
 ** MPD
 #+BEGIN_SRC sh

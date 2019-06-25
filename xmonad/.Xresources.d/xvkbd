@@ -1,0 +1,51 @@
+xvkbd.title: xvkbd - Virtual Keyboard (Dvorak)
+
+xvkbd.secure: true
+
+xvkbd*Font: -*-fira code-medium-*-*-*-*-*-*-*-*-*-*-*
+xvkbd.windowGeometry: 530x180
+
+xvkbd.NormalKeys: \
+  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 \n\
+  Escape 1 2 3 4 5 6 7 8 9 0 [ ] Delete \n\
+  Tab \' , . p y f g c r l / = BackSpace \n\
+  Control_L a o e u i d h t n s - \ Return \n\
+  Shift_L ; q j k x b m w v z Multi_key \n\
+  MainMenu Caps_Lock Alt_L Meta_L space Meta_R Alt_R Left Right Up Down Focus
+
+xvkbd.ShiftKeys: \
+  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 \n\
+  Escape ! @ # $ % ^ & * ( ) { } Delete \n\
+  ISO_Left_Tab \" < > P Y F G C R L ? + BackSpace \n\
+  Control_L A O E U I D H T N S _ | Return \n\
+  Shift_L : Q J K X B M W V Z Multi_key \n\
+  MainMenu Caps_Lock Alt_L Meta_L space Meta_R Alt_R Left Right Up Down Focus
+
+xvkbd.KeyLabels: \
+  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 \n\
+  Esc 1 2 3 4 5 6 7 8 9 0 [ ] Del \n\
+  Tab ' , . P Y F G C R L / = Backspace \n\
+  Control A O E U I D H T N S - \134 Return \n\
+  Shift ; Q J K X B M W V Z Compose \n\
+  MainMenu Caps\nLock Alt Meta space Meta Alt left right up down Focus
+
+xvkbd.NormalKeyLabels: \
+  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 \n\
+  Esc 1 2 3 4 5 6 7 8 9 0 [ ] Del \n\
+  Tab ' , . p y f g c r l / = Backspace \n\
+  Ctrl a o e u i d h t n s - \134 Return \n\
+  Shift ; q j k x b m w v z Compose \n\
+  MainMenu Caps Alt Meta space Meta Alt left right up down Focus
+
+xvkbd.ShiftKeyLabels:  \
+  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 \n\
+  Esc ! @ # $ % ^ & * ( ) [ ] Del \n\
+  Tab \" < > P Y F G C R L ? + Backspace \n\
+  Ctrl A O E U I D H T N S _ | Return \n\
+  Shift : Q J K X B M W V Z Compose \n\
+  MainMenu Caps Alt Meta space Meta Alt left right up down Focus
+
+xvkbd.AltgrKeys:
+xvkbd.ShiftAltgrKeys:
+xvkbd.AltgrKeyLabels:
+xvkbd.ShiftAltgrKeyLabels:

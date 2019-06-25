@@ -5,6 +5,7 @@ import Data.Default (def)
 import Data.Foldable (foldl')
 import Data.List (intercalate, isInfixOf, isPrefixOf, isSuffixOf)
 import qualified Data.Map as M
+import Data.Maybe (maybe)
 import Data.Monoid (Endo(..), appEndo)
 import qualified DBus.Notify as Notify
 import System.IO (BufferMode(LineBuffering), FilePath, Handle, hPutStrLn, hSetBuffering)
@@ -33,6 +34,7 @@ import XMonad.Hooks.ManageDocks (avoidStruts, docks)
 import XMonad.Hooks.ManageHelpers ( (-?>), composeOne
                                   , isDialog, isFullscreen, transience
                                   , doRectFloat, doHideIgnore, doCenterFloat, doFullFloat
+                                  , doSideFloat, Side(SC)
                                   )
 
 -- Imports: Layouts
@@ -47,7 +49,7 @@ import XMonad.Actions.Submap (submap)
 import XMonad.Actions.LoggedAction (withLog, logAction)
 import Graphics.X11.ExtraTypes.XF86 ( xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
                                     , xF86XK_AudioMute, xF86XK_AudioPlay
-                                    , xF86XK_Launch5
+                                    , xF86XK_Launch5, xF86XK_Launch8, xF86XK_Launch9
                                     )
 
 -- Imports: Auxiliaries
@@ -99,6 +101,8 @@ isTerminal = anyOf (className =?) knownTerminalWindowClasses
 
 -- Miscellaneous config
 myModMask = mod4Mask
+xvkbdWindowQuery = className =? "XVkbd"
+xzoomWindowQuery = stringProperty "WM_ICON_NAME" =? "xzoom"
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
@@ -146,6 +150,8 @@ myManageHook = composeOne $
 
   -- Miscellaneous
   , className =? "Thunderbird" -?> doShift wsMisc
+  , xvkbdWindowQuery -?> doSideFloat SC
+  , xzoomWindowQuery -?> doRectFloat (W.RationalRect 0.05 0.55 0.4 0.4)
 
   , (isDialog <||> anyOf (className =?) dialogWindows) -?> doCenterFloat
   , isFullscreen -?> doFullFloat
@@ -274,6 +280,10 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-ctrl-shift-n %! Close all notifications
   -- mod-shift-h %! Show previous notification(s)
 
+  -- %% ! Accessibility
+  , ((0, xF86XK_Launch8), spawnVisualKeyboard) -- none-Hotkey4 %! Relaunch visual keyboard
+  , ((0, xF86XK_Launch9), spawnMagnifier) -- none-Hotkey5 %! Launch screen magnifier
+
   -- %% ! Miscellaneous
   , ((myControlMask, xK_space), safeSpawnProg "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
@@ -321,6 +331,15 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     sysctlAction cmd unit = runProcessWithInput "systemctl" ["--user", cmd, unit] ""
     sysctlPrompt name "status" xpc = listCompletedPrompt name promptSysUnits ((notifyOf name) . sysctlAction "status") xpc
     sysctlPrompt name cmd xpc = listCompletedPrompt name promptSysUnits (\u -> sysctlAction cmd u >> notify name u) xpc
+
+    spawnVisualKeyboard = raiseMaybe (spawn "xvkbd") xvkbdWindowQuery
+    showClamped i | i < 0 = "0"
+                  | otherwise = show i
+    showPosition (x, y) = "-source 500x500+" ++ (showClamped x) ++ "+" ++ (showClamped y)
+    spawnMagnifier = do
+      conf <- ask
+      let newPosition = (\(x, y) -> (x - 192, y - 108)) <$> mousePosition conf
+      raiseMaybe (spawn $ "xzoom " ++ (maybe "" showPosition newPosition)) xzoomWindowQuery
 
     promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
     promptApps =

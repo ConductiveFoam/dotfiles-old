@@ -18,6 +18,11 @@ fi
 if [ -f "$userresources" ]; then
     xrdb -merge "$userresources"
 fi
+if [ -d "${userresources}.d" ]; then
+  for fn in ${userresources}.d/*; do
+    xrdb -merge "$fn"
+  done
+fi
 
 if [ -f "$usermodmap" ]; then
     xmodmap "$usermodmap"
