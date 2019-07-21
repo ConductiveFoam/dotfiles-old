@@ -49,7 +49,7 @@ import XMonad.Actions.Submap (submap)
 import XMonad.Actions.LoggedAction (withLog, logAction)
 import Graphics.X11.ExtraTypes.XF86 ( xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume
                                     , xF86XK_AudioMute, xF86XK_AudioPlay
-                                    , xF86XK_Launch5, xF86XK_Launch8, xF86XK_Launch9
+                                    , xF86XK_Launch5, xF86XK_Launch6, xF86XK_Launch7, xF86XK_Launch8, xF86XK_Launch9
                                     )
 
 -- Imports: Auxiliaries
@@ -172,21 +172,21 @@ myManageHook = composeOne $
 -- %% Modifier is windows (mod4) key
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
-  -- %% ! Launching and Killing programs
-  [ ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Launch terminal
-  , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmuxinator start dev") -- %! Launch dev terminal
-  , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmuxinator start web") -- %! Launch elinks terminal
-  , ((0, xF86XK_Launch5), -- none-Hotkey1 %! Launch note taking terminal
+  -- %% ! Launching programs
+  [ ((0, xF86XK_Launch5), safeSpawnProg "firefox") -- none-Hotkey1 %! Browser
+  , ((0, xF86XK_Launch6), spawnTerminal termTitleTmux "tmuxinator start dev") -- none-Hotkey2 %! Dev terminal
+  , ((0, xF86XK_Launch7), -- none-Hotkey3 %! Note taking terminal
       raiseMaybe (spawnTerminal termTitleNotes "tmuxinator start notes") notesWindowQuery)
-  , ((myShiftMask, xK_r), shellPrompt xpc) -- %! Launch app
-  , ((myModMask, xK_r), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! Launch app from curated list
-  , ((myModMask, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Launch game
-  , ((myShiftMask, xK_c), kill) -- %! Close the focused window
-
-  , ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
-  , ((myShiftMask, xK_space), sendMessage FirstLayout) -- %! Reset the layouts on the current workspace to default
-
-  , ((myModMask, xK_n), refresh) -- %! Refresh xmonad
+  , ((0, xF86XK_Launch8), spawnVisualKeyboard) -- none-Hotkey4 %! Visual keyboard
+  , ((0, xF86XK_Launch9), spawnMagnifier) -- none-Hotkey5 %! Screen magnifier
+  , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmuxinator start dev") -- %! Dev terminal
+  , ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Bare terminal
+  , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmuxinator start web") -- %! Elinks terminal
+  , ((myModMask, xK_r), withLog (colored colDGreen "Launch") $ submap $ M.fromList -- %! Prompts submap:
+    [ ((0, xK_Return), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! Programs from curated list
+    , ((0, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Game
+    , ((shiftMask, xK_Return), shellPrompt xpc) -- %! Shell
+    ])
 
   -- %% ! Moving focus
   , ((myModMask, xK_Tab), windows W.focusDown) -- %! Move focus to the next window
@@ -194,7 +194,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_j), windows W.focusDown) -- %! Move focus to the next window
   , ((myModMask, xK_k), windows W.focusUp) -- %! Move focus to the previous window
   , ((myModMask, xK_m), windows W.focusMaster) -- %! Move focus to the master window
-  , ((myControlMask, xK_b), windowPrompt xpc Goto allWindows) -- %! Prompt for window and move focus there
+  , ((myModMask, xK_g), windowPrompt xpc Goto allWindows) -- %! Prompt for window and move focus there
   , ((myModMask, xK_b), windowPrompt xpc Bring allWindows) -- %! Prompt for window and bring it
 
   -- %% ! Actions on current window
@@ -204,6 +204,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center
   , ((myControlMask, xK_t), withFocused $ remanage) -- %! Reapply manage hook
   , ((myShiftControlMask, xK_t), withAll $ remanage) -- %! Reapply manage hook to current workspace
+  , ((myShiftMask, xK_c), kill) -- %! Close the focused window
 
   -- %% ! Modifying the window order
   , ((myShiftControlMask, xK_Return), windows W.swapMaster) -- %! Swap the focused window and the master window
@@ -225,11 +226,11 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]
   ] ++
 
-  -- %% ! Increasing or Decreasing number of windows in the master area
-  [ ((myModMask, xK_comma), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
-  , ((myModMask, xK_period), sendMessage (IncMasterN (-1))) -- %! Deincrement the number of windows in the master area
-
-  -- %% ! Resizing the master/slave ratio
+  -- %% ! Modifying the layout
+  [ ((myModMask, xK_space), sendMessage NextLayout) -- %! Rotate through the available layout algorithms
+  , ((myShiftMask, xK_space), sendMessage FirstLayout) -- %! Reset the layouts on the current workspace to default
+  , ((myModMask, xK_comma), sendMessage (IncMasterN 1)) -- %! Increment the number of windows in the master area
+  , ((myModMask, xK_period), sendMessage (IncMasterN (-1))) -- %! Decrement the number of windows in the master area
   , ((myModMask, xK_h), sendMessage Shrink) -- %! Shrink the master area
   , ((myModMask, xK_l), sendMessage Expand) -- %! Expand the master area
 
@@ -280,10 +281,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- mod-ctrl-shift-n %! Close all notifications
   -- mod-shift-h %! Show previous notification(s)
 
-  -- %% ! Accessibility
-  , ((0, xF86XK_Launch8), spawnVisualKeyboard) -- none-Hotkey4 %! Relaunch visual keyboard
-  , ((0, xF86XK_Launch9), spawnMagnifier) -- none-Hotkey5 %! Launch screen magnifier
-
   -- %% ! Miscellaneous
   , ((myControlMask, xK_space), safeSpawnProg "cyclexlayout.sh") -- %! Cycle keyboard layouts
 
@@ -296,6 +293,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xK_Print), unsafeSpawn $ screenshotCommand "" "") -- %! Make screenshot of whole desktop
 
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
+
   ] ++
   -- mod-control-[0..9] %! Extend prefix
   [((myControlMask, key), (prependToPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
