@@ -87,7 +87,8 @@ wsRead = "read"
 wsMedia = "media"
 wsMsg = "msg"
 wsMisc = "misc"
-myWorkspaces = [ wsMain, wsDev, wsRead, wsMedia, wsMsg, wsMisc ]
+wsPile = "pile"
+myWorkspaces = [ wsMain, wsDev, wsRead, wsMedia, wsMsg, wsMisc, wsPile ]
 
 -- Terminal config
 myTerminal = "alacritty"
@@ -106,13 +107,15 @@ xzoomWindowQuery = stringProperty "WM_ICON_NAME" =? "xzoom"
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
-           onWorkspace wsMedia (noBorders Full) $ onWorkspace wsMsg msg $
-           onWorkspace wsMisc Accordion $ tiled ||| (Mirror col) ||| (Mirror tiled)
+           onWorkspace wsMedia noBorders' $ onWorkspace wsMsg msg $
+           onWorkspace wsMisc noBorders' $ onWorkspace wsPile Accordion $
+           tiled ||| (Mirror col) ||| (Mirror tiled)
   where
     col = Column 1
     read = Mirror $ (Tall 2 delta (1/3)) ||| (mosaic 2 [2, 1])
     msg = col ||| Mirror col
     tiled = Tall 1 delta (1/2)
+    noBorders' = noBorders Full
 
     delta = 3/100
 
