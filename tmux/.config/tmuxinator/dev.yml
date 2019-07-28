@@ -10,7 +10,7 @@ windows:
       panes:
         - empty
         - empty
-  - emacs: emacsclient -a '' -t -e '(progn (global-display-line-numbers-mode t) (switch-to-buffer "stuff.org") (split-window-below) (switch-to-buffer "*scratch*"))'
+  - emacs: emacsclient -a '' -t -e '(progn (switch-to-buffer "stuff.org") (split-window-below) (switch-to-buffer "*scratch*"))'
   - "~.":
       root: ~/dotfiles
       panes:

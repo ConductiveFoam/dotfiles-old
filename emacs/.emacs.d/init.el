@@ -204,6 +204,24 @@ respectively."
  ;; Miscellaneous
  ("C-c l" . org-store-link))
 
+;;; Highlight current line
+(require 'hlinum)
+(hlinum-activate)
+
+;;; Right-align Line numbers
+(defun my-linum-get-format-string ()
+  (let* ((width (1+ (length (number-to-string
+                             (count-lines (point-min) (point-max))))))
+         (format (concat "%" (number-to-string width) "d ")))
+    (setq my-linum-format-string format)))
+(defun my-linum-format (line-number)
+  (propertize (format my-linum-format-string line-number) 'face 'linum))
+
+(add-hook 'linum-before-numbering-hook 'my-linum-get-format-string)
+(setq linum-format 'my-linum-format)
+
+(add-hook 'find-file-hook (lambda () (linum-mode t)))
+
 ;;; Prog mode
 (add-hook 'prog-mode-hook 'company-mode)
 
