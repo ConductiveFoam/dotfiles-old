@@ -205,6 +205,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myShiftMask, xK_f), withFocused $ windows . (rectFloat maximizeRect)) -- %! Float & maximize
   , ((myControlMask, xK_f), withFocused $ float) -- %! Float
   , ((myModMask, xK_f), withFocused $ windows . (rectFloat centerRect)) -- %! Float & center
+  , ((myShiftMask, xK_p), windows $ W.shift wsPile) -- %! Move to "pile" workspace
   , ((myControlMask, xK_t), withFocused $ remanage) -- %! Reapply manage hook
   , ((myShiftControlMask, xK_t), withAll $ remanage) -- %! Reapply manage hook to current workspace
   , ((myShiftMask, xK_c), kill) -- %! Close the focused window
