@@ -41,6 +41,7 @@ $ mkdir -p ~/src/emacs ~/.emacs.d/lib
 #+BEGIN_SRC sh
 $ git clone -b master https://github.com/emacsmirror/emacswiki.org.git ~/src/emacs/emacswiki.org
 $ git clone https://github.com/hrs/sensible-defaults.el.git ~/src/emacs/sensible-defaults.el
+$ git clone https://github.com/tom-tan/hlinum-mode.git ~/src/emacs/hlinum-mode
 #+END_SRC
 - ~M-x package-refresh-contents RET~ ~M-x package-install-selected-packages RET~
 
@@ -57,7 +58,7 @@ $ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin
 #+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~compton~
-- +Configured to start XMonad in ~.xinitrc~+
+- Configured to start XMonad in ~.xinitrc~
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
 - Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~compton~
 
