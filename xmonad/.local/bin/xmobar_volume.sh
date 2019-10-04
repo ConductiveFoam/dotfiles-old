@@ -3,10 +3,10 @@ format='NR == 6 {
   volume = substr($5, 2, length($5) - 3)
   if ($6 == "[on]") {
     color = "#859900"
-    status = "[on] "
+    status = "on "
   } else {
     color = "#dc322f"
-    status = $6
+    status = "off"
   }
   print "Vol: <fc=#268bd2>" volume "</fc>% <fc=" color ">" status "</fc>"
 }
