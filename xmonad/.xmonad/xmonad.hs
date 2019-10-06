@@ -8,13 +8,14 @@ import qualified Data.Map as M
 import Data.Maybe (maybe)
 import Data.Monoid (Endo(..), appEndo)
 import qualified DBus.Notify as Notify
+import System.Directory (setCurrentDirectory, getHomeDirectory)
+import System.Exit (exitWith, ExitCode(ExitSuccess))
 import System.IO (BufferMode(LineBuffering), FilePath, Handle, hPutStrLn, hSetBuffering)
 import System.Posix.IO ( FdOption(CloseOnExec), setFdOption
                        , createPipe, fdToHandle, closeFd
                        , dupTo, stdInput
                        )
 import System.Posix.Process (executeFile)
-import System.Exit (exitWith, ExitCode(ExitSuccess))
 import XMonad
 import XMonad.Config.Desktop (desktopConfig, desktopLayoutModifiers)
 
@@ -297,7 +298,6 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xK_Print), unsafeSpawn $ screenshotCommand "" "") -- %! Make screenshot of whole desktop
 
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
-
   ] ++
   -- mod-control-[0..9] %! Extend prefix
   [((myControlMask, key), (prependToPrefix $ (fromIntegral key) - 48) >> refresh) | key <- [xK_0 .. xK_9]]
@@ -365,6 +365,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
 -- Main config
 main = do
+  catchIO $ getHomeDirectory >>= setCurrentDirectory
+
   -- Monitor-dependent infobar config
   dpy <- openDisplay ""
   rects <- getScreenInfo dpy
