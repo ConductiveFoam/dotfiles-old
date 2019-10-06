@@ -61,6 +61,7 @@ import XMonad.Prompt.AssociationPrompt (associationPrompt)
 import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
 import XMonad.Prompt.MPD (loadPlaylist)
 import XMonad.Prompt.Shell (shellPrompt)
+import XMonad.Prompt.UdiskiePrompt (mountDevicePrompt, unmountDevicePrompt, listDevices)
 import XMonad.Prompt.Window (WindowPrompt(Goto, Bring), allWindows, windowPrompt)
 
 -- Imports: Actions
@@ -266,12 +267,17 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     , ((controlMask, xK_Delete), MPD.clear) -- %! MPD clear
     ])
 
-  -- %% ! Systemctl integration
+  -- %% ! Service & Device control
   , ((myControlMask, xK_s), withLog (colored colDGreen "Unit") $ submap $ M.fromList -- %! Systemctl submap:
     [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! Show unit status
     , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! Start unit
     , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! Stop unit
     , ((0, xK_r), sysctlPrompt "Restart Unit: " "restart" xpc) -- %! Restart unit
+    ])
+  , ((myControlMask, xK_d), withLog (colored colDGreen "Device") $ submap $ M.fromList -- %! Device submap:
+    [ ((0, xK_l), notifyOf "Mounted devices" (unlines <$> listDevices "~/media")) -- %! List mounted devices
+    , ((0, xK_m), mountDevicePrompt "/dev" xpc) -- %! Mount device
+    , ((0, xK_u), unmountDevicePrompt "~/media" xpc) -- %! Unmount device
     ])
 
   -- %% ! Quit xmonad, Power control
