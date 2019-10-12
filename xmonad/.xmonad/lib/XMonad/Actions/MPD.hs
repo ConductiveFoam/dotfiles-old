@@ -1,7 +1,7 @@
 module XMonad.Actions.MPD
   ( Status(..)
   , MPD.Song(..)
-  , MPD.State(..)
+  , MPD.PlaybackState(..)
   , liftMPD, liftMPD_
   , state, toggle, play, pause, stop
   , next, previous
@@ -40,7 +40,7 @@ status Repeat = status'' MPD.stRandom
 status Consume = status'' MPD.stRandom
 status Single = status'' MPD.stRandom
 
-state :: MonadIO m => m MPD.State
+state :: MonadIO m => m MPD.PlaybackState
 state = status' MPD.Stopped MPD.stState
 
 status' :: MonadIO m => a -> (MPD.Status -> a) -> m a
