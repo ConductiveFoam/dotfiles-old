@@ -128,6 +128,7 @@ myManageHook = composeOne $
   | (t, action) <- terminalWindows
   ] ++
   [ (className =? "Zenity" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.15 0.03 0.7 0.94)
+  , (className =? "Zenity" <&&> title =? "Device password") -?> doCenterFloat
   , className =? "Zenity" -?> doRectFloat centerRect
 
   -- Gaming related

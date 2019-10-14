@@ -1,0 +1,2 @@
+program_options:
+  password_prompt: "zenity --title 'Device password' --entry --hide-text --text 'Enter password for {device_presentation}:'"
