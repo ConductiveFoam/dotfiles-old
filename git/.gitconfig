@@ -1,5 +1,9 @@
 [user]
-	name = Sam B
-	email = nhalbleiter@gmail.com
+  name = Sam B
+  email = nhalbleiter@gmail.com
+
 [core]
-	editor = emacs -q -nw
+  editor = emacs -q -nw
+
+[pretty]
+  shortdate = "%C(yellow)commit %C(auto)%H% d%n%CresetDate:   %aD%n%s%n"

@@ -29,7 +29,7 @@ alias rmi='rm -i'
 alias clr='clear'
 
 alias git?='clear; git status'
-alias git??='git?; git stash list; git log -3 --format="format:%C(yellow)commit %H%C(auto)% d%n%CresetDate:   %aD%n%s%n"'
+alias git??='git?; git stash list; git --no-pager log -3 --format=shortdate'
 alias git-amend='git commit --amend --no-edit'
 
 alias sysdctl='systemctl --user'

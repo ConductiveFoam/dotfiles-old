@@ -15,5 +15,5 @@ windows:
       root: ~/dotfiles
       panes:
         - tmux move-window -s dev:4 -t dev:5 ; tmux move-window -s dev:3 -t dev:4 ; clr
-        - git?; git stash list
+        - git??
   - man: (tmux_dev_preselect_window.sh &); clr
