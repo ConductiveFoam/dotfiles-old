@@ -1,0 +1,23 @@
+xscreensaver.timeout: 0:07:00
+xscreensaver.cycle: 0:07:00
+xscreensaver.lock: True
+xscreensaver.lockTimeout: 0:10:00
+xscreensaver.passwdTimeout: 0:00:30
+xscreensaver.timestamp: True
+xscreensaver.splash: False
+
+xscreensaver.fade: False
+xscreensaver.unfade: False
+
+xscreensaver.font: *-medium-r-*-140-*-m-*
+xscreensaver.dpmsEnabled: True
+xscreensaver.dpmsQuickOff: False
+xscreensaver.dpmsStandby: 0:10:00
+xscreensaver.dpmsSuspend: 0:15:00
+xscreensaver.dpmsOff: 0:20:00
+
+xscreensaver.mode: random-same
+
+xscreensaver.programs: \
+  penrose -root \n\
+  abstractile -root -sleep 11 -tile block -fps \n
