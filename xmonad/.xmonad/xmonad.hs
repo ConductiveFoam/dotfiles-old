@@ -304,6 +304,12 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), withFocused $ \w -> unsafeSpawn $ screenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
   , ((0, xK_Print), unsafeSpawn $ screenshotCommand "" "") -- %! Make screenshot of whole desktop
 
+  , ((myModMask, xK_a), withLog (colored colDGreen "Accessibility") $ submap $ M.fromList -- %! Accessibility submap
+    [ ((0, xK_k), spawnVisualKeyboard) -- %! Visual keyboard
+    , ((0, xK_z), spawnMagnifier) -- %! Screen magnifier
+    ])
+
+  -- %% ! Prefix control
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
   ] ++
   -- mod-control-[0..9] %! Extend prefix
