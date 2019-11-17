@@ -13,17 +13,20 @@ import XMonad
 
 import XMonad.Prompt (XPConfig)
 import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
+import XMonad.Util.Run (runProcessWithInput)
 
 udiskiePrompt :: String -> String -> FilePath -> [String] -> XPConfig -> X ()
 udiskiePrompt name action from list xpc = do
   from' <- resolvePath from
-  listCompletedPrompt name list (\w -> spawn $ "udiskie-" ++ action ++ " " ++ (from' </> w)) xpc
+  listCompletedPrompt name list (\w -> spawn $ "udiskie-" ++ action ++ " \"" ++ (from' </> w) ++ "\"") xpc
 
 mountDevicePrompt, unmountDevicePrompt :: FilePath -> XPConfig -> X ()
 mountDevicePrompt from xpc = do
-  devices <- listDevices from
-  let devices' = filter notBoring devices
-  -- TODO filter out already mounted ones?
+  devices <- runProcessWithInput "udiskie_mountable_devices.sh" [] ""
+  let devices' = (filter notBoring . -- Only show certain devices & partitions
+                  (fmap $ drop $ (length from) + 1) . -- Remove path
+                  lines
+                 ) devices
   udiskiePrompt "Mount device: " "mount" from (sort devices') xpc
 
 unmountDevicePrompt from xpc = do
@@ -35,6 +38,7 @@ listDevices from = io $ (resolvePath from) >>= listDirectory
 
 notBoring :: String -> Bool
 notBoring ('s':'d':x:n) = (isAlpha x) && (0 < length n) && (all isDigit n)
+notBoring ('s':'r':[n]) = isDigit n
 notBoring _ = False
 
 resolvePath :: MonadIO m => FilePath -> m FilePath
