@@ -1,0 +1,46 @@
+cabal-version: 2.4
+
+name: nhalbleiter-xmonad
+version: 0.1
+maintainer: nhalbleiter@gmail.com
+license: NONE
+category: Graphics
+build-type: Simple
+
+tested-with: GHC == 8.8.1
+
+library
+  exposed-modules: CommandPrefix
+                 , MyVisuals, MyBars
+                 , XMobar.Config
+                 , XMonad.Actions.MPD
+                 , XMonad.Actions.LoggedAction
+                 , XMonad.Prompt.ListCompletedPrompt
+                 , XMonad.Prompt.AssociationPrompt
+                 , XMonad.Prompt.UdiskiePrompt
+  ghc-options: -Wall -Werror
+  build-depends: base >=4.8 && <4.14
+               , X11 >=1.8 && <1.10
+               , xmonad, xmonad-contrib, xmonad-extras
+               , filepath ^>=1.4.2
+               , libmpd
+               , containers
+               , data-default
+               , directory
+  hs-source-dirs: lib
+  default-language: Haskell2010
+
+executable nhalbleiter-xmonad
+  main-is: xmonad.hs
+  ghc-options: -Wall -fno-warn-missing-signatures
+  build-depends: base >=4.8 && <4.14
+               , X11 >=1.8 && <1.10
+               , xmonad, xmonad-contrib, xmonad-extras
+               , nhalbleiter-xmonad
+               , fdo-notify
+               , containers
+               , data-default
+               , directory
+               , unix
+               , utf8-string
+  default-language: Haskell2010

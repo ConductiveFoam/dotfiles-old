@@ -55,17 +55,22 @@ $ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
 - Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~compton~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming)
 
-** XMonad
+** xmonad
 #+BEGIN_SRC sh
 $ mkdir -p ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/screenshots ~/.config ~/.local/{share/awk,bin} ~/.Xresources.d ~/bin
+$ (cd ~; cabal install xmonad)
 #+END_SRC
-- No XMonad-specific setup needs to be done before starting the binary (it configures the background, tray and xmobar itself)
-- XMobar installation assumes no compilation flags and relies on scripts instead
+The second line gets the xmonad executable so we can use ~xmonad --recompile~ from then on
+- No xmonad-specific setup neends to be done before starting the binary (it configures the background, tray and xmobar itself)
 - Enable --user dunst.service
-- Dependencies: ~xmonad-contrib~, ~xmonad-extras~, ~xmobar~, ~stalonetray~, ~nitrogen~
-  - Other Haskell libs: ~fdo-notify~
-  - Terminal used is ~alacritty~
-  - XMobar: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
+- Dependencies:
+  - cabal-install >3.0.1.0
+  - xmobar with ~+with_xft +with_utf8~ flags:
+#+BEGIN_SRC sh
+$ git clone https://github.com/jaor/xmobar.git ~/src/xmobar
+$ (cd ~/src/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
+#+END_SRC
+  - xmobar info scripts: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
   - Integration: ~dunst~, ~zenity~, ~xvkbd~, ~xzoom~, ~maim~
 
 ** MPD

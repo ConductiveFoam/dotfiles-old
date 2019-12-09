@@ -1,0 +1,13 @@
+#!/bin/sh -eu
+
+SRC_DIR=~/.xmonad
+EXE_NAME=nhalbleiter-xmonad
+
+output_file=$1; shift
+
+cd $SRC_DIR
+
+cabal build
+
+find dist-newstyle -type f -executable -name $EXE_NAME \
+     -exec mv -u '{}' $output_file ';'
