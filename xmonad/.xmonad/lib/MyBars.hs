@@ -47,14 +47,17 @@ secondaryBar = myDefaultXMobar
   }
 
 -- Internals
+myDefaultXMobar :: Config
 myDefaultXMobar = def
   { font = myFont
   , bgColor = colBackground
   , fgColor = colForeground
   }
 
+colConfig :: [String]
 colConfig = ["-l", colDBlue, "-n", colDGreen, "-h", colDRed]
 
+infoMisc, infoLoad, infoNet, infoTime :: ([Runnable], String)
 infoMisc = ( [ Run "Kbd" ["[(\"us(dvorak)\", \"DV\"), (\"us\", \"US\"), (\"de\", \"DE\")]"] [] ]
            , "XSS %xmobar_xssmode.sh% | <fc=" ++ colDMagenta ++ ">%kbd%</fc>"
            )
@@ -73,5 +76,6 @@ infoTime = ( [ Run "Date" ["\"%l:%M %p\"", "\"time\"", "60"] []
            , "<fc=" ++ colDMagenta ++ ">%xmobar_time.sh% %time%</fc> * %uptime%"
            )
 
+infoMPD, infoVolume :: String
 infoMPD = "%xmobar_mpdstatus.sh%"
 infoVolume = "%xmobar_volume.sh%"

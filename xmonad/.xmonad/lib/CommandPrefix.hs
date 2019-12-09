@@ -1,7 +1,6 @@
 {-# LANGUAGE
   DeriveDataTypeable
   #-}
-{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 module CommandPrefix
   ( CommandPrefix(..)
   , resetPrefix, modifyPrefix, prependToPrefix
@@ -22,7 +21,7 @@ import XMonad.Config.Prime
   )
 import qualified XMonad.Util.ExtensibleState as XS
 import XMonad.Util.Loggers (Logger)
-import XMonad.Util.PureX (XLike(toX))
+import XMonad.Util.PureX (XLike)
 
 -- CommandPrefix
 newtype CommandPrefix = CommandPrefix { commandPrefix :: Int } deriving (Typeable, Read, Show)
@@ -52,7 +51,7 @@ prefixToString n = show n
 prefixedAction :: X a -> X ()
 prefixedAction a = do
   prefix <- getPrefix
-  if prefix == 0 then
+  _ <- if prefix == 0 then
     a
     else
     (replicateM_ (prefix - 1) a) >> a

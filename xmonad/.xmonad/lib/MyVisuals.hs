@@ -1,5 +1,15 @@
 module MyVisuals where
 
+myFont
+  , colDBlue, colLBlue
+  , colDBlack, colLBlack
+  , colDRed, colLRed
+  , colDGreen, colLGreen
+  , colDYellow, colLYellow
+  , colDMagenta, colLMagenta
+  , colDWhite, colLWhite
+  , colBackground, colForeground :: String
+
 myFont = "xft:Fira Code:style=Bold:size=9:antialias=true"
 
 -- Solarized colors

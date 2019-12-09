@@ -15,4 +15,4 @@ instance XPrompt AssociationPrompt where
   showXPrompt (AssociationPrompt name) = name
 
 associationPrompt :: String -> (Map String a) -> (a -> X ()) -> XPConfig -> X ()
-associationPrompt name map runner xpc = mkXPrompt (AssociationPrompt name) xpc (mkComplFunFromList' $ keys map) $ flip whenJust runner . (map !?)
+associationPrompt name commandmap runner xpc = mkXPrompt (AssociationPrompt name) xpc (mkComplFunFromList' $ keys commandmap) $ flip whenJust runner . (commandmap !?)

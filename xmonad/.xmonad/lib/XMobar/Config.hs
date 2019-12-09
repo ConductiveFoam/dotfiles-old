@@ -91,16 +91,16 @@ asList conf =
 -- Runnable
 data Runnable =
   Run { name :: String
-           , literal :: [String]
-           , quoted :: [String]
-           }
+      , literal :: [String]
+      , quoted :: [String]
+      }
 
 instance Show Runnable where
-  show (Run name literals quoted) = "Run " ++ name ++ " " ++ quoted' ++ " " ++ literals'
+  show (Run rname literals rquoted) = "Run " ++ rname ++ " " ++ quoted' ++ " " ++ literals'
     where
       quote x = "\"" ++ x ++ "\""
-      quoted' | quoted == [] = ""
-              | otherwise = "[" ++ (intercalate ", " (map quote quoted)) ++ "]"
+      quoted' | rquoted == [] = ""
+              | otherwise = "[" ++ (intercalate ", " (map quote rquoted)) ++ "]"
       literals' = intercalate " " literals
 
 -- Auxiliaries

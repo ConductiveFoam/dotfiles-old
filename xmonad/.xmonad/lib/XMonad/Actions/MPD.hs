@@ -56,8 +56,8 @@ toggleStatus Single = toggleStatus' MPD.stSingle MPD.single
 
 toggleStatus' :: MonadIO m => (MPD.Status -> Bool) -> (Bool -> MPD.MPD ())  -> m ()
 toggleStatus' g s = liftMPD_ $ do
-  status <- MPD.status
-  s $ not (g status)
+  current <- MPD.status
+  s $ not (g current)
 
 play, delete :: MonadIO m => Int -> m ()
 play = liftMPD_ . MPD.play . Just
@@ -92,11 +92,11 @@ showSong i = liftIO $ do
     return $ either show (showSong' . (!! 0)) response
 
 showSong' :: MPD.Song -> String
-showSong' MPD.Song { MPD.sgTags = tags } =
-    (showMeta MPD.Artist tags) ++ " -- " ++
-    (showMeta MPD.Album tags) ++ " #" ++
-    (showMeta MPD.Track tags) ++ " -- " ++
-    (showMeta MPD.Title tags)
+showSong' MPD.Song { MPD.sgTags = tags' } =
+    (showMeta MPD.Artist tags') ++ " -- " ++
+    (showMeta MPD.Album tags') ++ " #" ++
+    (showMeta MPD.Track tags') ++ " -- " ++
+    (showMeta MPD.Title tags')
   where
     showValue = intercalate ", " . (MPD.toString <$>)
     showMeta meta tags = maybe "" showValue $ M.lookup meta tags
