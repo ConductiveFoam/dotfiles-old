@@ -333,8 +333,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       }
 
     screenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
-    helpCommand = "zenity --info --no-wrap --title=\"xmonad key binds\"" ++
-      " --text=\"$(awk -f ~/.xmonad/genhelp.awk ~/.xmonad/xmonad.hs | sed 's/&/&amp;/')\""
+    helpCommand = "zenity --info --no-wrap --no-markup --title=\"xmonad key binds\"" ++
+      " --text=\"$(awk -f ~/.xmonad/genhelp.awk ~/.xmonad/xmonad.hs)\""
     steamCommand = ("steam steam://run/" ++)
 
     notifySong 0 = MPD.currentSong >>= (maybe (notify "MPD" "No song") (notifySong . (+ 1)))
