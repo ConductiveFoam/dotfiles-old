@@ -7,11 +7,6 @@
 
 export LS_COLORS='ln=00;36'
 
-# Explicit XDG spec to make other things a bit easier
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache"
-
 # Convenience aliases
 alias ls='ls --color=auto'
 alias lsa='ls -a'
@@ -22,13 +17,13 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 alias cd.='cd ~/dotfiles'
-alias cd..='cd ..'
-alias cd...='cd ../..'
+alias ..='cd ..'
+alias ...='cd ../..'
 alias rmi='rm -i'
 
-alias clr='clear'
+alias clr='clear -x'
 
-alias git?='clear; git status'
+alias git?='clr; git status'
 alias git??='git?; git stash list; git --no-pager log -3 --format=shortdate'
 alias git-amend='git commit --amend --no-edit'
 
@@ -54,23 +49,9 @@ ssht() { /usr/bin/ssh -t "$@" "tmux attach || tmux new"; }
 #  Rust
 alias clippy='cargo +stable clippy'
 alias rustfmt='cargo +nightly fmt'
-export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
-PATH="$HOME/.cargo/bin:$PATH"
-#  Haskell
-PATH="$HOME/.cabal/bin:$PATH"
-#  Go
-export GOPATH="$HOME/.go"
-PATH="$GOPATH/bin:$PATH"
-#  Ruby
-PATH="$(ruby -e 'puts Gem.user_dir')/bin:$PATH"
 
 PS1='[\u@\h \W]\$ '
 
 export EDITOR="emacsclient -nw"
 export VISUAL="emacsclient"
 export SUDO_EDITOR="emacs -nw"
-
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
-export AWKPATH=".:$HOME/.local/share/awk:/usr/local/share/awk"
-
-export BUILDDIR="$HOME/build"

@@ -47,7 +47,7 @@ $ mkdir -p ~/.elinks
 
 ** XConfig
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin
+$ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin ~/.profile.d
 #+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~compton~
