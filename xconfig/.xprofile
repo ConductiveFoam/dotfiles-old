@@ -6,5 +6,5 @@ if [ -d ~/.xprofile.d ]; then
   done
 fi
 
-compton -b
+picom -b
 systemctl --user start redshiftd
