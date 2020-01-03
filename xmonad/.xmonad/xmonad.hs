@@ -356,7 +356,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       let newPosition = (\(x, y) -> (x - 192, y - 108)) <$> mousePosition conf
       raiseMaybe (spawn $ "xzoom " ++ (maybe "" showPosition newPosition)) xzoomWindowQuery
 
-    promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service"]
+    promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service", "udiskied.service"]
     promptApps =
       [ "firefox"
       , "alacritty"
