@@ -27,11 +27,11 @@ mountDevicePrompt from xpc = do
                   (fmap $ drop $ (length from) + 1) . -- Remove path
                   lines
                  ) devices
-  udiskiePrompt "Mount device: " "mount" from (sort devices') xpc
+  udiskiePrompt "Mount device: " "mount -r" from (sort devices') xpc
 
 unmountDevicePrompt from xpc = do
   devices <- listDevices from
-  udiskiePrompt "Unmount device: " "umount" from (sort devices) xpc
+  udiskiePrompt "Unmount device: " "umount -f" from (sort devices) xpc
 
 listDevices :: MonadIO m => FilePath -> m [String]
 listDevices from = io $ (resolvePath from) >>= listDirectory
