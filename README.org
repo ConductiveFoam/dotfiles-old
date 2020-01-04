@@ -1,14 +1,14 @@
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
 Pretty much everything in here depends on ~base~.
-~mkdir~ invocations indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree). The font used is ~Fira Code~.
+~mkdir~ and other shell calls invocations indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree). The font used is ~Fira Code~.
 
 * Package specific instructions
 ** base
-Basic system tools configuration such as ~tmux~, ~git~, and ~ssh~
+Basic system tools configuration such as ~tmux~, ~git~, and ~ssh~, as well as programming language conveniences
 #+BEGIN_SRC sh
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
-$ mkdir -p ~/{.config/tmuxinator,.local,.profile.d,.ssh}
+$ mkdir -p ~/{.profile.d,.shrc.d,.ssh,.config/tmuxinator,.local}
 #+END_SRC
 - Dependencies:
   - [[https://github.com/tmux-plugins/tpm][TPM]], [[https://github.com/tmuxinator/tmuxinator][tmuxinator]], and ~fortune~
@@ -16,20 +16,20 @@ $ mkdir -p ~/{.config/tmuxinator,.local,.profile.d,.ssh}
 
 ** Bash
 #+BEGIN_SRC sh
-$ mkdir -p ~/.profile.d
+$ mkdir -p ~/{.profile.d,.shrc.d}
 #+END_SRC
-- Drop-in setup via executable scripts in ~$HOME/.profile.d~
+- Drop-in setup for login (interactive) shells via executable scripts in ~$HOME/.profile.d~ (~$HOME/.shrc.d~)
 - Dependencies: ~thefuck~
 
 ** appconfig
 #+BEGIN_SRC sh
-$ mkdir -p ~/{.local/bin,.config}
+$ mkdir -p ~/{.shrc.d,.config,.local/bin}
 #+END_SRC
 - Dependencies: ~aria2~
 
 ** Emacs
 #+BEGIN_SRC sh
-$ mkdir -p ~/src/emacs ~/.emacs.d/lib
+$ mkdir -p ~/{.shrc.d,src/emacs,.emacs.d/lib}
 #+END_SRC
 - tmux integration starts server when window is created
 - ~M-x package-refresh-contents RET~ ~M-x package-install-selected-packages RET~
@@ -49,7 +49,7 @@ $ mkdir -p ~/.elinks
 
 ** XConfig
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin ~/.profile.d
+$ mkdir -p ~/{.profile.d,.shrc.d,.config,.local,.xprofile.d,.Xresources.d,bin}
 #+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~picom~
@@ -59,7 +59,7 @@ $ mkdir -p ~/.xprofile.d ~/.Xresources.d ~/bin ~/.profile.d
 
 ** xmonad
 #+BEGIN_SRC sh
-$ mkdir -p ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/screenshots ~/.config ~/.local/{share/awk,bin} ~/.Xresources.d ~/bin
+$ mkdir -p  ~/{.config,.Xresources.d,bin,screenshots} ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/.local/{share/awk,bin}
 $ (cd ~; cabal install xmonad)
 #+END_SRC
 The second line gets the xmonad executable so we can use ~xmonad --recompile~ from then on

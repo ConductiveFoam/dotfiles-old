@@ -1,0 +1,1 @@
+alias ncdu='ncdu -2 -rr --confirm-quit'

@@ -1,0 +1,3 @@
+# Need to manually move and relink config since xscreensaver-demo does not respect $HOME as location for .xscreensaver
+XSCREENSAVER_CONFIG="$HOME/dotfiles/xconfig/.xscreensaver"
+alias xscreensaver-demo="xscreensaver-demo; mv ~/.xscreensaver $XSCREENSAVER_CONFIG; ln -sf $XSCREENSAVER_CONFIG ~"
