@@ -10,8 +10,9 @@ Basic system tools configuration such as ~tmux~, ~git~, and ~ssh~, as well as pr
 $ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
 $ mkdir -p ~/{.profile.d,.shrc.d,.ssh,.config/tmuxinator,.local}
 #+END_SRC
+- Complete system upgrade via ~topgrade~
 - Dependencies:
-  - [[https://github.com/tmux-plugins/tpm][TPM]], [[https://github.com/tmuxinator/tmuxinator][tmuxinator]], and ~fortune~
+  - [[https://github.com/tmux-plugins/tpm][TPM]], [[https://github.com/tmuxinator/tmuxinator][tmuxinator]], ~fortune~, ~topgrade~
   - ~ruby~ (for tmuxinator), ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~)
 
 ** Bash

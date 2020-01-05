@@ -1,0 +1,10 @@
+git_repos = [
+    "~/src/emacs/*/",
+    "~/src/xmobar",
+    "~/dotfiles",
+]
+
+[commands]
+"Cabal update" = "cabal update"
+"xmobar update" = "cd ~/src/xmobar; cabal install --overwrite-policy=always"
+"xmonad recompile" = "xmonad --recompile"
