@@ -1,4 +1,8 @@
+export PAGER="most"
+export MOST_SWITCHES="-r -t2"
+
 # Convenience aliases
+alias pg="command $PAGER"
 alias ls='ls --color=auto'
 alias lsa='ls -a'
 alias lsl='ls -l'

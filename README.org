@@ -13,6 +13,7 @@ $ mkdir -p ~/{.profile.d,.shrc.d,.ssh,.config/tmuxinator,.local}
 - Complete system upgrade via ~topgrade~
 - Dependencies:
   - [[https://github.com/tmux-plugins/tpm][TPM]], [[https://github.com/tmuxinator/tmuxinator][tmuxinator]], ~fortune~, ~topgrade~
+  - ~most~ for paging
   - ~ruby~ (for tmuxinator), ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~)
 
 ** Bash

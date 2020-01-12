@@ -1,0 +1,40 @@
+% Change foreground color of status bar to white (yellow doesn't look good in solarized dark)
+color status white blue
+color underline green black
+color overstrike blue black
+
+% Unset (some) uppercased keys
+unsetkey "B"
+unsetkey "D"
+unsetkey "F"
+unsetkey "G"
+unsetkey "H"
+unsetkey "J"
+unsetkey "M"
+unsetkey "N"
+unsetkey "O"
+unsetkey "Q"
+unsetkey "R"
+unsetkey "S"
+unsetkey "T"
+unsetkey "U"
+unsetkey "V"
+unsetkey "W"
+unsetkey "X"
+
+% Enable horizontal scrolling via emacs-like binds
+unsetkey "^F"
+setkey page_right "^F"
+setkey page_left "^B"
+
+% Emulate some of less' keybinds
+unsetkey "b"
+setkey page_up "b"
+unsetkey "<"
+setkey bob "<"
+unsetkey ">"
+setkey eob ">"
+unsetkey "j"
+setkey down "j"
+setkey up "k"
+setkey help "h"
