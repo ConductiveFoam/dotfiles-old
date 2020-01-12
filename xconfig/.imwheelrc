@@ -1,0 +1,17 @@
+"^Navigator$"
+# Increase horizontal scroll speed
+None, Left, Left, 4
+None, Right, Right, 4
+Shift_L, Up, Left, 4
+Shift_L, Down, Right, 4
+# Remap forward/backward to PgUp/PgDown
+None, Thumb2, Prior
+None, Thumb, Next
+# Remap Ctrl-forward/backward to Home/End
+Shift_L, Thumb2, Home
+Shift_L, Thumb, End
+
+"^telegram-desktop$"
+# Remap forward/backward to next/previous chat
+None, Thumb2, Control_L|Shift_L|Tab
+None, Thumb, Control_L|Tab
