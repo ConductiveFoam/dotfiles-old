@@ -16,7 +16,6 @@
 
 ;;; Packages & local imports
 (add-to-list 'load-path "~/.emacs.d/lib")
-(require 'better-require)
 (require 'package)
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
