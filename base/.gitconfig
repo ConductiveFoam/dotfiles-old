@@ -3,7 +3,48 @@
   email = nhalbleiter@gmail.com
 
 [core]
-  editor = emacs -q -nw
+  editor = emacsclient -nw
+  pager = "most +s"
+  whitespace = "tab-in-indent tabwidth=2"
+
+[alias]
+  amend = "commit --amend --no-edit"
+  sdiff = "diff --staged"
 
 [pretty]
-  shortdate = "%C(yellow)commit %C(auto)%H% d%n%CresetDate:   %aD%n%s%n"
+  shortdate = "%C(yellow)commit %C(auto)%h% d%n%CresetDate:   %aD%n%s%n"
+
+[advice]
+  statusHints = false
+  detachedHead = false
+
+[interactive]
+  singleKey = true
+
+[pager]
+  branch = false
+
+[status]
+  short = true
+  branch = true
+  showUntrackedFiles = all
+
+[log]
+  abbrevCommit = true
+
+[stash]
+  showPatch = true
+
+[merge]
+  conflictStyle = "diff3"
+  log = 3
+
+[rebase]
+  missingCommitsCheck = "warn"
+  abbreviateCommands = true
+
+[grep]
+  patternType = "extended"
+  fullName = true
+  threads = 2
+  fallbackToNoIndex = true

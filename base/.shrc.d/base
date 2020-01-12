@@ -19,8 +19,7 @@ alias rmi='rm -i'
 alias clr='clear -x'
 
 alias git?='clr; git status'
-alias git??='git?; git stash list; git --no-pager log -3 --format=shortdate'
-alias git-amend='git commit --amend --no-edit'
+alias git??='git?; git --no-pager stash list; git --no-pager log -3 --format=shortdate'
 
 alias topgrade!='system_upgrade.sh'
 alias sysdctl='systemctl --user'
