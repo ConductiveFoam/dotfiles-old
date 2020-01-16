@@ -1,15 +1,11 @@
 Dotfile repository, to be used with [[https://www.gnu.org/software/stow/][GNU Stow]].
 
-Pretty much everything in here depends on ~base~.
-~mkdir~ and other shell calls invocations indicate directories to create for smooth experience (e.g. build artifacts not cluttering up the package tree). The font used is ~Fira Code~.
+Pretty much everything in here depends on ~base~. The font used is ~Fira Code~.
+Shell code indicates setup steps.
 
 * Package specific instructions
 ** base
 Basic system tools configuration such as ~tmux~, ~git~, and ~ssh~, as well as programming language conveniences
-#+BEGIN_SRC sh
-$ git clone https://github.com/tmux-plugins/tpm.git ~/.tmux/plugins/tpm
-$ mkdir -p ~/{.profile.d,.shrc.d,.ssh,.config/tmuxinator,.local}
-#+END_SRC
 - Complete system upgrade via ~topgrade~
 - Dependencies:
   - [[https://github.com/tmux-plugins/tpm][TPM]], [[https://github.com/tmuxinator/tmuxinator][tmuxinator]], ~fortune~, ~topgrade~
@@ -17,22 +13,13 @@ $ mkdir -p ~/{.profile.d,.shrc.d,.ssh,.config/tmuxinator,.local}
   - ~ruby~ (for tmuxinator), ~xsel~ (for ~tmux-yank~), ~xdg-open~ (for ~tmux-open~)
 
 ** Bash
-#+BEGIN_SRC sh
-$ mkdir -p ~/{.profile.d,.shrc.d}
-#+END_SRC
 - Drop-in setup for login (interactive) shells via executable scripts in ~$HOME/.profile.d~ (~$HOME/.shrc.d~)
 - Dependencies: ~thefuck~
 
 ** appconfig
-#+BEGIN_SRC sh
-$ mkdir -p ~/{.shrc.d,.config,.local/bin}
-#+END_SRC
 - Dependencies: ~aria2~
 
 ** Emacs
-#+BEGIN_SRC sh
-$ mkdir -p ~/{.shrc.d,src/emacs,.emacs.d/lib}
-#+END_SRC
 - tmux integration starts server when window is created
 - ~M-x package-refresh-contents RET~ ~M-x package-install-selected-packages RET~
 - Expects the following repos in ~$HOME/src/emacs/~:
@@ -43,16 +30,10 @@ $ git clone https://github.com/tom-tan/hlinum-mode.git ~/src/emacs/hlinum-mode
 #+END_SRC
 
 ** Elinks
-#+BEGIN_SRC sh
-$ mkdir -p ~/.elinks
-#+END_SRC
 - Key binds and session resume
 - Autostart through tmux
 
 ** XConfig
-#+BEGIN_SRC sh
-$ mkdir -p ~/{.profile.d,.shrc.d,.config,.local,.xprofile.d,.Xresources.d,bin}
-#+END_SRC
 - Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~picom~
 - Configured to start XMonad in ~.xinitrc~
@@ -61,10 +42,9 @@ $ mkdir -p ~/{.profile.d,.shrc.d,.config,.local,.xprofile.d,.Xresources.d,bin}
 
 ** xmonad
 #+BEGIN_SRC sh
-$ mkdir -p  ~/{.config,.Xresources.d,bin,screenshots} ~/.xmonad/lib/{XMonad/Prompt,XMonad/Actions,XMobar} ~/.local/{share/awk,bin}
 $ (cd ~; cabal install xmonad)
 #+END_SRC
-The second line gets the xmonad executable so we can use ~xmonad --recompile~ from then on
+The cabal invocation gets the xmonad executable so we can use ~xmonad --recompile~ from then on
 - No xmonad-specific setup neends to be done before starting the binary (it configures the background, tray and xmobar itself)
 - Enable --user dunst.service
 - Dependencies:
@@ -78,9 +58,6 @@ $ (cd ~/src/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
   - Integration: ~dunst~, ~zenity~, ~xvkbd~, ~xzoom~, ~maim~
 
 ** MPD
-#+BEGIN_SRC sh
-$ mkdir -p ~/.config/mpd/playlists
-#+END_SRC
 - Enable --user mpd.service (or start explicitly)
 - ~bin/mpd_gen_playlists.zsh~ to create playlists for directories in mpd music library; respects an ~mpd_exclude.txt~ file there
 
