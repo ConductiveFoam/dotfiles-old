@@ -1,3 +1,3 @@
 export EDITOR="emacsclient -nw"
 export VISUAL="emacsclient"
-export SUDO_EDITOR="emacs -nw"
+export SUDO_EDITOR="emacsclient -nw"

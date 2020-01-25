@@ -62,16 +62,14 @@
   :ensure t
   :custom
   (sml/replacer-regexp-list
-   '(("^~/org" ":Org:")
-     ("^/sudo:.*:" ":SU:")
-     ("^~/Documents/" ":Doc:")
-     ("^:\\([^:]*\\):Documento?s/" ":\\1/Doc:")
-     ("^~/[Gg]it/" ":Git:")
-     ("^~/[Gg]it[Hh]ub/" ":Git:")
-     ("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:")
+   '(("^~/Documents/" ":DOC:")
+     ("^\\([^:]*\\)/[Dd]ocumento?s/" ":\\1/DOC:")
+     ("^~/.config/" ":CONF:")
+     ("^~/src/" ":PROJ:")
      ("^~/dotfiles/" ":DOT:")
      ("^:DOT:\\([^/]+\\)/" ":DOT:\\1:")
-     ("^:DOT:emacs:\\.emacs\\.d/" ":DOT:ED:")))
+     ("^:DOT:emacs:\\.emacs\\.d/" ":DOT:ED:")
+     ("^:DOT:xmonad:\\.xmonad/" ":DOT:XM:")))
   (sml/theme 'light)
   :config
   (sml/setup))
@@ -94,6 +92,10 @@
      ("mode" "")))
   :config
   (cyphejor-mode))
+
+;;; IDO
+(require 'ido)
+(ido-mode t)
 
 ;;; Smartparens
 ;; Auxiliary
