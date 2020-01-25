@@ -38,7 +38,7 @@ $ git clone https://github.com/tom-tan/hlinum-mode.git ~/src/emacs/hlinum-mode
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~picom~
 - Configured to start XMonad in ~.xinitrc~
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
-- Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming), ~imwheel~
+- Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming), ~imwheel~, ~solaar~
 
 ** xmonad
 #+BEGIN_SRC sh
