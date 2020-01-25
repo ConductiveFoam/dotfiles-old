@@ -38,7 +38,7 @@ $ git clone https://github.com/tom-tan/hlinum-mode.git ~/src/emacs/hlinum-mode
 - Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~picom~
 - Configured to start XMonad in ~.xinitrc~
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
-- Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming)
+- Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming), ~imwheel~
 
 ** xmonad
 #+BEGIN_SRC sh
@@ -54,8 +54,8 @@ The cabal invocation gets the xmonad executable so we can use ~xmonad --recompil
 $ git clone https://github.com/jaor/xmobar.git ~/src/xmobar
 $ (cd ~/src/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
 #+END_SRC
-  - xmobar info scripts: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ for nvidia graphics cards
-  - Integration: ~dunst~, ~zenity~, ~xvkbd~, ~xzoom~, ~maim~
+  - xmobar info scripts: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ (from ~nvidia-utils~) for nvidia graphics cards
+  - Integration: ~dunst~, ~stalonetray~, ~xvkbd~, ~xzoom~, ~maim~
 
 ** MPD
 - Enable --user mpd.service (or start explicitly)
