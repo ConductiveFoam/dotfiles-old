@@ -179,7 +179,7 @@ myManageHook = composeOne $
 myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   -- %% ! Launching programs
-  [ ((0, xF86XK_Launch5), safeSpawnProg "firefox") -- none-Hotkey1 %! Browser
+  [ ((0, xF86XK_Launch5), safeSpawnProg "firefox-developer-edition") -- none-Hotkey1 %! Browser
   , ((0, xF86XK_Launch6), spawnTerminal termTitleTmux "tmuxinator start dev") -- none-Hotkey2 %! Dev terminal
   , ((0, xF86XK_Launch7), -- none-Hotkey3 %! Note taking terminal
       raiseMaybe (spawnTerminal termTitleNotes "tmuxinator start notes") notesWindowQuery)
@@ -358,7 +358,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
 
     promptSysUnits = ["redshiftd.service", "xss-deactivate.timer", "dunst.service", "mpd.service", "udiskied.service"]
     promptApps =
-      [ "firefox"
+      [ "firefox-developer-edition"
       , "alacritty"
       , "blender", "gimp", "inkscape", "libreoffice", "steam", "vlc"
       , "telegram-desktop", "teamspeak3"
