@@ -34,9 +34,6 @@
 (put 'upcase-region 'disabled nil)
 (menu-bar-mode -1)
 
-;;; Auto-header
-(require 'header2)
-
 ;;; Sensible defaults
 (require 'sensible-defaults)
 (sensible-defaults/increase-gc-threshold)
