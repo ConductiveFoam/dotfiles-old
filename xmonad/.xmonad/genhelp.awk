@@ -19,6 +19,12 @@ function bindmodifiers(s) {
 }
 
 function printbind(bind, desc) {
+    # Every "!! " in the describing comment will indent the combination and
+    # comment by a bit
+    n_indent = gsub("!!", " ", desc)
+    for (i = 0; i < n_indent; i++) {
+        bind = "  " bind
+    }
     printf "  %-25s  %s\n", bind, desc
 }
 
@@ -26,6 +32,7 @@ function printbind(bind, desc) {
 /^\s*--\s+%%/ {
     $1 = $2 = ""
     if ($3 == "!") { #-- %% ! Are section headers
+        # that get preceded by a blank line
 	print ""
 	$3 = ""
     }
@@ -35,16 +42,15 @@ function printbind(bind, desc) {
 #-- %! Are bindings with their combination in line
 /^.*--\s+%!/ {
     mod = bindmodifiers(substr($2, 3, length($2) - 3))
-    if ($3 ~ /^xK_/) { #
-        bind = mod substr($3, 4, length($3) - 5)
-    } else {
-        bind = mod substr($3, 8, length($3) - 9)
-    }
+    i_underscore = index($3, "_")
+    # Remove the "xK_" or "xF86XK_" prefixes
+    bind = mod substr($3, i_underscore + 1, length($3) - 2 - i_underscore)
     printbind(bind, substr($0, index($0, "%! ") + 3))
 }
 
-#-- [bind] %! Are bindings with their combination elsewhere
+#-- [bind] %! Are comments for binds that are defined elsewhere
 /^.*--\s+[^[:blank:]]+\s+%!/ {
+    # Need to treat comments at the beginning of a line a bit differently
     if ($1 == "--") {
 	bind = ltrim($2)
 	$1 = $2 = $3 = ""

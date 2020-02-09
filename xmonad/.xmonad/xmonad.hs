@@ -189,9 +189,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Bare terminal
   , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmuxinator start web") -- %! Elinks terminal
   , ((myModMask, xK_r), withLog (colored colDGreen "Launch") $ submap $ M.fromList -- %! Prompts submap:
-    [ ((0, xK_Return), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! Programs from curated list
-    , ((0, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! Game
-    , ((shiftMask, xK_Return), shellPrompt xpc) -- %! Shell
+    [ ((0, xK_Return), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! !! Programs from curated list
+    , ((0, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! !! Game
+    , ((shiftMask, xK_Return), shellPrompt xpc) -- %! !! Shell
     ])
 
   -- %% ! Moving focus
@@ -249,36 +249,36 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPD toggle
 
   , ((myControlMask, xK_m), withLog (colored colDGreen "MPD") $ submap $ M.fromList -- %! Audio Submap:
-    [ ((0, xK_p), decrementPrefix 1 >> withPrefix MPD.play) -- %! MPD play $prefix
-    , ((0, xK_n), MPD.pause True) -- %! MPD pause
-    , ((shiftMask, xK_t), MPD.stop) -- %! MPD stop
-    , ((0, xK_t), MPD.toggle) -- %! MPD toggle
-    , ((0, xK_f), prefixedAction MPD.next) -- %! MPD next
-    , ((0, xK_b), prefixedAction MPD.previous) -- %! MPD previous
+    [ ((0, xK_p), decrementPrefix 1 >> withPrefix MPD.play) -- %! !! MPD play $prefix
+    , ((0, xK_n), MPD.pause True) -- %! !! MPD pause
+    , ((shiftMask, xK_t), MPD.stop) -- %! !! MPD stop
+    , ((0, xK_t), MPD.toggle) -- %! !! MPD toggle
+    , ((0, xK_f), prefixedAction MPD.next) -- %! !! MPD next
+    , ((0, xK_b), prefixedAction MPD.previous) -- %! !! MPD previous
 
-    , ((0, xK_l), notifyOf "MPD - Playlist" MPD.showPlaylist) -- %! Notify of current playlist
-    , ((0, xK_s), withPrefix notifySong) -- %! Notify of song $prefix
+    , ((0, xK_l), notifyOf "MPD - Playlist" MPD.showPlaylist) -- %! !! Notify of current playlist
+    , ((0, xK_s), withPrefix notifySong) -- %! !! Notify of song $prefix
 
-    , ((shiftMask, xK_s), MPD.toggleStatus MPD.Random) -- %! MPD random
-    , ((shiftMask, xK_r), MPD.toggleStatus MPD.Repeat) -- %! MPD repeat
-    , ((shiftMask, xK_c), MPD.toggleStatus MPD.Consume) -- %! MPD consume
-    , ((shiftMask, xK_o), MPD.toggleStatus MPD.Single) -- %! MPD single
+    , ((shiftMask, xK_s), MPD.toggleStatus MPD.Random) -- %! !! MPD random
+    , ((shiftMask, xK_r), MPD.toggleStatus MPD.Repeat) -- %! !! MPD repeat
+    , ((shiftMask, xK_c), MPD.toggleStatus MPD.Consume) -- %! !! MPD consume
+    , ((shiftMask, xK_o), MPD.toggleStatus MPD.Single) -- %! !! MPD single
 
-    , ((0, xK_Delete), withPrefix deleteSong) -- %! MPD del $prefix
-    , ((controlMask, xK_Delete), MPD.clear) -- %! MPD clear
+    , ((0, xK_Delete), withPrefix deleteSong) -- %! !! MPD del $prefix
+    , ((controlMask, xK_Delete), MPD.clear) -- %! !! MPD clear
     ])
 
   -- %% ! Service & Device control
   , ((myControlMask, xK_s), withLog (colored colDGreen "Unit") $ submap $ M.fromList -- %! Systemctl submap:
-    [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! Show unit status
-    , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! Start unit
-    , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! Stop unit
-    , ((0, xK_r), sysctlPrompt "Restart Unit: " "restart" xpc) -- %! Restart unit
+    [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! !! Show unit status
+    , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! !! Start unit
+    , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! !! Stop unit
+    , ((0, xK_r), sysctlPrompt "Restart Unit: " "restart" xpc) -- %! !! Restart unit
     ])
   , ((myControlMask, xK_d), withLog (colored colDGreen "Device") $ submap $ M.fromList -- %! Device submap:
-    [ ((0, xK_l), notifyOf "Mounted devices" (unlines <$> listDevices "~/media")) -- %! List mounted devices
-    , ((0, xK_m), mountDevicePrompt "/dev" xpc) -- %! Mount device
-    , ((0, xK_u), unmountDevicePrompt "~/media" xpc) -- %! Unmount device
+    [ ((0, xK_l), notifyOf "Mounted devices" (unlines <$> listDevices "~/media")) -- %! !! List mounted devices
+    , ((0, xK_m), mountDevicePrompt "/dev" xpc) -- %! !! Mount device
+    , ((0, xK_u), unmountDevicePrompt "~/media" xpc) -- %! !! Unmount device
     ])
 
   -- %% ! Quit xmonad, Power control
@@ -289,8 +289,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myControlMask, xK_z), safeSpawnProg "togglexss.sh") -- %! Toggle automatic lock
 
   -- %% ! Notification control
-  -- mod-ctrl-n %! Close notification
-  -- mod-ctrl-shift-n %! Close all notifications
+  -- mod-control-n %! Close notification
+  -- mod-control-shift-n %! Close all notifications
   -- mod-shift-h %! Show previous notification(s)
 
   -- %% ! Miscellaneous
@@ -305,8 +305,8 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xK_Print), unsafeSpawn $ screenshotCommand "" "") -- %! Make screenshot of whole desktop
 
   , ((myModMask, xK_a), withLog (colored colDGreen "Accessibility") $ submap $ M.fromList -- %! Accessibility submap
-    [ ((0, xK_k), spawnVisualKeyboard) -- %! Visual keyboard
-    , ((0, xK_z), spawnMagnifier) -- %! Screen magnifier
+    [ ((0, xK_k), spawnVisualKeyboard) -- %! !! Visual keyboard
+    , ((0, xK_z), spawnMagnifier) -- %! !! Screen magnifier
     ])
 
   -- %% ! Prefix control
