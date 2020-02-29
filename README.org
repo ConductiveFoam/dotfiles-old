@@ -39,6 +39,10 @@ $ git clone https://github.com/tom-tan/hlinum-mode.git ~/src/emacs/hlinum-mode
 - Configured to start XMonad in ~.xinitrc~
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
 - Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming), ~imwheel~, ~solaar~
+- Set up with some local compose key binds as well as a lot from a shared repo
+#+BEGIN_SRC sh
+$ git clone https://github.com/kragen/xcompose.git ~/src/repos/xcompose
+#+END_SRC
 
 ** xmonad
 #+BEGIN_SRC sh

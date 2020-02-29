@@ -2,6 +2,7 @@
 # Keyboard setup: Dvorak keymap, custom binds, enable numlock
 setkeyboard.sh dvorak
 numlockx
+export GTK_IM_MODULE=xim
 
 # MX Ergo config
 imwheel
