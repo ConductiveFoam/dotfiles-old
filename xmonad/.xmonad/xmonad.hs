@@ -60,6 +60,9 @@ import qualified XMonad.Prompt as XPrompt
 import XMonad.Prompt.AssociationPrompt (associationPrompt)
 import XMonad.Prompt.ListCompletedPrompt (listCompletedPrompt)
 import XMonad.Prompt.MPD (loadPlaylist)
+import XMonad.Prompt.Pass ( passPrompt, passTypePrompt
+                          , passGeneratePrompt, passGenerateAndCopyPrompt
+                          )
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.UdiskiePrompt (mountDevicePrompt, unmountDevicePrompt, listDevices)
 import XMonad.Prompt.Window (WindowPrompt(Goto, Bring), allWindows, windowPrompt)
@@ -309,6 +312,13 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     [ ((0, xK_k), spawnVisualKeyboard) -- %! !! Visual keyboard
     , ((0, xK_z), spawnMagnifier) -- %! !! Screen magnifier
     ])
+
+  , ((myModMask, xK_p), (withLog (colored colDGreen "Passwords") $ submap $ M.fromList -- %! Passwords submap
+    [ ((0, xK_t), passTypePrompt xpc) -- %! !! Type in password
+    , ((0, xK_c), passPrompt xpc) -- %! !! Copy password to clipboard
+    , ((0, xK_g), passGeneratePrompt xpc) -- %! !! Generate password
+    , ((shiftMask, xK_g), passGenerateAndCopyPrompt xpc) -- %! !! Generate password and copy to clipboard
+    ]) >> refresh)
 
   -- %% ! Prefix control
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
