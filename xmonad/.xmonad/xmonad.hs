@@ -130,6 +130,7 @@ myManageHook = composeOne $
   [ (className =? "Zenity" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.15 0.03 0.7 0.94)
   , (className =? "Zenity" <&&> title =? "Device password") -?> doCenterFloat
   , className =? "Zenity" -?> doRectFloat centerRect
+  , className =? "Pinentry-gtk-2" -?> doRectFloat centerRect
 
   -- Gaming related
   , (className =? "Steam" <&&> title =? "Steam" ) -?> doShift wsMedia

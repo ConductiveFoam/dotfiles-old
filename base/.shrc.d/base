@@ -21,7 +21,6 @@ alias clr='clear -x'
 alias git?='clr; git status'
 alias git??='git?; git --no-pager stash list; git --no-pager log -3 --format=shortdate'
 
-alias topgrade!='system_upgrade.sh'
 alias sysdctl='systemctl --user'
 
 # Fortune aliases
@@ -37,3 +36,6 @@ ssht() { /usr/bin/ssh -t "$@" "tmux attach || tmux new"; }
 #  Rust
 alias clippy='cargo +stable clippy'
 alias rustfmt='cargo +nightly fmt'
+
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye > /dev/null

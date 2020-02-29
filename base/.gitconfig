@@ -1,6 +1,7 @@
 [user]
   name = Sam B
   email = nhalbleiter@gmail.com
+  signingkey = 1F2F415A87C3168F85A285F731519FA16D854C40
 
 [core]
   editor = emacsclient -nw

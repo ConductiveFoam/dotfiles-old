@@ -5,7 +5,7 @@ Shell code indicates setup steps.
 
 * Package specific instructions
 ** base
-Basic system tools configuration such as ~tmux~, ~git~, and ~ssh~, as well as programming language conveniences
+Basic system tools configuration such as ~tmux~, ~git~, ~gnupg~, and ~ssh~, as well as programming language conveniences
 - Complete system upgrade via ~topgrade~
 - Dependencies:
   - [[https://github.com/tmux-plugins/tpm][TPM]], [[https://github.com/tmuxinator/tmuxinator][tmuxinator]], ~fortune~, ~topgrade~
