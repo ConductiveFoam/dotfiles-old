@@ -192,7 +192,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmuxinator start dev") -- %! Dev terminal
   , ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Bare terminal
   , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmuxinator start web") -- %! Elinks terminal
-  , ((myModMask, xK_r), withLog (colored colDGreen "Launch") $ submap $ M.fromList -- %! Prompts submap:
+  , ((myModMask, xK_r), submapWithLog "Launch" -- %! Prompts submap:
     [ ((0, xK_Return), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! !! Programs from curated list
     , ((0, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! !! Game
     , ((shiftMask, xK_Return), shellPrompt xpc) -- %! !! Shell
@@ -252,7 +252,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((0, xF86XK_AudioMute), safeSpawn "amixer" ["set", "Master", "toggle"]) -- %! Toggle mute
   , ((0, xF86XK_AudioPlay), MPD.toggle) -- %! MPD toggle
 
-  , ((myControlMask, xK_m), withLog (colored colDGreen "MPD") $ submap $ M.fromList -- %! Audio Submap:
+  , ((myControlMask, xK_m), submapWithLog "MPD" -- %! Audio Submap:
     [ ((0, xK_p), decrementPrefix 1 >> withPrefix MPD.play) -- %! !! MPD play $prefix
     , ((0, xK_n), MPD.pause True) -- %! !! MPD pause
     , ((shiftMask, xK_t), MPD.stop) -- %! !! MPD stop
@@ -273,13 +273,13 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     ])
 
   -- %% ! Service & Device control
-  , ((myControlMask, xK_s), withLog (colored colDGreen "Unit") $ submap $ M.fromList -- %! Systemctl submap:
+  , ((myControlMask, xK_s), submapWithLog "Unit" -- %! Systemctl submap:
     [ ((0, xK_s), sysctlPrompt "Unit Status: " "status" xpc) -- %! !! Show unit status
     , ((0, xK_a), sysctlPrompt "Start Unit: " "start" xpc) -- %! !! Start unit
     , ((0, xK_d), sysctlPrompt "Stop Unit: " "stop" xpc) -- %! !! Stop unit
     , ((0, xK_r), sysctlPrompt "Restart Unit: " "restart" xpc) -- %! !! Restart unit
     ])
-  , ((myControlMask, xK_d), withLog (colored colDGreen "Device") $ submap $ M.fromList -- %! Device submap:
+  , ((myControlMask, xK_d), submapWithLog "Device" -- %! Device submap:
     [ ((0, xK_l), notifyOf "Mounted devices" (unlines <$> listDevices "~/media")) -- %! !! List mounted devices
     , ((0, xK_m), mountDevicePrompt "/dev" xpc) -- %! !! Mount device
     , ((0, xK_u), unmountDevicePrompt "~/media" xpc) -- %! !! Unmount device
@@ -308,17 +308,17 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((shiftMask, xK_Print), withFocused $ \w -> unsafeSpawn $ screenshotCommand ("--window " ++ (show w)) "-window") -- %! Make screenshot of focused window
   , ((0, xK_Print), unsafeSpawn $ screenshotCommand "" "") -- %! Make screenshot of whole desktop
 
-  , ((myModMask, xK_a), withLog (colored colDGreen "Accessibility") $ submap $ M.fromList -- %! Accessibility submap
+  , ((myModMask, xK_a), submapWithLog "Accessibility" -- %! Accessibility submap
     [ ((0, xK_k), spawnVisualKeyboard) -- %! !! Visual keyboard
     , ((0, xK_z), spawnMagnifier) -- %! !! Screen magnifier
     ])
 
-  , ((myModMask, xK_p), (withLog (colored colDGreen "Passwords") $ submap $ M.fromList -- %! Passwords submap
+  , ((myModMask, xK_p), submapWithLog "Passwords" -- %! Passwords submap
     [ ((0, xK_t), passTypePrompt xpc) -- %! !! Type in password
     , ((0, xK_c), passPrompt xpc) -- %! !! Copy password to clipboard
     , ((0, xK_g), passGeneratePrompt xpc) -- %! !! Generate password
     , ((shiftMask, xK_g), passGenerateAndCopyPrompt xpc) -- %! !! Generate password and copy to clipboard
-    ]) >> refresh)
+    ])
 
   -- %% ! Prefix control
   , ((myControlMask, xK_g), resetPrefix >> refresh) -- %! Reset prefix
@@ -329,6 +329,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     myShiftMask = myModMask .|. shiftMask
     myControlMask = myModMask .|. controlMask
     myShiftControlMask = myModMask .|. shiftMask .|. controlMask
+    submapWithLog logName binds = (withLog (colored colDGreen logName) $ submap $ M.fromList binds) >> refresh
 
     notesWindowQuery = isTerminal <&&> title =? termTitleNotes
 
