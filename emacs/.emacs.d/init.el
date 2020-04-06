@@ -16,6 +16,12 @@
 
 ;;; Packages & local imports
 (add-to-list 'load-path "~/.emacs.d/lib")
+;; Add directories under ~/src/emacs
+(let ((default-directory "~/src/emacs"))
+  (normal-top-level-add-subdirs-to-load-path))
+;;  Manually add directories not caught
+(add-to-list 'load-path "~/src/emacs/sensible-defaults.el")
+;; Set up package management
 (require 'package)
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")

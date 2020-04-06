@@ -1,1 +1,0 @@
-/home/sam/src/emacs/emacswiki.org/header2.el
