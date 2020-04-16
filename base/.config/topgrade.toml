@@ -7,6 +7,6 @@ git_repos = [
 
 [commands]
 "Make compose files" = "cd ~/src/repos/xcompose; make"
-"Cabal update" = "cabal update"
+"Cabal update" = "cabal update; cabal install cabal-install --overwrite-policy=always"
 "xmobar update" = "cd ~/src/xmobar; cabal install --overwrite-policy=always"
 "xmonad recompile" = "xmonad --recompile"
