@@ -55,8 +55,8 @@ The cabal invocation gets the xmonad executable so we can use ~xmonad --recompil
   - cabal-install >3.0.1.0
   - xmobar with ~+with_xft +with_utf8~ flags:
 #+BEGIN_SRC sh
-$ git clone https://github.com/jaor/xmobar.git ~/src/xmobar
-$ (cd ~/src/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
+$ git clone https://github.com/jaor/xmobar.git ~/src/repos/xmobar
+$ (cd ~/src/repos/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
 #+END_SRC
   - xmobar info scripts: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ (from ~nvidia-utils~) for nvidia graphics cards
   - Integration: ~dunst~, ~stalonetray~, ~xvkbd~, ~xzoom~, ~maim~
@@ -76,3 +76,7 @@ $ (cd ~/src/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
 $ mkdir -p ~/.go
 #+END_SRC
 - Dependencies: ~go~
+** Haskell
+#+BEGIN_SRC sh
+$ git clone https://github.com/haskell/cabal.git ~/src/repos/cabal
+#+END_SRC
