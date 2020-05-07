@@ -109,6 +109,7 @@ isTerminal = anyOf (className =?) knownTerminalWindowClasses
 myModMask = mod4Mask
 xvkbdWindowQuery = className =? "XVkbd"
 xzoomWindowQuery = stringProperty "WM_ICON_NAME" =? "xzoom"
+myBrowser = "firefox-developer-edition"
 
 -- Layout hook
 myLayout = onWorkspace wsDev col $ onWorkspace wsRead read $
@@ -133,15 +134,17 @@ myManageHook = composeOne $
   [ (className =? "Zenity" <&&> title =? "xmonad key binds") -?> doRectFloat (W.RationalRect 0.15 0.03 0.7 0.94)
   , (className =? "Zenity" <&&> title =? "Device password") -?> doCenterFloat
   , className =? "Zenity" -?> doRectFloat centerRect
-  , className =? "Pinentry-gtk-2" -?> doRectFloat centerRect
+  , className =? "Pinentry-gtk-2" -?> doCenterFloat
 
   -- Gaming related
-  , (className =? "Steam" <&&> title =? "Steam" ) -?> doShift wsMedia
+  , (className =? "Steam" <&&> title =? "Steam") -?> doShift wsMedia
   , (className =? "Steam" <&&> title ..=? "Friends List") -?> doShift wsMsg
   , (className =? "Steam" <&&> title ..=? "Steam - News") -?> doHideIgnore
+  , (className ..=? "Minecraft 1.") -?> doShift wsMedia
+  -- , (title =? "Paradox Launcher" -?> doShift wsMedia >> doRectFloat centerRect)
   ] ++
   [ className =? t -?> action
-  | (t, action) <- gameWindows
+  | (t, action) <- gameActions
   ] ++
 
   -- Multimedia
@@ -169,12 +172,12 @@ myManageHook = composeOne $
   ]
   where
     terminalWindows = [(termTitleTmux, doShift wsDev), (termTitleWeb, doShift wsRead), (termTitleNotes, doRectFloat notesRect)]
-    gameWindows =
-      [ ("Steam", doShift wsMedia)
-      , ("Dustforce.bin.x86_64", doFullFloat >> doShift wsMedia)
-      , ("hollow_knight.x86_64", doShift wsMedia)
+    gameActions =
+      [ ("Dustforce.bin.x86_64", doShift wsMedia >> doFullFloat)
+      , ("Paradox Launcher", doShift wsMedia >> doRectFloat centerRect)
       ]
-    multimediaWindows = ["Blender", "vlc", "Inkscape"]
+    multimediaWindows = ["Blender", "vlc", "Inkscape"] ++
+      [ "stellaris", "hollow_knight.x86_64", "minecraft-launcher"]
     firefoxWindows = [(["GitHub", "GitLab", "ArchWiki"], wsRead)]
     dialogWindows = ["Matplotlib", "feh"]
 
@@ -192,9 +195,9 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
   , ((myModMask, xK_Return), spawnTerminal termTitleTmux "tmuxinator start dev") -- %! Dev terminal
   , ((myShiftMask, xK_Return), safeSpawn (terminal conf) ["-t", termTitle]) -- %! Bare terminal
   , ((myControlMask, xK_Return), spawnTerminal termTitleWeb "tmuxinator start web") -- %! Elinks terminal
-  , ((myModMask, xK_r), submapWithLog "Launch" -- %! Prompts submap:
+  , ((myModMask, xK_r), submapWithLog "Launch" -- %! Launch submap:
     [ ((0, xK_Return), listCompletedPrompt "Launch: " promptApps safeSpawnProg xpc) -- %! !! Programs from curated list
-    , ((0, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! !! Game
+    , ((0, xK_g), associationPrompt "Start Game: " promptGames unsafeSpawn xpc) -- %! !! Games
     , ((shiftMask, xK_Return), shellPrompt xpc) -- %! !! Shell
     ])
 
@@ -347,7 +350,7 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
     screenshotCommand opts name = "maim " ++ opts ++ " $HOME/screenshots/screenshot" ++ name ++"-$(date +%Y%m%d-%H-%M-%S).png"
     helpCommand = "zenity --info --no-wrap --no-markup --title=\"xmonad key binds\"" ++
       " --text=\"$(awk -f ~/.xmonad/genhelp.awk ~/.xmonad/xmonad.hs)\""
-    steamCommand = ("steam steam://run/" ++)
+    steamGame = ("steam steam://run/" ++)
 
     notifySong 0 = MPD.currentSong >>= (maybe (notify "MPD" "No song") (notifySong . (+ 1)))
     notifySong p = notifyOf ("MPD - Song #" ++ (show p)) $ MPD.showSong (p - 1)
@@ -375,18 +378,20 @@ myKeys conf@(XConfig {modMask = myModMask}) = M.fromList $
       , "blender", "gimp", "inkscape", "libreoffice", "steam", "vlc"
       , "telegram-desktop", "teamspeak3"
       , "pavucontrol-qt"
+      , "virtualbox"
       ]
     promptGames = M.fromList $
       [ ("Left 4 Dead 2", "left4gore -2")
-      , ("Stellaris", steamCommand "281990")
-      , ("Full Bore", steamCommand "264060")
-      , ("Zen Bound 2",steamCommand "61600")
-      , ("Portal", steamCommand "400")
-      , ("Portal 2", steamCommand "620")
+      , ("Minecraft", "minecraft-launcher")
+      , ("Stellaris", steamGame "281990")
+      , ("Full Bore", steamGame "264060")
+      , ("Zen Bound 2", steamGame "61600")
+      , ("Portal", steamGame "400")
+      , ("Portal 2", steamGame "620")
       , ("Hollow Knight", "$HOME/games/Hollow\\ Knight/start.sh")
-      , ("They Bleed Pixels", steamCommand "211260")
-      , ("Rex Rocket", steamCommand "288020")
-      , ("Dustforce", steamCommand "65300")]
+      , ("They Bleed Pixels", steamGame "211260")
+      , ("Rex Rocket", steamGame "288020")
+      , ("Dustforce", steamGame "65300")]
 
 -- Main config
 main = do
