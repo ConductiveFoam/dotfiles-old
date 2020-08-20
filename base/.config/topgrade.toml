@@ -1,4 +1,5 @@
-git_repos = [
+[git]
+repos = [
     "~/src/emacs/*/",
     "~/src/repos/*/",
     "~/dotfiles",

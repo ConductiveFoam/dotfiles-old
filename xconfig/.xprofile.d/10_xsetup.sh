@@ -6,7 +6,7 @@ export GTK_IM_MODULE=xim
 
 # MX Ergo config
 imwheel
-solaar 2> /dev/null &
+solaar -w hide 2> /dev/null &
 
 # Disable beeps
 xset b off
