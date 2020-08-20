@@ -1,6 +1,6 @@
-#!/usr/bin/sh
-# Keyboard setup: Dvorak keymap, custom binds, enable numlock
-setkeyboard.sh dvorak
+y#!/usr/bin/sh
+# Keyboard setup: US keymap, custom binds, enable numlock
+setkeyboard.sh us
 numlockx
 export GTK_IM_MODULE=xim
 
