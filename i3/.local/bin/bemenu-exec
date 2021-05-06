@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+file=$1
+shift
+
+selection=$(cat $file | bemenu "$@")
+
+[[ -n $selection ]] || exit
+$selection

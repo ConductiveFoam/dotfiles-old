@@ -30,32 +30,19 @@ $ git clone git://github.com/bbatsov/prelude.git ~/.emacs.d
 - Autostart through tmux
 
 ** XConfig
-- Provides ~redshiftd.service~, ~udiskied.service~ and ~xss-deactivate.timer~
-- Starts ~xscreensaver~, ~udiskie~, ~redshift~ and ~picom~
+- Provides ~redshiftd.service~, ~udiskied.service~, and ~xss-deactivate.timer~
+- Starts ~udiskie~, ~redshift~, and ~picom~
 - Configured to start XMonad in ~.xinitrc~
 - Setup in ~$HOME/.xprofile~ and executable scripts in ~$HOME/.xprofile.d~
-- Dependencies: ~xscreensaver~, ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming), ~imwheel~, ~solaar~
+- Dependencies: ~udiskie~, ~redshift~, ~picom~, ~zenity~, ~gtx-solarc-theme~ (for zenity theming), and ~imwheel~, ~solaar~
 - Set up with some local compose key binds as well as a lot from a shared repo
 #+BEGIN_SRC sh
 $ git clone https://github.com/kragen/xcompose.git ~/src/repos/xcompose
 #+END_SRC
 
-** xmonad
-#+BEGIN_SRC sh
-$ (cd ~; cabal install xmonad)
-#+END_SRC
-The cabal invocation gets the xmonad executable so we can use ~xmonad --recompile~ from then on
-- No xmonad-specific setup neends to be done before starting the binary (it configures the background, tray and xmobar itself)
-- Enable --user dunst.service
-- Dependencies:
-  - cabal-install >3.0.1.0
-  - xmobar with ~+with_xft +with_utf8~ flags:
-#+BEGIN_SRC sh
-$ git clone https://github.com/jaor/xmobar.git ~/src/repos/xmobar
-$ (cd ~/src/repos/xmobar; cabal configure -f "+with_xft +with_utf8"; cabal install)
-#+END_SRC
-  - xmobar info scripts: ~ddate~, ~amixer~, ~mpc~, ~sensors~, ~nvidia-smi~ (from ~nvidia-utils~) for nvidia graphics cards
-  - Integration: ~dunst~, ~stalonetray~, ~xvkbd~, ~xzoom~, ~maim~
+** i3
+- Dependencies: ~bemenu~
+- Dependencies for py3status: ~python-pydbus~, ~python-i3ipc~, ~alsa-utils~, ~pamixer~, and ~lm-sensors~
 
 ** MPD
 - Enable --user mpd.service (or start explicitly)

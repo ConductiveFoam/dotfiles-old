@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+state=$(systemctl show --property=ActiveState $@ | cut -d= -f2)
+action=start
+if [[ $state == "active" ]]; then
+    action=stop
+fi
+systemctl $action $@

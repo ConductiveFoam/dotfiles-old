@@ -1,7 +1,0 @@
-# /home/sam/.config/tmuxinator/notes.yml
-
-name: notes
-root: ~/Documents
-
-windows:
-  - emacs: emacsclient -t -e '(switch-to-buffer "stuff.org")'

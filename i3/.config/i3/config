@@ -1,0 +1,258 @@
+# Main settings
+set $mod Mod4
+
+## VIM-style directions
+set $up j
+set $down k
+set $left h
+set $right l
+
+## Import colors from xrdb
+set_from_resource $color_dark_black i3wm.color0
+set_from_resource $color_light_black i3wm.color8
+set_from_resource $color_dark_red i3wm.color1
+set_from_resource $color_light_red i3wm.color9
+set_from_resource $color_dark_green i3wm.color2
+set_from_resource $color_light_green i3wm.color10
+set_from_resource $color_dark_yellow i3wm.color3
+set_from_resource $color_light_yellow i3wm.color11
+set_from_resource $color_dark_blue i3wm.color4
+set_from_resource $color_light_blue i3wm.color12
+set_from_resource $color_dark_magenta i3wm.color5
+set_from_resource $color_light_magenta i3wm.color13
+set_from_resource $color_dark_cyan i3wm.color6
+set_from_resource $color_light_cyan i3wm.color14
+set_from_resource $color_dark_white i3wm.color7
+set_from_resource $color_light_white i3wm.color15
+
+set_from_resource $color_background i3wm.background
+set_from_resource $color_foreground i3wm.foreground
+set_from_resource $color_fade i3wm.fadeColor
+set_from_resource $color_cursor i3wm.cursorColor
+set_from_resource $color_pointer_background i3wm.pointerColorBackground
+set_from_resource $color_pointer_foreground i3wm.pointerColorForeground
+
+## Other visual things
+set $font pango:Fira Code, FontAwesome Bold 9
+font $font
+
+for_window [class=".*"] border pixel 1
+
+## Program launching & handling
+set $options_launcher ""
+
+set $command_passmenu ~/.local/bin/passmenu
+set $command_browser firefox-developer-edition
+set $name_terminal_dev " "
+set $command_terminal_dev i3-sensible-terminal -t " " -e tmuxinator start dev
+
+set $mode_pass Password: [t]ype  [c]opy
+set $mode_launch Launch: [f]irefox  [p]rogram  [l]aunch
+# [g]ame
+set $mode_system i3 & system control: [l]ock screen  [s]hutdown  [r]eboot  [q]uit i3  [R]estart i3
+set $mode_layout Layout manipulation: split [v]ertical / [h]orizontal
+
+## Workspace & output settings
+workspace_auto_back_and_forth yes
+
+set $ws1 "1: &#xe007;"
+set $ws2 "2: &#xf121;"
+set $ws3 "3: &#xf518;"
+set $ws4 "4: &#xf11b;"
+set $ws5 "5: &#xf086;"
+set $ws6 "6: &#xf108;"
+set $ws7 "7: &#xf187;"
+set $ws8 "8: &#xf120;"
+
+set $output_secondary DisplayPort-1
+
+# Client management
+## Dev term to term ws, term ws to secondary output
+assign [title=$name_terminal_dev] → $ws8
+workspace $ws8 output $output_secondary
+
+## Comms stuff to comms ws
+assign [class="^discord$"] → $ws5
+assign [class="^TelegramDesktop$"] → $ws5
+
+# Autostart
+#exec_always --no-startup-id i3-cycle-focus.py --history 2
+
+# Key binds
+## Launch
+bindsym $mod+Return exec $command_terminal_dev
+bindsym $mod+d exec BEMENU_SCALE=2 bemenu-exec ~/.config/i3/menu-preselection -p "Launch"
+
+## Launch mode
+bindsym $mod+r mode "$mode_launch"
+mode "$mode_launch" {
+    bindsym f exec $command_browser; mode "default"
+    bindsym p exec bemenu-exec ~/.config/i3/menu-preselection -p "Launch"
+    bindsym l exec bemenu-run $options_launcher; mode "default"
+    bindsym m exec minecraft-launcher; mode "default"
+
+    bindsym Escape mode "default"
+    bindsym Control+g mode "default"
+}
+
+## Pass integration
+bindsym $mod+p mode "$mode_pass"
+mode "$mode_pass" {
+    bindsym t exec $command_passmenu --type -p "Password"; mode "default"
+    bindsym c exec $command_passmenu -p "Password"; mode "default"
+
+    bindsym Escape mode "default"
+    bindsym Control+g mode "default"
+}
+
+## Window manipulation
+bindsym $mod+Shift+c kill
+floating_modifier $mod
+
+### Change focus
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+#bindsym $mod+Tab exec --no-startup-id i3-cycle-focus.py --switch
+
+###  To parent
+bindsym $mod+a focus parent
+
+###  To output
+bindsym $mod+w focus output primary
+bindsym $mod+e focus output $output_secondary
+
+### Move focused window
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+### Floating and fullscreen
+bindsym $mod+f floating enable
+bindsym $mod+t floating disable
+bindsym $mod+space focus mode_toggle
+
+bindsym $mod+Control+f fullscreen toggle
+
+### Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+# move the currently focused window to the scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $mod+minus scratchpad show
+
+## Workspace manipulation
+### Focus workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+comma workspace $ws8
+
+### Move container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+p move container to workspace $ws7
+bindsym $mod+Shift+comma move container to workspace $ws8
+
+### Move workspace to output
+bindsym $mod+Shift+w move workspace to output primary
+bindsym $mod+Shift+e move workspace to output $output_secondary
+
+## Layout manipulation
+bindsym $mod+Control+l "$mode_layout"
+mode "$mode_layout" {
+    bindsym h split h
+    bindsym v split v
+
+    bindsym Escape mode "default"
+    bindsym Control+g mode "default"
+}
+
+## Other
+### i3 & Power control
+bindsym $mod+q reload
+bindsym $mod+Shift+q mode "$mode_system"
+mode "$mode_system" {
+    bindsym l exec --no-startup-id "i3lock -i ~/Pictures/blue_nebula-wallpaper-7680x4320.png && sleep 1", mode "default"
+    bindsym s exec systemctl poweroff
+    bindsym r exec systemctl reboot
+    bindsym q exec i3-msg exit
+    bindsym Shift+r restart
+
+    bindsym Escape mode "default"
+}
+
+### Audio control
+set $refresh_status exec py3-cmd refresh --all
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_status
+
+# Bars
+## Primary bar: Focused window, system info, and tray
+set $bar_primary bar_primary
+bar {
+    id $bar_primary
+    output primary
+    tray_output primary
+    status_command py3status -c ~/.config/i3/primarybar.conf
+    position top
+    separator_symbol " | "
+    workspace_min_width 20
+    strip_workspace_numbers yes
+
+    colors {
+        background $color_background
+        statusline $color_dark_magenta
+        separator $color_foreground
+
+        # border  background  text
+        focused_workspace $color_background $color_background $color_dark_yellow
+        active_workspace $color_background $color_background $color_dark_blue
+        inactive_workspace $color_background $color_background $color_foreground
+        urgent_workspace $color_dark_red $color_background $color_dark_red
+        binding_mode $color_background $color_background $color_dark_green
+    }
+}
+
+## Secondary bar: Connectivity, system load, and temperatures
+set $bar_load bar_load
+bar {
+    id $bar_load
+    output $output_secondary
+    tray_output none
+    status_command py3status -c ~/.config/i3/loadbar.conf
+    position top
+    separator_symbol " | "
+    workspace_min_width 20
+    strip_workspace_numbers yes
+
+    bindsym button1 nop
+
+    colors {
+        background $color_background
+        statusline $color_dark_magenta
+        separator $color_foreground
+
+        # border  background  text
+        focused_workspace $color_background $color_background $color_dark_yellow
+        active_workspace $color_background $color_background $color_dark_blue
+        inactive_workspace $color_background $color_background $color_foreground
+        urgent_workspace $color_dark_red $color_background $color_dark_red
+        binding_mode $color_background $color_background $color_dark_green
+    }
+}
