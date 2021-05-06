@@ -1,3 +1,8 @@
+Xft.dpi: 168
+
+Xcursor.theme: Adwaita
+Xcursor.size: 20
+
 #define S_base03        #002b36
 #define S_base02        #073642
 #define S_base01        #586e75
@@ -55,6 +60,3 @@
 !! white dark/light
 *color7:                S_base2
 *color15:               S_base3
-
-Xcursor.theme: Adwaita
-Xcursor.size: 16
